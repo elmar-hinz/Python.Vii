@@ -1,22 +1,13 @@
 import curses
-from vii.config import *
-from vii.view import View
-from vii.model import Model
-from vii.controller import Controller
+from .model.model import Model
+from .controller.controller import Controller
+from .view.view import View
 
 class Application:
-    def __init__(self, screen):
-        self.screen = screen
-        self.main()
-
-    def main(self):
-        self.model = Model(self)
-        self.view = View(self)
-        self.controller = Controller(self)
-        self.wireUp()
-        self.controller.loop()
-
-    def wireUp(self):
-        pass
+    def __init__(self, root):
+        model = Model()
+        view = View(root)
+        controller = Controller(model, view)
+        controller.loop()
 
 def main(): curses.wrapper(Application)
