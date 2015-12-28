@@ -7,8 +7,11 @@ class AbstractWindow:
         window.refresh()
         self.window = window
 
-    def draw(self, text):
+    def setBuffer(self, buffer):
+        self.buffer = buffer
+
+    def draw(self):
         self.window.clear()
-        self.window.addstr(text)
+        self.window.addstr(str(self.buffer))
         self.window.refresh()
 
