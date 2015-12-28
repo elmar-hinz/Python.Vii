@@ -1,8 +1,9 @@
-from .commandline import CommandLine
+from .line import Line
+from .buffer import Buffer
 
 class Model:
     def __init__(self):
-        self.commandLine = CommandLine()
-
+        self.commandLine = Line()
+        self.buffer = Buffer()
 
 
