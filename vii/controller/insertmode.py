@@ -1,6 +1,6 @@
 from .abstractmode import AbstractMode
 
-class EditMode(AbstractMode):
+class InsertMode(AbstractMode):
 
     def __init__(self, controller):
         super().__init__(controller)
@@ -11,7 +11,7 @@ class EditMode(AbstractMode):
 
     def handleKey(self, key):
         super().handleKey(key)
-        if key == 27: return self.controller.commandMode
-        return self.controller.editMode
-
+        if key == 127: return self.backspace()
+        if key == 27: return self.controller.editMode
+        else: return self.append(key)
 

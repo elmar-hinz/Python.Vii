@@ -13,6 +13,9 @@ class AbstractList:
     def clear(self):
         self.list = []
 
+    def createElement(self):
+        raise NotImplementedError
+
     def delete(self, nr, count = 1):
         self.list[nr:nr+count] = []
 
