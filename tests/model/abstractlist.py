@@ -1,4 +1,4 @@
-# from nose.tools import *
+from nose.tools import *
 from nose.plugins.skip import SkipTest
 from vii.model.abstractlist import AbstractList
 
@@ -26,6 +26,10 @@ class TestList:
         self.fixture.append(1)
         self.fixture.append(2)
         assert str(self.fixture) == "1\n2"
+
+    @raises(NotImplementedError)
+    def testCreateElement(self):
+        self.fixture.createElement()
 
     def testAppend(self):
         self.fixture.append(1)
@@ -66,6 +70,15 @@ class TestList:
         self.fixture.insert(1,[2,3])
         self.assertContains(1,2,3,4)
 
+    def testInsertAppend(self):
+        """ insert after list appends """
+        self.fixture.append(1)
+        self.fixture.append(2)
+        self.fixture.insert(2,3)
+        self.assertContains(1,2,3)
+        self.fixture.insert(3,[4,5])
+        self.assertContains(1,2,3,4,5)
+
     def testRead(self):
         self.fixture.append(1)
         self.fixture.append(2)
@@ -92,7 +105,6 @@ class TestList:
         self.fixture.append(4)
         self.fixture.replace(1,[2,3])
         self.assertContains(1,2,3,4)
-
 
 
 
