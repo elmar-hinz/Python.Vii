@@ -5,5 +5,9 @@ from ..logger import *
 class Model:
     def __init__(self):
         self.commandLine = Line()
+
+    def createBuffer(self, cursor):
+        """ TODO add to bufferlist """
         self.buffer = Buffer()
-        debug(self.buffer.length())
+        self.buffer.cursor = cursor
+        return self.buffer
