@@ -2,19 +2,21 @@ from nose.tools import *
 from nose.plugins.skip import SkipTest
 from vii.model.abstractlist import AbstractList
 
-class TestList:
+class TestAbstractList:
 
     def setup(self):
         self.fixture = AbstractList()
+        self.fixture.memberClass = int
 
     def teardown(self):
         pass
 
     def assertContains(self, *numbers):
-        assert(self.fixture.asList() == list(numbers))
+        assert(list(self.fixture) == list(numbers))
 
     def testInit(self):
         assert self.fixture.__class__ == AbstractList
+
 
     def testLength(self):
         assert self.fixture.length() == 0
@@ -22,14 +24,20 @@ class TestList:
         self.fixture.append(1)
         assert self.fixture.length() == 2
 
+    def testClear(self):
+        self.fixture.append(1)
+        self.fixture.append(1)
+        assert self.fixture.length() == 2
+        self.fixture.clear()
+        assert self.fixture.length() == 0
+
     def testStr(self):
         self.fixture.append(1)
         self.fixture.append(2)
         assert str(self.fixture) == "1\n2"
 
-    @raises(NotImplementedError)
-    def testCreateElement(self):
-        self.fixture.createElement()
+    def testCreateMember(self):
+        assert self.fixture.createMember() == 0
 
     def testAppend(self):
         self.fixture.append(1)
@@ -78,18 +86,6 @@ class TestList:
         self.assertContains(1,2,3)
         self.fixture.insert(3,[4,5])
         self.assertContains(1,2,3,4,5)
-
-    def testRead(self):
-        self.fixture.append(1)
-        self.fixture.append(2)
-        self.fixture.append(3)
-        assert self.fixture.read(1) == 2
-
-    def testReadMultiple(self):
-        self.fixture.append(1)
-        self.fixture.append(2)
-        self.fixture.append(3)
-        assert self.fixture.read(1, 2) == [2,3]
 
     def testReplace(self):
         self.fixture.append(1)

@@ -8,4 +8,4 @@ logger = logging.getLogger()
 logger.addHandler(fileHandler)
 logger.setLevel(logLevel)
 
-
+def debug(str): logger.debug(str)
