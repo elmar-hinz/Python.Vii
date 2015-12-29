@@ -8,7 +8,6 @@ class InsertMode(AbstractMode):
         self.view = controller.view.window
         self.buffer = controller.model.buffer
         self.line = self.buffer[-1]
-        debug("insert buffer length: %s" % self.buffer.length())
 
     def handleKey(self, key):
         super().handleKey(key)
