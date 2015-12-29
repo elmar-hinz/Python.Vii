@@ -18,9 +18,20 @@ class Cursor:
         if x > width: x = width
         self.x = x
 
+    def trackHorizontalInsert(self, x, length):
+        if x <= self.x: self.x += length
+
+    def trackHorizontalDelete(self, x, length):
+        if x < self.x:
+            self.x -= length
+            if self.x < x: self.x = x
+
     def trackVerticalInsert(self, y, length):
         if y <= self.y: self.y += length
 
-    def trackHorizontalInsert(self, x, length):
-        if x <= self.x: self.x += length
+    def trackVerticalDelete(self, y, length):
+        if y < self.y:
+            self.y -= length
+            if self.y < y: self.y = y
+
 

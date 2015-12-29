@@ -2,7 +2,6 @@
 from nose.plugins.skip import SkipTest
 from vii.controller.cursor import Cursor
 from vii.model.buffer import Buffer
-from vii.model.line import Line
 
 class TestCursor:
 
@@ -57,35 +56,54 @@ class TestCursor:
         self.fixture.moveHorizontal(-50)
         assert self.fixture.x == 0
 
-    def testTrackVerticalInsert(self):
-        """ insert after: cursor is fix """
-        lines = [Line("a"), Line("b")]
-        self.fixture.y = 0
-        self.fixture.buffer.insert(1, lines)
-        self.fixture.trackVerticalInsert(1, len(lines))
-        assert self.fixture.y == 0
-        """ insert before: cursor moves """
-        lines = [Line("a"), Line("b")]
-        self.fixture.y = 1
-        self.fixture.buffer.insert(1, lines)
-        self.fixture.trackVerticalInsert(1, len(lines))
-        print(self.fixture.y)
-        assert self.fixture.y == 3
-
     def testTrackHorizontalInsert(self):
         """ insert after: cursor is fix """
-        line, insert = self.fixture[0], "xxx"
         self.fixture.x = 0
-        line.insert(1, insert)
-        self.fixture.trackHorizontalInsert(1, len(insert))
+        self.fixture.trackHorizontalInsert(1, 3)
         assert self.fixture.x == 0
-        """ insert before: cursor moves """
+        """ insert before: cursor moves up """
         self.fixture.x = 1
-        line.insert(1, insert)
-        self.fixture.trackHorizontalInsert(1, len(insert))
+        self.fixture.trackHorizontalInsert(1, 3)
         assert self.fixture.x == 4
 
+    def testTrackHorizontalDelete(self):
+        """ delete after: cursor is fix """
+        self.fixture.x = 0
+        self.fixture.trackHorizontalDelete(1,2)
+        assert self.fixture.x == 0
+        """ delete before: cursor moves down """
+        self.fixture.x = 5
+        self.fixture.trackHorizontalDelete(1, 2)
+        assert self.fixture.x == 3
+        """ delete before including cursor """
+        """ cursor moves down to position """
+        self.fixture.x = 2
+        self.fixture.trackHorizontalDelete(1, 5)
+        assert self.fixture.x == 1
 
+    def testTrackVerticalInsert(self):
+        """ insert after: cursor is fix """
+        self.fixture.y = 0
+        self.fixture.trackVerticalInsert(1, 2)
+        assert self.fixture.y == 0
+        """ insert before: cursor moves up """
+        self.fixture.y = 1
+        self.fixture.trackVerticalInsert(1, 2)
+        assert self.fixture.y == 3
 
+    def testTrackVerticalDelete(self):
+        """ delete after: cursor is fix """
+        self.fixture.y = 0
+        self.fixture.trackHorizontalDelete(1, 1)
+        assert self.fixture.y == 0
+        """ delete before: cursor moves down """
+        self.fixture.x = 2
+        self.fixture.trackHorizontalDelete(0, 1)
+        assert self.fixture.x == 1
+        """ delete before including cursor """
+        """ cursor moves down to position """
+        self.fixture.x = 1
+        self.fixture.trackHorizontalDelete(0, 2)
+        assert self.fixture.x == 0
 
 
