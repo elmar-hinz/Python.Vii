@@ -6,8 +6,6 @@ class EditMode(AbstractMode):
         super().__init__(controller)
         self.view = controller.view.window
         self.model = controller.model.buffer
-        self.line = self.model.createElement()
-        self.model.append(self.line)
 
     def handleKey(self, key):
         super().handleKey(key)

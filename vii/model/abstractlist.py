@@ -1,45 +1,37 @@
+from ..logger import *
 
-class AbstractList:
+class AbstractList(list):
+
+    """ class of list members """
+    memberClass = None
 
     def __init__(self):
-        self.clear()
-
-    def asList(self):
-        return self.list
+        list.__init__(self)
 
     def append(self, subject):
-        self.list.extend(self.__list(subject))
+        self.extend(self.__list(subject))
 
-    def clear(self):
-        self.list = []
-
-    def createElement(self):
-        raise NotImplementedError
+    def createMember(self):
+        return self.memberClass()
 
     def delete(self, nr, count = 1):
-        self.list[nr:nr+count] = []
+        self[nr:nr+count] = []
+
 
     def insert(self, nr, subject):
-        insert = self.__list(subject)
-        begin, end = self.list[:nr], self.list[nr:]
-        self.list = begin + insert + end
+        self[nr:nr] = self.__list(subject)
 
     def length(self):
-        return len(self.list)
-
-    def read(self, nr, count = None):
-        if count: return self.list[nr:nr+count]
-        else: return self.list[nr]
+        return len(self)
 
     def replace(self, nr, subject):
         list = self.__list(subject)
-        self.list[nr:nr+len(list)] = list
+        self[nr:nr+len(list)] = list
 
     def __str__(self):
-        return "\n".join(str(e) for e in self.list)
+        return "\n".join(str(e) for e in self)
 
-    @staticmethod
-    def __list(subject):
-        if '__iter__' in dir(subject): return subject
+    def __list(self, subject):
+        if not subject.__class__ == self.memberClass: return subject
         else: return [subject]
 
