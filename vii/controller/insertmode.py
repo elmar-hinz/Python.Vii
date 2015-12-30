@@ -25,7 +25,6 @@ class InsertMode(AbstractMode):
         line = self.currentLine()
         line.insert(x, chr(key))
         self.buffer.cursor.position(x = x + 1)
-        self.window.draw()
         return self.controller.currentMode
 
     def backspace(self):
@@ -33,7 +32,6 @@ class InsertMode(AbstractMode):
         line.delete(line.length() - 1)
         x = self.buffer.cursor.x - 1
         self.buffer.cursor.position(x = x)
-        self.window.draw()
         return self.controller.currentMode
 
     def newline(self):
@@ -42,7 +40,6 @@ class InsertMode(AbstractMode):
         self.buffer.append(line)
         y = self.buffer.cursor.y + 1
         self.buffer.cursor.position(y, 0)
-        self.window.draw()
         return self.controller.insertMode
 
 

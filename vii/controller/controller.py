@@ -18,6 +18,7 @@ class Controller:
         self.editMode = EditMode(self)
         self.insertMode = InsertMode(self)
         self.currentMode = self.insertMode
+        self.view.window.draw()
 
     def loop(self):
         self.view.root.nodelay(0)

@@ -8,13 +8,14 @@ class TestCursor:
     def setup(self):
         self.fixture = Cursor()
         text = "line one\nline two\nline three"
-        self.fixture.buffer = Buffer(text)
+        self.fixture.buffer = Buffer("buffer", text)
 
     def teardown(self):
         pass
 
     def testInit(self):
         assert self.fixture.__class__ == Cursor
+        print( self.fixture.buffer.length())
         assert self.fixture.buffer.length() == 3
         assert self.fixture.x == 0
         assert self.fixture.y == 0
@@ -91,8 +92,8 @@ class TestCursor:
         assert self.fixture.y == 0
         """ insert before: cursor moves up """
         self.fixture.y = 1
-        self.fixture.trackVerticalInsert(1, 2)
-        assert self.fixture.y == 3
+        self.fixture.trackVerticalInsert(1, 1)
+        assert self.fixture.y == 2
 
     def testTrackVerticalDelete(self):
         """ delete after: cursor is fix """
