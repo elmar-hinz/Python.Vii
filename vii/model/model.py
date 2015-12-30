@@ -10,4 +10,5 @@ class Model:
         """ TODO add to bufferlist """
         self.buffer = Buffer()
         self.buffer.cursor = cursor
+        cursor.buffer = self.buffer
         return self.buffer

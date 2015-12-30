@@ -1,6 +1,7 @@
 
 """Window"""
 application = "Vii"
+numberBarWidth = 5
 
 """Logging"""
 import logging

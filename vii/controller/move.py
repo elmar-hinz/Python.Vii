@@ -12,4 +12,3 @@ def right(position, count):
     return (position[0], position[1] + count)
 
 
-
