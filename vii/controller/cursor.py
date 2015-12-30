@@ -1,5 +1,4 @@
 from ..logger import *
-from ..config import numberBarWidth
 
 class Cursor:
 
@@ -8,7 +7,7 @@ class Cursor:
 
     def __init__(self):
         self.y = 0
-        self.x = numberBarWidth
+        self.x = 0
 
     def guardRange(self):
         if self.y < 0:
@@ -16,10 +15,10 @@ class Cursor:
         elif self.y > len(self.buffer) - 1:
             self.y = len(self.buffer) - 1
         line = self.buffer[self.y]
-        if self.x < numberBarWidth:
-            self.x = numberBarWidth
-        elif self.x > len(line) + numberBarWidth:
-            self.x = len(line) + numberBarWidth
+        if self.x < 0:
+            self.x = 0
+        elif self.x > len(line):
+            self.x = len(line)
 
     def position(self, y = None, x = None):
         if y == None and x == None:

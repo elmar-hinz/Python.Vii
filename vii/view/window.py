@@ -1,6 +1,7 @@
 from .abstractwindow import AbstractWindow
 from .renderer import render
 import curses
+from ..config import numberBarWidth
 from ..logger import *
 
 class Window(AbstractWindow):
@@ -22,6 +23,8 @@ class Window(AbstractWindow):
         self.window.refresh()
 
     def move(self):
-        debug("move %s %s" % self.buffer.cursor.position())
-        self.window.move(*self.buffer.cursor.position())
+        y, x = self.buffer.cursor.position()
+        debug("move %s %s" % (y, x))
+        x += numberBarWidth
+        self.window.move(y, x)
 
