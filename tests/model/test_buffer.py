@@ -6,13 +6,14 @@ from vii.model.line import Line
 class TestBuffer:
 
     def setup(self):
-        self.fixture = Buffer()
+        self.fixture = Buffer("buffer")
 
     def teardown(self):
         pass
 
     def testInit(self):
         assert self.fixture.__class__ == Buffer
+        assert self.fixture.id == "buffer"
         assert self.fixture.memberClass == Line
         assert self.fixture.length() == 1
         assert str(self.fixture) == ""
@@ -20,7 +21,7 @@ class TestBuffer:
 
     def testInitWithText(self):
         content = "aa aa\nbb bb"
-        buffer = Buffer(content)
+        buffer = Buffer("buffer", content)
         assert buffer.length() == 2
         assert str(buffer) == content
 

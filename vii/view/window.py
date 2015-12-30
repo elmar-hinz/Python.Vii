@@ -8,8 +8,8 @@ class Window(AbstractWindow):
 
     buffer = None
 
-    def __init__(self, parentWindow):
-        super().__init__(parentWindow)
+    def __init__(self, parentWindow, modelId):
+        super().__init__(parentWindow, modelId)
 
     def layout(self, parentWindow):
         height, width = parentWindow.getmaxyx()

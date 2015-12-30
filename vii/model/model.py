@@ -8,7 +8,7 @@ class Model:
 
     def createBuffer(self, cursor):
         """ TODO add to bufferlist """
-        self.buffer = Buffer()
+        self.buffer = Buffer("buffer")
         self.buffer.cursor = cursor
         cursor.buffer = self.buffer
         return self.buffer

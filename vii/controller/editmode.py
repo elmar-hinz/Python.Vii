@@ -29,7 +29,6 @@ class EditMode(AbstractMode):
 
     def append(self):
         self.cursor.position(*self._append(self.cursor.position()))
-        self.window.draw()
         return self.controller.insertMode
 
     def insert(self):
@@ -37,42 +36,34 @@ class EditMode(AbstractMode):
 
     def up(self):
         self.cursor.position(*self.move.up())
-        self.window.draw()
         return self.controller.editMode
 
     def down(self):
         self.cursor.position(*self.move.down())
-        self.window.draw()
         return self.controller.editMode
 
     def left(self):
         self.cursor.position(*self.move.left())
-        self.window.draw()
         return self.controller.editMode
 
     def right(self):
         self.cursor.position(*self.move.right())
-        self.window.draw()
         return self.controller.editMode
 
     def endOfLine(self):
         self.cursor.position(*self.move.endOfLine())
-        self.window.draw()
         return self.controller.editMode
 
     def beginningOfLine(self):
         self.cursor.position(*self.move.beginningOfLine())
-        self.window.draw()
         return self.controller.editMode
 
     def appendToLine(self):
         self.cursor.position(*self._append(self.move.endOfLine()))
-        self.window.draw()
         return self.controller.insertMode
 
     def insertBeforeLine(self):
         self.cursor.position(*self.move.beginningOfLine())
-        self.window.draw()
         return self.controller.insertMode
 
     def currentLine(self):
