@@ -1,5 +1,5 @@
 from .abstractmode import AbstractMode
-from .move import *
+from .movements import Movements
 from ..config import numberBarWidth
 from ..logger import *
 
@@ -10,44 +10,74 @@ class EditMode(AbstractMode):
         self.window = controller.view.window
         self.buffer = controller.model.buffer
         self.cursor = self.buffer.cursor
+        self.move = Movements(self.window, self.buffer, self.cursor)
 
     def handleKey(self, key):
         super().handleKey(key)
-        if key == 27: return self.controller.commandMode
-        if key == 104: return self.left()
-        if key == 106: return self.down()
-        if key == 107: return self.up()
-        if key == 108: return self.right()
-        if key == 65: return self.appendToLine()
+        if key == ord('$'): return self.endOfLine()
+        if key == ord(':'): return self.controller.commandMode
+        if key == ord('^'): return self.beginningOfLine()
+        if key == ord('A'): return self.appendToLine()
+        if key == ord('I'): return self.insertBeforeLine()
+        if key == ord('a'): return self.append()
+        if key == ord('h'): return self.left()
+        if key == ord('i'): return self.insert()
+        if key == ord('j'): return self.down()
+        if key == ord('k'): return self.up()
+        if key == ord('l'): return self.right()
         return self.controller.editMode
 
+    def append(self):
+        self.cursor.position(*self._append(self.cursor.position()))
+        self.window.draw()
+        return self.controller.insertMode
+
+    def insert(self):
+        return self.controller.insertMode
+
     def up(self):
-        self.cursor.position(*up(self.cursor.position(), 1))
+        self.cursor.position(*self.move.up())
         self.window.draw()
         return self.controller.editMode
 
     def down(self):
-        self.cursor.position(*down(self.cursor.position(), 1))
+        self.cursor.position(*self.move.down())
         self.window.draw()
         return self.controller.editMode
 
     def left(self):
-        self.cursor.position(*left(self.cursor.position(), 1))
+        self.cursor.position(*self.move.left())
         self.window.draw()
         return self.controller.editMode
 
     def right(self):
-        self.cursor.position(*right(self.cursor.position(), 1))
+        self.cursor.position(*self.move.right())
+        self.window.draw()
+        return self.controller.editMode
+
+    def endOfLine(self):
+        self.cursor.position(*self.move.endOfLine())
+        self.window.draw()
+        return self.controller.editMode
+
+    def beginningOfLine(self):
+        self.cursor.position(*self.move.beginningOfLine())
         self.window.draw()
         return self.controller.editMode
 
     def appendToLine(self):
-        x = self.currentLine().length() + numberBarWidth
-        self.cursor.position(x=x)
+        self.cursor.position(*self._append(self.move.endOfLine()))
+        self.window.draw()
+        return self.controller.insertMode
+
+    def insertBeforeLine(self):
+        self.cursor.position(*self.move.beginningOfLine())
         self.window.draw()
         return self.controller.insertMode
 
     def currentLine(self):
         return self.buffer[self.cursor.y]
 
+    def _append(self, position):
+        return (position[0], position[1] + 1)
 

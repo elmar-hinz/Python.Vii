@@ -17,14 +17,14 @@ class InsertMode(AbstractMode):
         if key == 10: return self.newline()
         if key == 27: return self.controller.editMode
         if key == 127: return self.backspace()
-        else: return self.append(key)
+        else: return self.insert(key)
 
-    def append(self, key):
-        debug("Apppend: %s" % key)
+    def insert(self, key):
+        debug("Insert: %s" % key)
+        x = self.buffer.cursor.x
         line = self.currentLine()
-        line.append(chr(key))
-        x = self.buffer.cursor.x + 1
-        self.buffer.cursor.position(x = x)
+        line.insert(x, chr(key))
+        self.buffer.cursor.position(x = x + 1)
         self.window.draw()
         return self.controller.currentMode
 
