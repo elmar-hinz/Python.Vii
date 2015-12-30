@@ -19,6 +19,11 @@ class TestCursor:
         assert self.fixture.x == 0
         assert self.fixture.y == 0
 
+    def testPosition(self):
+        assert self.fixture.position() == (0,0)
+        self.fixture.position(1,2)
+        assert self.fixture.position() == (1,2)
+
     def testMoveVertical(self):
         self.fixture.moveVertical(0)
         assert self.fixture.y == 0

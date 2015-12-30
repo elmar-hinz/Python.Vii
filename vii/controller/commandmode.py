@@ -5,7 +5,7 @@ class CommandMode(AbstractMode):
     def __init__(self, controller):
         super().__init__(controller)
         self.line = controller.model.commandLine
-        self.view = controller.view.commandLine
+        self.window = controller.view.commandLine
 
     def handleKey(self, key):
         super().handleKey(key)
@@ -15,7 +15,7 @@ class CommandMode(AbstractMode):
 
     def submit(self):
         self.line.clear()
-        self.view.draw()
+        self.window.draw()
         return self.controller.commandMode
 
 

@@ -10,10 +10,10 @@ class AbstractMode:
 
     def append(self, key):
         self.line.append(chr(key))
-        self.view.draw()
+        self.window.draw()
         return self.controller.currentMode
 
     def backspace(self):
         self.line.delete(self.line.length() - 1)
-        self.view.draw()
+        self.window.draw()
         return self.controller.currentMode
