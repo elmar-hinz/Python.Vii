@@ -31,7 +31,7 @@ class Cursor:
         y = self.y + offset
         height = self.buffer.length()
         if y < 0: y = 0
-        if y > height: y = height
+        if y >= height: y = height - 1 # cursor can't stay behind last line
         self.y = y
         self.guardRange()
 
@@ -40,7 +40,7 @@ class Cursor:
         width = self.buffer[y].length()
         x = self.x + offset
         if x < 0: x = 0
-        if x > width: x = width
+        if x > width: x = width # cursor can stay behind last char by ONE
         self.x = x
         self.guardRange()
 

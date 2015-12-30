@@ -27,18 +27,16 @@ class TestCursor:
     def testMoveVertical(self):
         self.fixture.moveVertical(0)
         assert self.fixture.y == 0
-        self.fixture.moveVertical(1)
-        assert self.fixture.y == 1
         self.fixture.moveVertical(2)
-        assert self.fixture.y == 3
-        self.fixture.moveVertical(-2)
+        assert self.fixture.y == 2
+        self.fixture.moveVertical(-1)
         assert self.fixture.y == 1
 
     def testMoveVerticalBounds(self):
         self.fixture.moveVertical(0)
         assert self.fixture.y == 0
         self.fixture.moveVertical(10)
-        assert self.fixture.y == 3
+        assert self.fixture.y == 2
         self.fixture.moveVertical(-10)
         assert self.fixture.y == 0
 
