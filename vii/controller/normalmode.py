@@ -2,7 +2,7 @@ from .abstractmode import AbstractMode
 # from .commandmode import CommandMode
 from .insertmode import InsertMode
 from .cursor import Cursor
-from .movements import Movements
+from .normalactions import NormalActions
 from ..logger import *
 from ..config import numberBarWidth, commandMap
 import os
@@ -13,8 +13,8 @@ os.environ.setdefault('ESCDELAY', '25')
 class NormalMode(AbstractMode):
 
     model, view, window, buffer, cursor = None, None, None, None, None
-    command, commandMap, delegating = None, dict(), False
-    move, insertMode = None, None
+    actions, command, commandMap, delegating = None, None, dict(), False
+    insertMode = None
 
     def __init__(self, model, view):
         self.model, self.view = model, view
@@ -27,7 +27,7 @@ class NormalMode(AbstractMode):
         # self.commandMode = CommandMode(self)
         self.insertMode = InsertMode(self)
         self.view.window.draw()
-        self.move = Movements(self.window, self.buffer, self.cursor)
+        self.actions = NormalActions(self.buffer, self.cursor)
 
     def parseCommandMap(self):
         for line in commandMap.strip().splitlines():
@@ -37,23 +37,16 @@ class NormalMode(AbstractMode):
             except:
                 pass
 
-    def createWindow(self):
-        """ TODO: multiple windows """
-        """ TODO: dynamic relation betwenn buffer and windows """
-        buffer = self.model.createBuffer(Cursor())
-        self.view.createWindow(buffer)
-
     def handleKey(self, key):
         super().handleKey(key)
-        if key == 27:
-            info("escape")
-            self.delegating = False
-            if self.child == self.insertMode: self.left()
-            self.child = None
         if self.delegating:
             info("delegate %s"%chr(key))
             self.child.handleKey(key)
+            if key == 27:
+                self.delegating = False
+                self.child = None
         elif self.catchCommand(key):
+            """ when command complete """
             self.switchCommand()
             self.command = None
 
@@ -73,51 +66,18 @@ class NormalMode(AbstractMode):
         info("switch %s %s"%(c, o))
         try:
             operator = self.commandMap[o]
-            function = getattr(self, operator)
-            return function()
-        except:
-            pass
+            function = getattr(self.actions, operator)
+            mode = function()
+            if mode == "InsertMode":
+                self.delegating = True
+                self.child = self.insertMode
+        except KeyError:
+            debug("Switching failed for %s" % o)
 
-    def append(self):
-        self.delegating = True
-        self.child = self.insertMode
-        self.cursor.position(*self._append(self.cursor.position()))
-
-    def insert(self):
-        self.delegating = True
-        self.child = self.insertMode
-
-    def up(self):
-        self.cursor.position(*self.move.up())
-
-    def down(self):
-        self.cursor.position(*self.move.down())
-
-    def left(self):
-        self.cursor.position(*self.move.left())
-
-    def right(self):
-        self.cursor.position(*self.move.right())
-
-    def endOfLine(self):
-        self.cursor.position(*self.move.endOfLine())
-
-    def beginningOfLine(self):
-        self.cursor.position(*self.move.beginningOfLine())
-
-    def appendToLine(self):
-        self.delegating = True
-        self.child = self.insertMode
-        self.cursor.position(*self._append(self.move.endOfLine()))
-
-    def insertBeforeLine(self):
-        self.delegating = True
-        self.child = self.insertMode
-        self.cursor.position(*self.move.beginningOfLine())
-
-    def currentLine(self):
-        return self.buffer[self.cursor.y]
-
-    def _append(self, position):
-        return (position[0], position[1] + 1)
+    # TODO: where is the right place?
+    def createWindow(self):
+        """ TODO: multiple windows """
+        """ TODO: dynamic relation betwenn buffer and windows """
+        buffer = self.model.createBuffer(Cursor())
+        self.view.createWindow(buffer)
 
