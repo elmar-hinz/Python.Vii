@@ -57,11 +57,12 @@ May be a little out of sync with actual development.
                 * Sheet
     * Controller
         * NormalMode
-        * InsertMode
-        * VisualMode
-        * OperatorPendingMode
-        * CommandLineMode
-        * CommandHistory
+            * NormalActions
+            * InsertMode
+            * VisualMode
+            * OperatorPendingMode
+            * CommandLineMode
+            * CommandHistory
 
 The criterium of this model is, in which class other classes are instantiated.
 There are a lot more of relations not shown in this overview.
