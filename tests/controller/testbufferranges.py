@@ -1,18 +1,15 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.controller.movements import Movements
+from vii.controller.bufferranges import BufferRanges
 
 class Dummy(): pass
 
-class TestMovements:
+class TestBufferRanges:
 
     def setup(self):
-        self.window = Dummy()
-        self.buffer = ["aa",
-            "bbb", "cccc", "ddddd"]
+        self.buffer = ["aa", "bbb", "cccc", "ddddd"]
         self.cursor = Dummy()
-        self.fixture = Movements(
-            self.window, self.buffer, self.cursor)
+        self.fixture = BufferRanges(self.buffer, self.cursor)
         self.cursor.x = 2
         self.cursor.y = 2
 

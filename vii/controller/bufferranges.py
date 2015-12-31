@@ -1,20 +1,13 @@
 
-class Movements:
+class BufferRanges:
     """
-    Calculate the target for each movement.
-
-    The current position is taken form
-    window.buffer.cursor
-
+    Calculate the end position of each range.
+    The current position is taken form cursor.
     Values out of range of the buffer are possible.
     Range controll happens in the buffer itself.
     """
 
-    def __init__(self, window, buffer, cursor):
-        """
-        setting them separately makes testing more easy
-        """
-        self.window = window
+    def __init__(self, buffer, cursor):
         self.buffer = buffer
         self.cursor = cursor
 

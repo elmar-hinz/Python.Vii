@@ -1,6 +1,6 @@
 from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.controller.normalMode import NormalMode
+from vii.controller.normalmode import NormalMode
 
 class Mock:
     def createBuffer(self, cursor):
@@ -27,7 +27,8 @@ class TestNormalMode:
 
     def testInit(self):
         for member in (" model view window buffer cursor "
-        " command commandMap delegating " " move insertMode ").split():
+        " command commandMap delegating " " insertMode ").split():
+            print(member)
             assert member in dir(self.fixture)
 
     def testParseCommandMap(self):
