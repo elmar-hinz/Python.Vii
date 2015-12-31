@@ -9,3 +9,8 @@ logger.addHandler(fileHandler)
 logger.setLevel(logLevel)
 
 def debug(str): logger.debug(str)
+def info(str): logger.info(str)
+def warn(str): logger.warn(str)
+def error(str): logger.error(str)
+def critical(str): logger.critical(str)
+

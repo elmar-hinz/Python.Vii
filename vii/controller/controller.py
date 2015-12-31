@@ -1,34 +1,25 @@
-from .commandmode import CommandMode
-from .editmode import EditMode
+from .abstractmode import AbstractMode
+# from .commandmode import CommandMode
 from .insertmode import InsertMode
 from .cursor import Cursor
+from .movements import Movements
 from ..logger import *
+from ..config import numberBarWidth, commandMap
+from .normalMode import NormalMode
 import os
 
 # Executed before call to curses.wrapper(Application) during import in app.py
 os.environ.setdefault('ESCDELAY', '25')
 
-class Controller:
+class Controller():
 
     def __init__(self, model, view):
-        self.model, self.view = model, view
-        self.view.commandLine.buffer = self.model.commandLine
-        self.createWindow()
-        self.commandMode = CommandMode(self)
-        self.editMode = EditMode(self)
-        self.insertMode = InsertMode(self)
-        self.currentMode = self.insertMode
-        self.view.window.draw()
+        self.screen = view.root
+        self.normalMode = NormalMode(model, view)
 
     def loop(self):
-        self.view.root.nodelay(0)
+        self.screen.nodelay(0)
         while True:
-            key = self.view.root.getch()
-            self.currentMode = self.currentMode.handleKey(key)
-
-    def createWindow(self):
-        """ TODO: multiple windows """
-        """ TODO: dynamic relation betwenn buffer and windows """
-        buffer = self.model.createBuffer(Cursor())
-        self.view.createWindow(buffer)
+            key = self.screen.getch()
+            self.normalMode.handleKey(key)
 

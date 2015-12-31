@@ -1,3 +1,15 @@
+commandMap = """
+$: endOfLine
+^: beginningOfLine
+A: appendToLine
+I: insertBeforeLine
+a: append
+h: left
+i: insert
+j: down
+k: up
+l: right
+"""
 
 """Window"""
 application = "Vii"

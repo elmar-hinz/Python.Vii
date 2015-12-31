@@ -13,4 +13,3 @@ class View:
         self.window = Window(self.root, "buffer")
         self.window.buffer = buffer
 
-
