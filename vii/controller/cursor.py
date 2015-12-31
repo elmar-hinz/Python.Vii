@@ -12,7 +12,6 @@ class Cursor:
 
     def update(self):
         self.guardRange()
-        debug("singal: %s" % self.buffer.id)
         signal(self.buffer.id, self.buffer)
 
     def guardRange(self):

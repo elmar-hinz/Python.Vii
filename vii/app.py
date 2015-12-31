@@ -7,7 +7,6 @@ class Application:
     def __init__(self, root):
         model = Model()
         view = View(root)
-        controller = Controller(model, view)
-        controller.loop()
+        Controller(model, view).loop()
 
 def main(): curses.wrapper(Application)
