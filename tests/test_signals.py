@@ -3,12 +3,21 @@ import vii.signals as signals
 class ObserverCorrectlyCalled1(Exception): pass
 class ObserverCorrectlyCalled2(Exception): pass
 
-class Observer():
-    def receive(self, id, subject):
-        if id == "o" and subject == "message1":
+class Sender(): pass
+
+sender1 = Sender()
+sender2 = Sender()
+
+class Receiver():
+    def receive(self, signal, sender, *args):
+        if signal == "sig" and sender == sender1:
             raise ObserverCorrectlyCalled1
-        if id == "o" and subject == "message2":
+        if(signal == "sig" and sender == sender2
+            and args == (1,2)):
             raise ObserverCorrectlyCalled2
+
+receiver1 = Receiver()
+receiver2 = Receiver()
 
 def test_registerIsUniqe():
     import vii.signals as signals
@@ -18,22 +27,22 @@ def test_registerIsUniqe():
     assert 1 in signals.register["a"]
 
 def test_slotRegistersObjects():
-    signals.slot("b", "c")
-    signals.slot("b", "d")
-    assert "c" in signals.register["b"]
-    assert "d" in signals.register["b"]
+    signals.slot("b", receiver1)
+    signals.slot("b", receiver2)
+    assert receiver1 in signals.register["b"]
+    assert receiver2 in signals.register["b"]
 
 def test_signalCallsAllObservers():
-    signals.slot("o", Observer())
-    signals.slot("o", Observer())
+    signals.slot("sig", receiver1)
+    signals.slot("sig", receiver2)
 
     seen = False
-    try: signals.signal("o", "message1")
+    try: signals.signal("sig", sender1)
     except ObserverCorrectlyCalled1: seen = True
     assert seen
 
     seen = False
-    try: signals.signal("o", "message2")
+    try: signals.signal("sig", sender2, 1, 2)
     except ObserverCorrectlyCalled2: seen = True
     assert seen
 
