@@ -4,11 +4,10 @@ from ..logger import *
 
 class Model:
     def __init__(self):
-        self.commandLine = Line()
+        # self.commandLine = Line()
+        pass
 
-    def createBuffer(self, cursor):
+    def createBuffer(self):
         """ TODO add to bufferlist """
-        self.buffer = Buffer("buffer")
-        self.buffer.cursor = cursor
-        cursor.buffer = self.buffer
+        self.buffer = Buffer()
         return self.buffer
