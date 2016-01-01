@@ -12,11 +12,26 @@ class Buffer:
     updateSignal = "bufferUpdate"
 
     def __init__(self):
-        signal(self.updateSignal, self)
         self.lines = []
+        signal(self.updateSignal, self)
 
-    def insert(self, position, string, subject):
+    def insert(self, position, string):
         "Insert string at position y, x"
+        if string == "": return
+        y, x = position
+        self._checkLineBounds(y, x)
+        tokens = self._parse(string)
+        head = self.lines[y][:x]
+        tail = self.lines[y][x:]
+        if len(tokens) == 1:
+            body = tokens[0]
+            replacement = [head + body + tail]
+        else:
+            head = head + tokens[0]
+            body = tokens[1:-1]
+            tail = tokens[-1] + tail
+            replacement = [head] + body + [tail]
+        self.lines[y:y+1] = replacement
         signal(self.updateSignal, self)
 
     def insertLines(self, y, text):
@@ -47,23 +62,9 @@ class Buffer:
         "Delete from position to position"
         self._checkRange(start, end)
         y1, x1 = start; y2, x2 = end
-        if y1 == y2:
-            count = x2 - x1 + 1
-            self.deleteFromLine(start, count)
-        else:
-            # delete head and tail
-            count = self.lengthOfLine(y1) - x1
-            self.deleteFromLine(start, count)
-            self.deleteFromLine((y2, 0), x2 + 1)
-            # delete body if any
-            if y2 - y1 >= 2:
-                self.deleteLines(y1 + 1, y2 - y1 - 1)
-            # merge remains into one line
-            merged = (self.copyLines(y1, 1) +
-                    self.copyLines(y1 + 1, 1))
-            # insert the new line and strip the old ones
-            self.insertLines(y1, merged)
-            self.deleteLines(y1 + 1, 2)
+        head = self.lines[y1][:x1]
+        tail = self.lines[y2][x2+1:]
+        self.lines[y1:y2+1] = [head + tail]
         signal(self.updateSignal, self)
 
     def copyFromLine(self, position, count):
