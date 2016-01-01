@@ -27,18 +27,48 @@ class Buffer:
 
     def deleteFromLine(self, position, count):
         "Delete count chars from position"
+        if count == 0: return
+        y, x = position
+        self._checkLineBounds(y, x)
+        self._checkLineBounds(y, x + count - 1)
+        line = self.lines[y]
+        self.lines[y] = line[:x] + line[x+count:]
         signal(self.updateSignal, self)
 
     def deleteLines(self, y, count):
+        if count == 0: return
+        self._checkBufferBounds(y)
+        self._checkBufferBounds(y+count-1)
+        self.lines[y:y+count] = []
         "Delete count lines from y"
         signal(self.updateSignal, self)
 
     def deleteRange(self, start, end):
         "Delete from position to position"
+        self._checkRange(start, end)
+        y1, x1 = start; y2, x2 = end
+        if y1 == y2:
+            count = x2 - x1 + 1
+            self.deleteFromLine(start, count)
+        else:
+            # delete head and tail
+            count = self.lengthOfLine(y1) - x1
+            self.deleteFromLine(start, count)
+            self.deleteFromLine((y2, 0), x2 + 1)
+            # delete body if any
+            if y2 - y1 >= 2:
+                self.deleteLines(y1 + 1, y2 - y1 - 1)
+            # merge remains into one line
+            merged = (self.copyLines(y1, 1) +
+                    self.copyLines(y1 + 1, 1))
+            # insert the new line and strip the old ones
+            self.insertLines(y1, merged)
+            self.deleteLines(y1 + 1, 2)
         signal(self.updateSignal, self)
 
     def copyFromLine(self, position, count):
         "Copy count chars from position"
+        if count == 0: return ""
         y, x = position
         self._checkLineBounds(y, x)
         self._checkLineBounds(y, x + count - 1)
@@ -46,6 +76,7 @@ class Buffer:
 
     def copyLines(self, y, count):
         "Copy count lines from y"
+        if count == 0: return ""
         self._checkBufferBounds(y)
         self._checkBufferBounds(y + count - 1)
         return self._join(self.lines[y:y+count])
@@ -79,11 +110,12 @@ class Buffer:
     def fill(self, text):
         "Clear and fill the buffer with text"
         self.deleteLines(0, self.countOfLines())
-        self.insertLines(0, self._parse(text))
+        self.insertLines(0, text)
 
     def _parse(self, string):
         "Parse to list of lines"
-        return string.splitlines()
+        lines = string.splitlines()
+        return lines if len(lines) > 0 else ['']
 
     def _join(self, lines):
         "Join str from list of lines"
