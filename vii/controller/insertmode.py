@@ -8,8 +8,8 @@ class InsertMode(AbstractMode):
     def __init__(self, parent):
         super().__init__(parent)
         self.window = parent.view.window
-        self.buffer = parent.model.buffer
-        self.cursor = self.buffer.cursor
+        self.buffer = self.window.buffer
+        self.cursor = self.window.cursor
 
     def handleKey(self, key):
         super().handleKey(key)
@@ -27,22 +27,22 @@ class InsertMode(AbstractMode):
 
     def insert(self, key):
         debug("Insert: %s" % key)
-        x = self.buffer.cursor.x
+        x = self.cursor.x
         self.line().insert(x, chr(key))
-        self.buffer.cursor.position(x = x + 1)
+        self.cursor.position(x = x + 1)
 
     def backspace(self):
-        y = self.buffer.cursor.y
-        x = self.buffer.cursor.x - 1
+        y = self.cursor.y
+        x = self.cursor.x - 1
         if y > self.startPosition[0] or x >= self.startPosition[1]:
             self.line().delete(x)
-            self.buffer.cursor.position(x = x)
+            self.cursor.position(x = x)
 
     def newline(self):
         line = self.buffer.createMember()
         self.buffer.append(line)
-        y = self.buffer.cursor.y + 1
-        self.buffer.cursor.position(y, 0)
+        y = self.cursor.y + 1
+        self.cursor.position(y, 0)
 
     def line(self):
         return self.buffer[self.cursor.y]

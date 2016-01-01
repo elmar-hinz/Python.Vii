@@ -20,8 +20,8 @@ class NormalMode(AbstractMode):
         self.model, self.view = model, view
         self.createWindow()
         self.window = self.view.window
-        self.buffer = self.model.buffer
-        self.cursor = self.buffer.cursor
+        self.cursor = self.window.cursor
+        self.buffer = self.cursor.buffer
         self.parseCommandMap()
         # self.view.commandLine.buffer = self.model.commandLine
         # self.commandMode = CommandMode(self)
@@ -78,6 +78,8 @@ class NormalMode(AbstractMode):
     def createWindow(self):
         """ TODO: multiple windows """
         """ TODO: dynamic relation betwenn buffer and windows """
-        buffer = self.model.createBuffer(Cursor())
-        self.view.createWindow(buffer)
+        buffer = self.model.createBuffer()
+        cursor = Cursor(buffer)
+        self.view.createWindow(buffer, cursor)
+
 
