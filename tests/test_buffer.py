@@ -266,4 +266,35 @@ class TestBuffer:
         self.buffer.insertLines(3, text)
         assert str(self.buffer) == expect
 
+    def test_insertEmptySting(self):
+        prefill = "1\n22\n3"
+        text = ""
+        expect = "1\n22\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
+
+    def test_insertSimpleSting(self):
+        prefill = "1\n22\n3"
+        text = "aa"
+        expect = "1\n2aa2\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
+
+    def test_insertWithoutBody(self):
+        prefill = "1\n22\n3"
+        text = "aa\nbb"
+        expect = "1\n2aa\nbb2\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
+
+    def test_insertWithBody(self):
+        prefill = "1\n22\n3"
+        text = "aa\nbb\ncc"
+        expect = "1\n2aa\nbb\ncc2\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
 
