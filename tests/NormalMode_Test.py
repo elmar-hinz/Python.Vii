@@ -31,24 +31,9 @@ class TestNormalMode:
                 cursor, buffer, window)
         self.fixture = NormalMode(view, buffer)
 
-    def teardown(self):
-        pass
-
     def testInit(self):
         for member in (" view window buffer cursor "
         " command commandMap delegating " " insertMode ").split():
             assert member in dir(self.fixture)
-
-    def testParseCommandMap(self):
-        orig = NormalMode.parseCommandMap.__globals__['commandMap']
-        NormalMode.parseCommandMap.__globals__['commandMap'] = """
-        a: alpha
-        b: beta
-        """
-        self.fixture.commandMap = dict()
-        self.fixture.parseCommandMap()
-        assert self.fixture.commandMap == {'a': 'alpha', 'b': 'beta'}
-        NormalMode.parseCommandMap.__globals__['commandMap'] = orig
-
 
 

@@ -2,6 +2,7 @@ from .AbstractMode import AbstractMode
 from .InsertMode import InsertMode
 from .Cursor import Cursor
 from .Buffer import Buffer
+from .CommandCatcher import CommandCatcher
 from .NormalActions import NormalActions
 from .Logger import *
 from .Setup import commandMap
