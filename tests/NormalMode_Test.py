@@ -32,8 +32,9 @@ class TestNormalMode:
         self.fixture = NormalMode(view, buffer)
 
     def testInit(self):
-        for member in (" view window buffer cursor "
-        " command commandMap delegating " " insertMode ").split():
+        for member in (" view buffer insertMode "
+        " commandCatcher delegating actions "
+        ).split():
             assert member in dir(self.fixture)
 
 

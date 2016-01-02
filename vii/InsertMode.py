@@ -1,18 +1,15 @@
-from .AbstractMode import AbstractMode
 from .Logger import *
 
-class InsertMode(AbstractMode):
+class InsertMode:
 
     startPosition = None
 
     def __init__(self, parent):
-        super().__init__(parent)
         self.window = parent.view.window
         self.buffer = self.window.buffer
         self.cursor = self.window.cursor
 
-    def handleKey(self, key):
-        super().handleKey(key)
+    def setp(self, key):
         if not self.startPosition: self.start()
         if False: pass
         elif key == 10: self.newline()

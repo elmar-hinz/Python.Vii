@@ -13,6 +13,6 @@ class Application:
 
     def loop(self, screen, mode):
         while True:
-            mode.handleKey(screen.getch())
+            mode.step(screen.getch())
 
 def main(): curses.wrapper(Application)

@@ -1,4 +1,3 @@
-from .AbstractMode import AbstractMode
 from .InsertMode import InsertMode
 from .Cursor import Cursor
 from .Buffer import Buffer
@@ -6,62 +5,39 @@ from .CommandCatcher import CommandCatcher
 from .NormalActions import NormalActions
 from .Logger import *
 from .Setup import commandMap
-import os
 
-class NormalMode(AbstractMode):
+class NormalMode:
 
-    view, window, buffer, cursor = None, None, None, None
-    actions, command, commandMap, delegating = None, None, dict(), False
+    view, buffer = None, None
+    commandCatcher, actions, delegating = None, None, False
     insertMode = None
 
     def __init__(self, view, buffer):
         self.view = view
         self.buffer = buffer
         self.createWindow()
-        self.window = self.view.window
-        self.cursor = self.window.cursor
-        self.parseCommandMap()
-        self.insertMode = InsertMode(self)
         self.view.window.draw()
-        self.actions = NormalActions(self.buffer, self.cursor)
+        self.commandCatcher = CommandCatcher(commandMap)
+        self.insertMode = InsertMode(self)
+        self.actions = NormalActions(self.buffer, self.view.window.cursor)
 
-    def parseCommandMap(self):
-        for line in commandMap.strip().splitlines():
-            try:
-                k, v = tuple(i.strip() for i in line.split(":"))
-                self.commandMap[k] = v
-            except:
-                pass
-
-    def handleKey(self, key):
-        super().handleKey(key)
+    def step(self, key):
         if self.delegating:
             info("delegate %s"%chr(key))
-            self.child.handleKey(key)
+            self.child.setp(key)
             if key == 27:
                 self.delegating = False
                 self.child = None
-        elif self.catchCommand(key):
+        elif self.commandCatcher.ready(key):
             """ when command complete """
             self.switchCommand()
-            self.command = None
-
-    def catchCommand(self, key):
-        if self.command == None:
-            self.command = {'count': "0", 'operator': ""}
-        if chr(key).isdigit():
-            self.command['count'] += chr(key)
-            return False
-        else:
-            self.command['count'] = int(self.command['count'])
-            self.command['operator'] += chr(key)
-            return True
+            self.commandCatcher.reset()
 
     def switchCommand(self):
-        c, o = self.command['count'], self.command['operator']
-        info("switch %s %s"%(c, o))
+        count = self.commandCatcher.count()
+        operator = self.commandCatcher.command()
+        info("switch %s %s"%(count, operator))
         try:
-            operator = self.commandMap[o]
             function = getattr(self.actions, operator)
             mode = function()
             if mode == "InsertMode":
