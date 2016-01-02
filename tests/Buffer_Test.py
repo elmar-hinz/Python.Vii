@@ -1,6 +1,6 @@
 from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.buffer import *
+from vii.Buffer import *
 
 class TestBuffer:
 

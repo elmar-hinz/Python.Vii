@@ -1,6 +1,6 @@
-from .normalmode import NormalMode
-from ..config import numberBarWidth, commandMap
-from ..logger import *
+from .NormalMode import NormalMode
+from .Setup import numberBarWidth, commandMap
+from .Logger import *
 import os
 
 # Executed before call to curses.wrapper(Application) during import in app.py

@@ -1,7 +1,7 @@
 import curses
-from .model.model import Model
-from .controller.controller import Controller
-from .view.view import View
+from .Model import Model
+from .Controller import Controller
+from .view.View import View
 
 class Application:
     def __init__(self, root):

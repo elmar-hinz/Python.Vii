@@ -1,5 +1,5 @@
-from ..buffer import Buffer
-from ..logger import *
+from .Buffer import Buffer
+from .Logger import *
 
 class Model:
     def __init__(self):

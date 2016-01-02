@@ -1,7 +1,7 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.controller.cursor import Cursor
-from vii.signals import *
+from vii.Cursor import Cursor
+from vii.Signals import *
 
 class BufferMock:
     text = "line one\nline two\nline three".splitlines()

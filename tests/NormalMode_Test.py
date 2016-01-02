@@ -1,6 +1,6 @@
 from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.controller.normalmode import NormalMode
+from vii.NormalMode import NormalMode
 
 class Mock1:
     buffer = None

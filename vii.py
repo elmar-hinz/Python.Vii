@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
-import vii.app
+import vii.App
 
-vii.app.main()
+vii.App.main()
 
 
 

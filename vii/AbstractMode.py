@@ -1,4 +1,4 @@
-from .. logger import logger
+from .Logger import logger
 
 class AbstractMode:
 

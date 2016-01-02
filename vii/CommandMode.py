@@ -1,4 +1,4 @@
-from .abstractmode import AbstractMode
+from .AbstractMode import AbstractMode
 
 class CommandMode(AbstractMode):
 

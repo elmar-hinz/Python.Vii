@@ -1,9 +1,9 @@
-from .abstractwindow import AbstractWindow
-from .renderer import render
+from ..Setup import numberBarWidth
+from .AbstractWindow import AbstractWindow
+from .Renderer import render
 import curses
-from ..config import numberBarWidth
-from ..signals import slot
-from ..logger import *
+from ..Signals import slot
+from ..Logger import *
 
 class Window(AbstractWindow):
 

@@ -1,7 +1,7 @@
-from .cursor import Cursor
-from .bufferranges import BufferRanges
-from ..logger import *
-from ..config import numberBarWidth, commandMap
+from .Cursor import Cursor
+from .BufferRanges import BufferRanges
+from .Logger import *
+from .Setup import numberBarWidth, commandMap
 
 class NormalActions:
 
