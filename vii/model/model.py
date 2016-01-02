@@ -1,5 +1,4 @@
-from .line import Line
-from .buffer import Buffer
+from ..buffer import Buffer
 from ..logger import *
 
 class Model:
@@ -10,4 +9,5 @@ class Model:
     def createBuffer(self):
         """ TODO add to bufferlist """
         self.buffer = Buffer()
+        self.buffer.insertLines(0,"")
         return self.buffer

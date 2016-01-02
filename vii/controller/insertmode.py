@@ -14,7 +14,8 @@ class InsertMode(AbstractMode):
     def handleKey(self, key):
         super().handleKey(key)
         if not self.startPosition: self.start()
-        if key == 10: self.newline()
+        if False: pass
+        elif key == 10: self.newline()
         elif key == 27: self.finish()
         elif key == 127: self.backspace()
         else: self.insert(key)
@@ -27,23 +28,22 @@ class InsertMode(AbstractMode):
 
     def insert(self, key):
         debug("Insert: %s" % key)
-        x = self.cursor.x
-        self.line().insert(x, chr(key))
+        y,x = self.cursor.position()
+        self.buffer.insert((y,x), chr(key))
         self.cursor.position(x = x + 1)
 
     def backspace(self):
         y = self.cursor.y
         x = self.cursor.x - 1
         if y > self.startPosition[0] or x >= self.startPosition[1]:
-            self.line().delete(x)
-            self.cursor.position(x = x)
+            if x >= 0:
+                self.buffer.deleteRange((y,x), (y,x))
+                self.cursor.position(x = x)
 
     def newline(self):
-        line = self.buffer.createMember()
-        self.buffer.append(line)
+        debug("Insert: Newline")
+        y,x = self.cursor.position()
+        self.buffer.insert((y,x), '\n')
         y = self.cursor.y + 1
         self.cursor.position(y, 0)
-
-    def line(self):
-        return self.buffer[self.cursor.y]
 

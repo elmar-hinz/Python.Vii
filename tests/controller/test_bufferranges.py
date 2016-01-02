@@ -2,12 +2,19 @@
 from nose.plugins.skip import SkipTest
 from vii.controller.bufferranges import BufferRanges
 
-class Dummy(): pass
+class Dummy():
+    text = ["aa", "bbb", "cccc", "ddddd"]
+
+    def lengthOfLine(self, y):
+        return len(self.text[y])
+
+    def countOfLines(self):
+        return len(self.text)
 
 class TestBufferRanges:
 
     def setup(self):
-        self.buffer = ["aa", "bbb", "cccc", "ddddd"]
+        self.buffer = Dummy()
         self.cursor = Dummy()
         self.fixture = BufferRanges(self.buffer, self.cursor)
         self.cursor.x = 2

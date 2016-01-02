@@ -82,4 +82,3 @@ class NormalMode(AbstractMode):
         cursor = Cursor(buffer)
         self.view.createWindow(buffer, cursor)
 
-
