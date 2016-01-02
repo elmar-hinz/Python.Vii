@@ -18,17 +18,22 @@ class TestBuffer:
 
     def test__parse(self):
         text = "1\n2\n\n4"
-        expect = ['1', '2', '', '4']
+        expect = ["1", "2", "", "4"]
         assert self.buffer._parse(text) == expect
 
-    def test__parseEmptyString(self):
+    def test__parse_emptyString(self):
         text = ""
-        expect = ['']
+        expect = [""]
+        assert self.buffer._parse(text) == expect
+
+    def test__parse_newline(self):
+        text = "\n"
+        expect = ["", ""]
         assert self.buffer._parse(text) == expect
 
     def test__join(self):
         expect = "1\n2\n\n4"
-        lines = ['1', '2', '', '4']
+        lines = ["1", "2", "", "4"]
         assert self.buffer._join(lines) == expect
 
     def test_countOfLines(self):
@@ -266,7 +271,31 @@ class TestBuffer:
         self.buffer.insertLines(3, text)
         assert str(self.buffer) == expect
 
-    def test_insertEmptySting(self):
+    def test_insertLines_leadingNewline(self):
+        prefill = "1\n2\n3"
+        text = "\n5"
+        expect = "1\n2\n3\n\n5"
+        self.buffer.fill(prefill)
+        self.buffer.insertLines(3, text)
+        assert str(self.buffer) == expect
+
+    def test_insertLines_trailingNewline(self):
+        prefill = "1\n2\n3"
+        text = "4\n"
+        expect = "1\n2\n3\n4\n"
+        self.buffer.fill(prefill)
+        self.buffer.insertLines(3, text)
+        assert str(self.buffer) == expect
+
+    def test_insertLines_singleNewline(self):
+        prefill = "1\n2\n3"
+        text = "\n"
+        expect = "1\n2\n3\n\n"
+        self.buffer.fill(prefill)
+        self.buffer.insertLines(3, text)
+        assert str(self.buffer) == expect
+
+    def test_insert_empty_string(self):
         prefill = "1\n22\n3"
         text = ""
         expect = "1\n22\n3"
@@ -274,10 +303,26 @@ class TestBuffer:
         self.buffer.insert((1,1), text)
         assert str(self.buffer) == expect
 
-    def test_insertSimpleSting(self):
+    def test_insert_simple_string(self):
         prefill = "1\n22\n3"
         text = "aa"
         expect = "1\n2aa2\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
+
+    def test_insert_newline(self):
+        prefill = "1\n22\n3"
+        text = "\n"
+        expect = "1\n2\n2\n3"
+        self.buffer.fill(prefill)
+        self.buffer.insert((1,1), text)
+        assert str(self.buffer) == expect
+
+    def test_insert_surrounding_newlines(self):
+        prefill = "1\n22\n3"
+        text = "\naa\n"
+        expect = "1\n2\naa\n2\n3"
         self.buffer.fill(prefill)
         self.buffer.insert((1,1), text)
         assert str(self.buffer) == expect

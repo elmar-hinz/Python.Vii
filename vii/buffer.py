@@ -19,7 +19,7 @@ class Buffer:
         "Insert string at position y, x"
         if string == "": return
         y, x = position
-        self._checkLineBounds(y, x)
+        self._checkLineBoundsPlus1(y, x)
         tokens = self._parse(string)
         head = self.lines[y][:x]
         tail = self.lines[y][x:]
@@ -116,7 +116,9 @@ class Buffer:
     def _parse(self, string):
         "Parse to list of lines"
         lines = string.splitlines()
-        return lines if len(lines) > 0 else ['']
+        if lines == []: lines = [""]
+        elif string[-1] == '\n': lines += [""]
+        return lines
 
     def _join(self, lines):
         "Join str from list of lines"
@@ -140,18 +142,18 @@ class Buffer:
     def _checkLineBounds(self, y, x):
         self._checkBufferBounds(y)
         if x < 0:
-            raise LineBoundsException()
+            raise LineBoundsException("1: y/x: %s/%s"%(y,x))
         line = self.lines[y]
         if x >= len(line):
-            raise LineBoundsException()
+            raise LineBoundsException("2: y/x: %s/%s"%(y,x))
 
     def _checkLineBoundsPlus1(self, y, x):
         self._checkBufferBounds(y)
         if x < 0:
-            raise LineBoundsException()
+            raise LineBoundsException("3: y/x: %s/%s"%(y,x))
         line = self.lines[y]
         if x > len(line):
-            raise LineBoundsException()
+            raise LineBoundsException("4: y/x: %s/%s"%(y,x))
 
     def _checkRange(self, start, end):
         y1, x1 = start; y2, x2 = end
