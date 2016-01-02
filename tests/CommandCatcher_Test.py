@@ -27,7 +27,8 @@ class CommandCatcher_Test:
         status = self.catcher.ready(ord('a'))
         assert status == True
         assert self.catcher.count() == 0
-        assert self.catcher.command() ==  "alpha"
+        assert self.catcher.action() ==  "alpha"
+        assert self.catcher.operator() ==  "a"
 
     def test_ready_with_count(self):
         status = self.catcher.ready(ord('1'))
@@ -36,9 +37,11 @@ class CommandCatcher_Test:
         status = self.catcher.ready(ord('b'))
         assert status == True
         assert self.catcher.count() == 12
-        assert self.catcher.command() ==  "beta"
+        assert self.catcher.action() ==  "beta"
+        assert self.catcher.operator() ==  "b"
 
     def test_ready_with_invalid_command(self):
         status = self.catcher.ready(ord('z'))
-        assert self.catcher.command() == None
+        assert self.catcher.action() == None
+        assert self.catcher.operator() == 'z'
 
