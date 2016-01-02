@@ -1,30 +1,25 @@
 from .AbstractMode import AbstractMode
-# from .CommandMode import CommandMode
 from .InsertMode import InsertMode
 from .Cursor import Cursor
+from .Buffer import Buffer
 from .NormalActions import NormalActions
 from .Logger import *
-from .Setup import numberBarWidth, commandMap
+from .Setup import commandMap
 import os
-
-# Executed before call to curses.wrapper(Application) during import in app.py
-os.environ.setdefault('ESCDELAY', '25')
 
 class NormalMode(AbstractMode):
 
-    model, view, window, buffer, cursor = None, None, None, None, None
+    view, window, buffer, cursor = None, None, None, None
     actions, command, commandMap, delegating = None, None, dict(), False
     insertMode = None
 
-    def __init__(self, model, view):
-        self.model, self.view = model, view
+    def __init__(self, view):
+        self.view = view
         self.createWindow()
         self.window = self.view.window
         self.cursor = self.window.cursor
         self.buffer = self.cursor.buffer
         self.parseCommandMap()
-        # self.view.commandLine.buffer = self.model.commandLine
-        # self.commandMode = CommandMode(self)
         self.insertMode = InsertMode(self)
         self.view.window.draw()
         self.actions = NormalActions(self.buffer, self.cursor)
@@ -77,8 +72,9 @@ class NormalMode(AbstractMode):
     # TODO: where is the right place?
     def createWindow(self):
         """ TODO: multiple windows """
-        """ TODO: dynamic relation betwenn buffer and windows """
-        buffer = self.model.createBuffer()
+        """ TODO: dynamic relation between buffer and windows """
+        buffer = Buffer()
+        buffer.insertLines(0,"")
         cursor = Cursor(buffer)
         self.view.createWindow(buffer, cursor)
 
