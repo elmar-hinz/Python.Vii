@@ -1,6 +1,6 @@
-from .commandline import CommandLine
-from .window import Window
-from ..logger import debug
+from .CommandLine import CommandLine
+from .Window import Window
+from ..Logger import debug
 
 class View:
     def __init__(self, root):

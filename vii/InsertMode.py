@@ -1,5 +1,5 @@
-from .abstractmode import AbstractMode
-from ..logger import *
+from .AbstractMode import AbstractMode
+from .Logger import *
 
 class InsertMode(AbstractMode):
 

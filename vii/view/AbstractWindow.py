@@ -1,5 +1,5 @@
 import curses
-from ..signals import slot
+from ..Signals import slot
 
 class AbstractWindow:
 

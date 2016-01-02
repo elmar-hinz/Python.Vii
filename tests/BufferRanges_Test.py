@@ -1,6 +1,6 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.controller.bufferranges import BufferRanges
+from vii.BufferRanges import BufferRanges
 
 class Dummy():
     text = ["aa", "bbb", "cccc", "ddddd"]

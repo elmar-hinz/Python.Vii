@@ -1,10 +1,10 @@
-from .abstractmode import AbstractMode
-# from .commandmode import CommandMode
-from .insertmode import InsertMode
-from .cursor import Cursor
-from .normalactions import NormalActions
-from ..logger import *
-from ..config import numberBarWidth, commandMap
+from .AbstractMode import AbstractMode
+# from .CommandMode import CommandMode
+from .InsertMode import InsertMode
+from .Cursor import Cursor
+from .NormalActions import NormalActions
+from .Logger import *
+from .Setup import numberBarWidth, commandMap
 import os
 
 # Executed before call to curses.wrapper(Application) during import in app.py

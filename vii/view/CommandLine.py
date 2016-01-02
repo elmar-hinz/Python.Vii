@@ -1,4 +1,4 @@
-from .abstractwindow import AbstractWindow
+from .AbstractWindow import AbstractWindow
 
 class CommandLine(AbstractWindow):
 

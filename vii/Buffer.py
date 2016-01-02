@@ -1,4 +1,4 @@
-from .signals import signal
+from .Signals import signal
 
 class BufferBoundsException(IndexError): pass
 class LineBoundsException(IndexError): pass

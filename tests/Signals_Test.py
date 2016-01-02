@@ -1,4 +1,4 @@
-import vii.signals as signals
+import vii.Signals as signals
 
 class ObserverCorrectlyCalled1(Exception): pass
 class ObserverCorrectlyCalled2(Exception): pass
@@ -20,10 +20,10 @@ receiver1 = Receiver()
 receiver2 = Receiver()
 
 def test_registerIsUniqe():
-    import vii.signals as signals
+    import vii.Signals as signals
     signals.register["a"].append(1)
     assert 1 in signals.register["a"]
-    import vii.signals as signals
+    import vii.Signals as signals
     assert 1 in signals.register["a"]
 
 def test_slotRegistersObjects():

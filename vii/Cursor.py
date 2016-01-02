@@ -1,5 +1,5 @@
-from ..logger import *
-from ..signals import *
+from .Logger import *
+from .Signals import *
 
 class Cursor:
 

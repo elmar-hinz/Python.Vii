@@ -1,5 +1,5 @@
-from ..config import numberBarWidth
-from ..logger import *
+from ..Setup import numberBarWidth
+from ..Logger import *
 
 def render(buffer):
     format = "\n%"+str(numberBarWidth-1)+"d %s"
