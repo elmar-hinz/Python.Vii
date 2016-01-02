@@ -23,23 +23,22 @@ class NormalMode:
 
     def step(self, key):
         if self.delegating:
-            info("delegate %s"%chr(key))
+            debug("delegate %s"%chr(key))
             self.child.setp(key)
             if key == 27:
                 self.delegating = False
                 self.child = None
         elif self.commandCatcher.ready(key):
             """ when command complete """
-            self.switchCommand()
+            self.dispatch()
             self.commandCatcher.reset()
 
-    def switchCommand(self):
-        count = self.commandCatcher.count()
-        operator = self.commandCatcher.command()
-        info("switch %s %s"%(count, operator))
+    def dispatch(self):
+        action = self.commandCatcher.action()
+        debug("switch  %s"%(action))
         try:
-            function = getattr(self.actions, operator)
-            mode = function()
+            function = getattr(self.actions, action)
+            mode = function(self.commandCatcher)
             if mode == "InsertMode":
                 self.delegating = True
                 self.child = self.insertMode

@@ -12,36 +12,36 @@ class NormalActions:
         self.cursor = cursor
         self.move = BufferRanges(buffer, cursor)
 
-    def append(self):
+    def append(self, command):
         self.cursor.position(*self._append(self.cursor.position()))
         return "InsertMode"
 
-    def insert(self):
+    def insert(self, command):
         return "InsertMode"
 
-    def up(self):
+    def up(self, command):
         self.cursor.position(*self.move.up())
 
-    def down(self):
+    def down(self, command):
         self.cursor.position(*self.move.down())
 
-    def left(self):
+    def left(self, command):
         self.cursor.position(*self.move.left())
 
-    def right(self):
+    def right(self, command):
         self.cursor.position(*self.move.right())
 
-    def endOfLine(self):
+    def endOfLine(self, command):
         self.cursor.position(*self.move.endOfLine())
 
-    def beginningOfLine(self):
+    def beginningOfLine(self, command):
         self.cursor.position(*self.move.beginningOfLine())
 
-    def appendToLine(self):
+    def appendToLine(self, command):
         self.cursor.position(*self._append(self.move.endOfLine()))
         return "InsertMode"
 
-    def insertBeforeLine(self):
+    def insertBeforeLine(self, command):
         self.cursor.position(*self.move.beginningOfLine())
         return "InsertMode"
 
