@@ -34,17 +34,17 @@ class Cursor:
     def guardRange(self):
         if self.y < 0:
             self.y = 0
-        elif self.y > self.buffer.length() - 1:
-            self.y = self.buffer.length() - 1
-        line = self.buffer.getLine(self.y)
+        elif self.y > self.buffer.countOfLines() - 1:
+            self.y = self.buffer.countOfLines() - 1
+        length = self.buffer.lengthOfLine(self.y)
         if self.x < 0:
             self.x = 0
-        elif self.x > len(line):
-            self.x = len(line)
+        elif self.x > length:
+            self.x = length
 
     def moveVertical(self, offset):
         y = self.y + offset
-        height = self.buffer.length()
+        height = self.buffer.countOfLines()
         if y < 0: y = 0
         if y >= height: y = height - 1 # cursor can't stay behind last line
         self.y = y
@@ -52,7 +52,7 @@ class Cursor:
 
     def moveHorizontal(self, offset):
         y = self.y
-        width = len(self.buffer.getLine(y))
+        width = self.buffer.lengthOfLine(y)
         x = self.x + offset
         if x < 0: x = 0
         if x > width: x = width # cursor can stay behind last char by ONE

@@ -6,11 +6,16 @@ from vii.signals import *
 class BufferMock:
     text = "line one\nline two\nline three".splitlines()
 
-    def getLine(self, index):
+    def lengthOfLine(self, index):
+        return len(self.text[index])
+
+    def copyLines(self, index, count):
         return self.text[index]
 
-    def length(self):
+    def countOfLines(self):
         return len(self.text)
+
+
 
 class TestCursor:
 
@@ -73,7 +78,7 @@ class TestCursor:
         assert self.reception
 
     def testMoveHorizontalBounds(self):
-        width = len(self.fixture.buffer.getLine(0))
+        width = len(self.fixture.buffer.text[0])
         self.fixture.moveHorizontal(0)
         assert self.fixture.x == 0
         self.fixture.moveHorizontal(50)
