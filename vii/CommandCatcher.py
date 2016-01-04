@@ -24,7 +24,8 @@ class CommandCatcher:
             self.parts['count'] += chr(key)
             return False
         else:
-            self.parts['count'] = int(self.parts['count'])
+            count = int(self.parts['count'])
+            self.parts['count'] = count if count > 0 else 1
             self.parts['operator'] += chr(key)
             try:
                 self.parts['action'] = self.map[self.parts['operator']]

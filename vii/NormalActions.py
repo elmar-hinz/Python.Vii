@@ -20,16 +20,20 @@ class NormalActions:
         return "InsertMode"
 
     def up(self, command):
-        self.cursor.position(*self.move.up())
+        for i in range(command.count()):
+            self.cursor.position(*self.move.up())
 
     def down(self, command):
-        self.cursor.position(*self.move.down())
+        for i in range(command.count()):
+            self.cursor.position(*self.move.down())
 
     def left(self, command):
-        self.cursor.position(*self.move.left())
+        for i in range(command.count()):
+            self.cursor.position(*self.move.left())
 
     def right(self, command):
-        self.cursor.position(*self.move.right())
+        for i in range(command.count()):
+            self.cursor.position(*self.move.right())
 
     def endOfLine(self, command):
         self.cursor.position(*self.move.endOfLine())

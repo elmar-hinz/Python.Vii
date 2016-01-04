@@ -42,8 +42,9 @@ class NormalMode:
             if mode == "InsertMode":
                 self.delegating = True
                 self.child = self.insertMode
-        except KeyError:
-            debug("Switching failed for %s" % o)
+        except TypeError:
+            debug("Switching failed for %s: %s"
+                % (self.commandCatcher.operator(), action))
 
     # TODO: where is the right place?
     def createWindow(self):
