@@ -7,10 +7,11 @@ class NormalActions:
 
     buffer, cursor, move = None, None, None
 
-    def __init__(self, buffer, cursor):
-        self.buffer = buffer
-        self.cursor = cursor
-        self.move = BufferRanges(buffer, cursor)
+    def __init__(self, windowManager, commandCatcher):
+        window = windowManager.window
+        self.buffer = window.buffer
+        self.cursor = window.cursor
+        self.move = BufferRanges(self.buffer, self.cursor)
 
     def append(self, command):
         self.cursor.position(*self._append(self.cursor.position()))

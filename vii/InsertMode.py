@@ -4,8 +4,8 @@ class InsertMode:
 
     startPosition = None
 
-    def __init__(self, parent):
-        self.window = parent.view.window
+    def __init__(self, windowManager, commandCatcher):
+        self.window = windowManager.window
         self.buffer = self.window.buffer
         self.cursor = self.window.cursor
 
