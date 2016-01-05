@@ -2,6 +2,7 @@ from .Cursor import Cursor
 from .BufferRanges import BufferRanges
 from .Logger import *
 from .Setup import numberBarWidth, commandMap
+from .AbstractAction import AbstractAction
 
 class NormalActions:
 
