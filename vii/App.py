@@ -1,18 +1,24 @@
 import curses, os
-from .NormalMode import NormalMode
+from .Controller import Controller
 from .view.View import View
-from .Buffer import Buffer
+from .WindowManager import WindowManager
+from .CommandCatcher import CommandCatcher
+from .Setup import commandMap
+from .Shared import Shared
 
 os.environ.setdefault('ESCDELAY', '25')
+Shared.modus = "normal"
 
 class Application:
     def __init__(self, screen):
         screen.nodelay(0)
-        self.loop(screen, NormalMode(
-            View(screen),Buffer()))
+        windowManager = WindowManager(screen, View(screen))
+        commandCatcher = CommandCatcher(commandMap)
+        controller = Controller(windowManager, commandCatcher)
+        self.loop(screen, controller)
 
-    def loop(self, screen, mode):
+    def loop(self, screen, controller):
         while True:
-            mode.step(screen.getch())
+            controller.step(screen.getch())
 
 def main(): curses.wrapper(Application)
