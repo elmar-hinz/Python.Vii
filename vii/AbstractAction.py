@@ -2,7 +2,8 @@ from .BufferRanges import BufferRanges
 
 class AbstractAction:
 
-    def __init__(self, dispatcher, windowManager):
+    def __init__(self, dispatcher, windowManager, actionManager):
+        self.actionManager = actionManager
         self.dispatcher = dispatcher
         self.windowManager = windowManager
         window = windowManager.window
