@@ -1,3 +1,4 @@
+from .Logger import *
 
 class ActionManager:
 
@@ -18,7 +19,7 @@ class ActionManager:
         action = action.capitalize()
         module = self.actionModules[mode]
         Action = getattr(module, action)
-        return Action(self.dispatcher, self.windowManager)
+        return mode, Action(self.dispatcher, self.windowManager, self)
 
     def parseMap(self, text):
         map = dict()

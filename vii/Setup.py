@@ -1,15 +1,19 @@
-commandMap = """
-$: endOfLine
-^: beginningOfLine
-A: appendToLine
-I: insertBeforeLine
-a: append
-h: left
-i: insert
-j: down
-k: up
-l: right
-idle: idle
+normalCommandMap = """
+$: EndOfLine
+^: BeginningOfLine
+A: AppendToLine
+I: InsertBeforeLine
+a: Append
+h: Left
+i: Insert
+j: Down
+k: Up
+l: Right
+idle: Idle
+"""
+
+insertCommandMap = """
+inserting: Inserting
 """
 
 """Window"""

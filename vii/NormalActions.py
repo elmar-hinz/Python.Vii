@@ -6,8 +6,10 @@ from .Logger import *
 class Idle(AbstractAction):
 
     def act(self):
-        debug("Idle")
-        pass
+        if self.dispatcher.ready():
+            operator = self.dispatcher.operator()
+            self.dispatcher.reset()
+            return self.actionManager.action("normal", operator)[1].act()
 
 class Append(AbstractAction):
 
@@ -22,7 +24,7 @@ class Append(AbstractAction):
 class Insert(AbstractAction):
 
     def act(self):
-        return "InsertMode"
+        return self.actionManager.action("insert", "inserting")
 
 class Up(AbstractAction):
 
