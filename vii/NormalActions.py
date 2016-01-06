@@ -1,57 +1,76 @@
+from .AbstractAction import AbstractAction
 from .Cursor import Cursor
 from .BufferRanges import BufferRanges
 from .Logger import *
-from .Setup import numberBarWidth, commandMap
-from .AbstractAction import AbstractAction
 
-class NormalActions:
+class Idle(AbstractAction):
 
-    buffer, cursor, move = None, None, None
+    def act(self):
+        debug("Idle")
+        pass
 
-    def __init__(self, windowManager, commandCatcher):
-        window = windowManager.window
-        self.buffer = window.buffer
-        self.cursor = window.cursor
-        self.move = BufferRanges(self.buffer, self.cursor)
+class Append(AbstractAction):
 
-    def append(self, command):
+    def act(self):
         self.cursor.position(*self._append(self.cursor.position()))
-        return "InsertMode"
-
-    def insert(self, command):
-        return "InsertMode"
-
-    def up(self, command):
-        for i in range(command.count()):
-            self.cursor.position(*self.move.up())
-
-    def down(self, command):
-        for i in range(command.count()):
-            self.cursor.position(*self.move.down())
-
-    def left(self, command):
-        for i in range(command.count()):
-            self.cursor.position(*self.move.left())
-
-    def right(self, command):
-        for i in range(command.count()):
-            self.cursor.position(*self.move.right())
-
-    def endOfLine(self, command):
-        self.cursor.position(*self.move.endOfLine())
-
-    def beginningOfLine(self, command):
-        self.cursor.position(*self.move.beginningOfLine())
-
-    def appendToLine(self, command):
-        self.cursor.position(*self._append(self.move.endOfLine()))
-        return "InsertMode"
-
-    def insertBeforeLine(self, command):
-        self.cursor.position(*self.move.beginningOfLine())
         return "InsertMode"
 
     @staticmethod
     def _append(position):
         return (position[0], position[1] + 1)
+
+class Insert(AbstractAction):
+
+    def act(self):
+        return "InsertMode"
+
+class Up(AbstractAction):
+
+    def act(self):
+        for i in range(self.dispatcher.count()):
+            self.cursor.position(*self.move.up())
+
+class Down(AbstractAction):
+
+    def act(self):
+        for i in range(self.dispatcher.count()):
+            self.cursor.position(*self.move.down())
+
+class Left(AbstractAction):
+
+    def act(self):
+        for i in range(self.dispatcher.count()):
+            self.cursor.position(*self.move.left())
+
+class Right(AbstractAction):
+
+    def act(self):
+        for i in range(self.dispatcher.count()):
+            self.cursor.position(*self.move.right())
+
+class BeginningOfLine(AbstractAction):
+
+    def act(self):
+        self.cursor.position(*self.move.beginningOfLine())
+
+class EndOfLine(AbstractAction):
+
+    def act(self):
+        self.cursor.position(*self.move.endOfLine())
+
+class AppendToLine(AbstractAction):
+
+    def act(self):
+        self.cursor.position(*self._append(self.move.endOfLine()))
+        return "InsertMode"
+
+    @staticmethod
+    def _append(position):
+        return (position[0], position[1] + 1)
+
+class InsertBeforeLine(AbstractAction):
+
+    def act(self):
+        self.cursor.position(*self.move.beginningOfLine())
+        return "InsertMode"
 

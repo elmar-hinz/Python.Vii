@@ -9,6 +9,7 @@ i: insert
 j: down
 k: up
 l: right
+idle: idle
 """
 
 """Window"""
