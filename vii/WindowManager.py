@@ -13,11 +13,11 @@ class WindowManager:
     def createWindow(self):
         """ TODO: multiple windows """
         """ TODO: dynamic relation between buffer and windows """
-        buffer = Buffer()
-        buffer.insertLines(0,"")
+        self.buffer = Buffer()
+        self.buffer.insertLines(0,"")
         self.window = Window(self.parentScreen)
-        self.window.buffer = buffer
-        cursor = Cursor(buffer)
-        self.window.cursor = cursor
+        self.window.buffer = self.buffer
+        self.cursor = Cursor(self.buffer)
+        self.window.cursor = self.cursor
 
 

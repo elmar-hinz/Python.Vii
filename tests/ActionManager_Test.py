@@ -20,7 +20,9 @@ class ActionManager_Test:
     def setup(self):
         self.dispatcher = "Dispatcher"
         self.windowManager = "WM"
-        self.manager = ActionManager(self.dispatcher, self.windowManager)
+        self.manager = ActionManager()
+        self.manager.dispatcher = self.dispatcher
+        self.manager.windowManager = self.windowManager
 
     def test_parseMap(self):
         result = self.manager.parseMap(self.mapString)

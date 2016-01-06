@@ -1,9 +1,9 @@
 
 class ActionManager:
 
-    def __init__(self, dispatcher, windowManager):
-        self.dispatcher = dispatcher
-        self.windowManager = windowManager
+    def __init__(self):
+        self.dispatcher = None
+        self.windowManager =  None
         self.actionMaps = dict()
         self.actionModules = dict()
 
