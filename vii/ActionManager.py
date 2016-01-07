@@ -16,7 +16,6 @@ class ActionManager:
 
     def action(self, mode, operator):
         action = self.actionMaps[mode][operator]
-        action = action.capitalize()
         module = self.actionModules[mode]
         Action = getattr(module, action)
         return mode, Action(self.dispatcher, self.windowManager, self)
