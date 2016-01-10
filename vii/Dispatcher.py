@@ -1,5 +1,7 @@
 from .Logger import *
 
+class TokenExecption(Exception): pass
+
 class Dispatcher:
 
     def __init__(self):
@@ -18,7 +20,7 @@ class Dispatcher:
         self.stepAction(token)
 
     def stepInit(self, token):
-        if isinstance(token, int): raise Exception
+        if isinstance(token, int): raise TokenExecption
         if self.currentMode == None or self.currentAction == None:
             self.currentMode, self.currentAction = self.actionManager.action(
                 "normal", "idle")
