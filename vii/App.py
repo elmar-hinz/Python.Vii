@@ -3,6 +3,7 @@ from .Dispatcher import Dispatcher
 from .view.View import View
 from .WindowManager import WindowManager
 from .ActionManager import ActionManager
+from .RegisterManager import RegisterManager
 from . import NormalActions
 from . import InsertActions
 from .Setup import insertCommandMap, normalCommandMap
@@ -15,11 +16,13 @@ class App:
         windowManager = WindowManager(screen, View(screen))
         dispatcher = Dispatcher()
         actionManager = ActionManager()
+        registerManager = RegisterManager()
         actionManager.addMap("normal", normalCommandMap)
         actionManager.addModule("normal", NormalActions)
         actionManager.addMap("insert", insertCommandMap)
         actionManager.addModule("insert", InsertActions)
         actionManager.dispatcher = dispatcher
+        actionManager.registerManager = registerManager
         actionManager.windowManager = windowManager
         dispatcher.windowManager = windowManager
         dispatcher.actionManager = actionManager
