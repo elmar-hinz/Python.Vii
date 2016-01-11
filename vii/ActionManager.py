@@ -1,10 +1,12 @@
 from .Logger import *
+from .BufferRanges import BufferRanges
 
 class ActionManager:
 
     def __init__(self):
         self.dispatcher = None
         self.windowManager =  None
+        self.registerManager = None
         self.actionMaps = dict()
         self.actionModules = dict()
 
@@ -18,7 +20,16 @@ class ActionManager:
         action = self.actionMaps[mode][operator]
         module = self.actionModules[mode]
         Action = getattr(module, action)
-        return mode, Action(self.dispatcher, self.windowManager, self)
+        action = Action()
+        action.dispatcher = self.dispatcher
+        action.windowManager = self.windowManager
+        action.actionManager = self
+        action.registerManager = self.registerManager
+        action.window = self.windowManager.window
+        action.buffer = self.windowManager.buffer
+        action.cursor = self.windowManager.cursor
+        action.move = BufferRanges(action.buffer, action.cursor)
+        return mode, action
 
     def parseMap(self, text):
         map = dict()

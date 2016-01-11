@@ -1,12 +1,13 @@
 import sys
 from vii.ActionManager import ActionManager
-from vii.AbstractAction import AbstractAction
 
 class Alpha:
-    def __init__(self, dispatcher, windowManager, actionManager):
-        self.dispatcher = dispatcher
-        self.windowManager = windowManager
-        self.actionManager = actionManager
+    pass
+
+class Mock():
+    window = "Window"
+    buffer = "Buffer"
+    cursor = "Cursor"
 
 class ActionManager_Test:
 
@@ -19,11 +20,10 @@ class ActionManager_Test:
     """
 
     def setup(self):
-        self.dispatcher = "Dispatcher"
-        self.windowManager = "WM"
         self.manager = ActionManager()
-        self.manager.dispatcher = self.dispatcher
-        self.manager.windowManager = self.windowManager
+        self.manager.dispatcher = Mock()
+        self.manager.windowManager = Mock()
+        self.manager.registerManager = Mock()
 
     def test_parseMap(self):
         result = self.manager.parseMap(self.mapString)
@@ -44,9 +44,15 @@ class ActionManager_Test:
         me = sys.modules[__name__]
         self.manager.addModule(self.mode, me)
         self.manager.addMap(self.mode, self.mapString)
-        action = self.manager.action("mmm", "a")
-        # assert action.__class__ == Alpha
-        # assert action.windowManager == self.windowManager
-        # assert action.dispatcher == self.dispatcher
+        mode, action = self.manager.action("mmm", "a")
+        assert action.__class__ == Alpha
+        assert mode == "mmm"
+        wanted = ("dispatcher windowManager actionManager"
+        " window buffer cursor registerManager ")
+        for w in wanted.split():
+            print(w)
+            assert w in dir(action)
+
+
 
 
