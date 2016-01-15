@@ -9,7 +9,6 @@ class Action:
     def act(self): return "actSeen"
 
 class ActionManager:
-
     actionCalled = 0
 
     def action(self, mode, operator):
@@ -17,7 +16,6 @@ class ActionManager:
         return mode, self.Action
 
 class Dispatcher_Test:
-
     def setup(self):
         self.dispatcher = Dispatcher()
         self.actionManager = ActionManager()
@@ -62,18 +60,46 @@ class Dispatcher_Test:
         assert self.dispatcher.ready() == False
         self.dispatcher.stepCommand("a")
         assert self.dispatcher.ready() == True
-        assert self.dispatcher.ready() == True
-        self.dispatcher.count() == 11
-        self.dispatcher.operator() == "a"
-        expect = {'count': 11, 'operator': "a", "inserts" : []}
+        assert self.dispatcher.count() == 11
+        assert self.dispatcher.operator() == "a"
+        expect = {
+                "inserts" : [],
+                'count': 11,
+                'operator': "a",
+                'count2': "0",
+                'operator2': "",
+                }
+        assert self.dispatcher.command() == expect
+
+    def test_stepCommand_operatorPending(self):
+        self.dispatcher.reset()
+        assert self.dispatcher.operatorPendingReady() == False
+        self.dispatcher.currentMode = "operatorPending"
+        self.dispatcher.stepCommand("1")
+        self.dispatcher.stepCommand("1")
+        assert self.dispatcher.operatorPendingReady() == False
+        self.dispatcher.stepCommand("a")
+        assert self.dispatcher.operatorPendingReady() == True
+        expect = {
+                "inserts" : [],
+                'count': "0",
+                'operator': "",
+                'count2': 11,
+                'operator2': "a",
+                }
         assert self.dispatcher.command() == expect
 
     def test_reset(self):
         self.dispatcher.operatorReady = True
         self.dispatcher.currentCommand = dict()
         self.dispatcher.reset()
-        assert self.dispatcher.currentCommand == {'count': "0", 'operator': "", "inserts" : []}
+        expect = {
+                "inserts" : [],
+                'count': "0",
+                'operator': "",
+                'count2': "0",
+                'operator2': "",
+                }
+        assert self.dispatcher.currentCommand == expect
         self.dispatcher.operatorReady = False
-
-
 

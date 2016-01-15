@@ -9,7 +9,22 @@ i: Insert
 j: Down
 k: Up
 l: Right
+y: Yank
+d: Delete
+c: Change
 idle: Idle
+"""
+
+operatorPendingMap = """
+$: EndOfLine
+^: BeginningOfLine
+h: Left
+j: Down
+k: Up
+l: Right
+yank: Yank
+delete: Delete
+change: Change
 """
 
 insertCommandMap = """

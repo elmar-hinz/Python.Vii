@@ -12,6 +12,7 @@ class Dispatcher:
         self.currentToken = None
         self.currentCommand = None
         self.operatorReady = False
+        self.operator2Ready = False
 
     def step(self, token):
         self.currentToken = token
@@ -22,7 +23,8 @@ class Dispatcher:
     def stepInit(self, token):
         if isinstance(token, int): raise TokenExecption
         if self.currentMode == None or self.currentAction == None:
-            self.currentMode, self.currentAction = self.actionManager.action(
+            self.currentMode = "normal"
+            self.currentAction = self.actionManager.action(
                 "normal", "idle")
         if self.currentCommand == None:
             self.reset()
@@ -38,13 +40,26 @@ class Dispatcher:
                 self.currentCommand['count'] = count if count > 0 else 1
                 self.currentCommand['operator'] += token
                 self.operatorReady = True
+        elif self.currentMode == "operatorPending":
+            if token.isdigit():
+                self.currentCommand['count2'] += token
+            else:
+                count = int(self.currentCommand['count2'])
+                self.currentCommand['count2'] = count if count > 0 else 1
+                self.currentCommand['operator2'] += token
+                self.operator2Ready = True
 
     def stepAction(self, token):
         if token == chr(27):
             self.currentAction.finish()
-            self.currentMode, self.currentAction = self.actionManager.action(
+            self.currentMode = "normal"
+            self.currentAction = self.actionManager.action(
                 "normal", "idle")
+        debug(self.currentMode)
+        debug(str(self.currentAction))
         self.currentMode, self.currentAction = self.currentAction.act()
+        debug("AFTER:")
+        debug(str(self.currentAction))
 
     def ready(self):
         return self.operatorReady
@@ -54,6 +69,15 @@ class Dispatcher:
 
     def operator(self):
         return self.currentCommand['operator']
+
+    def operatorPendingReady(self):
+        return self.operator2Ready
+
+    def operatorPendingCount(self):
+        return self.currentCommand['count2']
+
+    def operatorPendingOperator(self):
+        return self.currentCommand['operator2']
 
     def token(self):
         return self.currentToken
@@ -66,6 +90,13 @@ class Dispatcher:
         pass
 
     def reset(self):
-        self.currentCommand = {'count': "0", 'operator': "", "inserts" : []}
+        self.currentCommand = {
+                "inserts" : [],
+                'count': "0",
+                'operator': "",
+                'count2': "0",
+                'operator2': "",
+                }
         self.operatorReady = False
+        self.operator2Ready = False
 

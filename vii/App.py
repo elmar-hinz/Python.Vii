@@ -6,7 +6,8 @@ from .ActionManager import ActionManager
 from .RegisterManager import RegisterManager
 from . import NormalActions
 from . import InsertActions
-from .Setup import insertCommandMap, normalCommandMap
+from . import OperatorPendingActions
+from .Setup import insertCommandMap, normalCommandMap, operatorPendingMap
 
 os.environ.setdefault('ESCDELAY', '25')
 
@@ -21,6 +22,8 @@ class App:
         actionManager.addModule("normal", NormalActions)
         actionManager.addMap("insert", insertCommandMap)
         actionManager.addModule("insert", InsertActions)
+        actionManager.addMap("operatorPending", operatorPendingMap)
+        actionManager.addModule("operatorPending", OperatorPendingActions)
         actionManager.dispatcher = dispatcher
         actionManager.registerManager = registerManager
         actionManager.windowManager = windowManager

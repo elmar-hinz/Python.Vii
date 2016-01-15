@@ -22,15 +22,19 @@ class TestBufferRanges:
 
     def testUp(self):
         assert self.fixture.up() == (1,2)
+        assert self.fixture.up(2) == (0,2)
 
     def testDown(self):
         assert self.fixture.down() == (3,2)
+        assert self.fixture.down(2) == (4,2)
 
     def testLeft(self):
         assert self.fixture.left() == (2,1)
+        assert self.fixture.left(2) == (2,0)
 
     def testRight(self):
         assert self.fixture.right() == (2,3)
+        assert self.fixture.right(2) == (2,4)
 
     def testBeginningOfBuffer(self):
         assert self.fixture.beginningOfBuffer() == (0,0)
@@ -43,4 +47,6 @@ class TestBufferRanges:
 
     def testEndOfLine(self):
         assert self.fixture.endOfLine() == (2,3)
+        print(self.fixture.endOfLine(2))
+        assert self.fixture.endOfLine(2) == (3,4)
 
