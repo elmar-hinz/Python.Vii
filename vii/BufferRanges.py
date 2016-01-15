@@ -17,25 +17,26 @@ class BufferRanges:
     def beginningOfLine(self):
         return (self._y(), 0)
 
-    def down(self):
-        return (self._y() + 1, self._x())
+    def down(self, factor = 1):
+        return (self._y() + factor, self._x())
 
     def endOfBuffer(self):
         y = self.buffer.countOfLines() - 1
         x = self.buffer.lengthOfLine(y) - 1
         return (y, x)
 
-    def endOfLine(self):
-        return (self._y(), self.buffer.lengthOfLine(self._y()) - 1)
+    def endOfLine(self, factor = 1):
+        y = self._y() + factor - 1
+        return (y, self.buffer.lengthOfLine(y) - 1)
 
-    def left(self):
-        return (self._y(), self._x() - 1)
+    def left(self, factor = 1):
+        return (self._y(), self._x() - factor)
 
-    def right(self):
-        return (self._y(), self._x() + 1)
+    def right(self, factor = 1):
+        return (self._y(), self._x() + factor)
 
-    def up(self):
-        return (self._y() - 1, self._x())
+    def up(self, factor = 1):
+        return (self._y() - factor, self._x())
 
     def _x(self):
         return self.cursor.x

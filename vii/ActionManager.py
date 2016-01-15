@@ -29,7 +29,7 @@ class ActionManager:
         action.buffer = self.windowManager.buffer
         action.cursor = self.windowManager.cursor
         action.move = BufferRanges(action.buffer, action.cursor)
-        return mode, action
+        return action
 
     def parseMap(self, text):
         map = dict()
