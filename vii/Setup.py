@@ -5,6 +5,7 @@ a: Append
 A: AppendToLine
 c: Change
 d: Delete
+G: GotoLine
 h: Left
 i: Insert
 I: InsertBeforeLine
@@ -45,4 +46,3 @@ logPath = "."
 logFileName = "vii.log"
 logFormat = "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
 logLevel = logging.DEBUG
-

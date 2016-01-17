@@ -95,7 +95,7 @@ class Cursor:
     def beginningOfLine(self):
         self.position(*self.ranges.beginningOfLine())
 
-    def down(self, factor = 1):
+    def down(self, factor = None):
         self.position(*self.ranges.down(factor))
 
     def endOfBuffer(self):
@@ -104,12 +104,12 @@ class Cursor:
     def endOfLine(self):
         self.position(*self.ranges.endOfLine())
 
-    def left(self, factor = 1):
+    def left(self, factor = None):
         self.position(*self.ranges.left(factor))
 
-    def right(self, factor = 1):
+    def right(self, factor = None):
         self.position(*self.ranges.right(factor))
 
-    def up(self, factor = 1):
+    def up(self, factor = None):
         self.position(*self.ranges.up(factor))
 

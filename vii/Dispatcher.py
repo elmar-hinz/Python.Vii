@@ -36,16 +36,18 @@ class Dispatcher:
             if token.isdigit():
                 self.currentCommand['count'] += token
             else:
-                count = int(self.currentCommand['count'])
-                self.currentCommand['count'] = count if count > 0 else 1
+                count = self.currentCommand['count']
+                if count == "": self.currentCommand['count'] = None
+                else: self.currentCommand['count'] = int(count)
                 self.currentCommand['operator'] += token
                 self.operatorReady = True
         elif self.currentMode == "operatorPending":
             if token.isdigit():
                 self.currentCommand['count2'] += token
             else:
-                count = int(self.currentCommand['count2'])
-                self.currentCommand['count2'] = count if count > 0 else 1
+                count = self.currentCommand['count2']
+                if count == "": self.currentCommand['count2'] = None
+                else: self.currentCommand['count2'] = int(count)
                 self.currentCommand['operator2'] += token
                 self.operator2Ready = True
 
@@ -88,11 +90,15 @@ class Dispatcher:
     def reset(self):
         self.currentCommand = {
                 "inserts" : [],
-                'count': "0",
+                'count': "",
                 'operator': "",
-                'count2': "0",
+                'count2': "",
                 'operator2': "",
                 }
         self.operatorReady = False
         self.operator2Ready = False
+
+    def noneCountTo1(self):
+        if self.currentCommand['count'] == None:
+            self.currentCommand['count'] = 1
 

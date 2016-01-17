@@ -8,10 +8,11 @@ class AbstractAction:
         self.dispatcher.logHistory()
         self.dispatcher.reset()
 
-    @staticmethod
-    def nextX(position):
-        return (position[0], position[1] + 1)
+    def multiplyCounts(self):
+        count1 = self.dispatcher.count()
+        count2 = self.dispatcher.operatorPendingCount()
+        if not count1: count1 = 1
+        if not count2: count2 = 1
+        return count1 * count2
 
-    @staticmethod
-    def nextY(position):
-        return (position[0] + 1)
+

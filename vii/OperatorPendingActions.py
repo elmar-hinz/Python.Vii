@@ -36,8 +36,7 @@ class Change(AbstractPendingAction):
 
 class Left(AbstractAction):
     def act(self, callback):
-        factor = (self.dispatcher.count() *
-            self.dispatcher.operatorPendingCount())
+        factor = self.multiplyCounts()
         stop = self.ranges.left()
         start = self.ranges.left(factor)
         self.cursor.left(factor)
@@ -45,8 +44,7 @@ class Left(AbstractAction):
 
 class Right(AbstractAction):
     def act(self, callback):
-        factor = (self.dispatcher.count() *
-            self.dispatcher.operatorPendingCount())
+        factor = self.multiplyCounts()
         start = self.cursor.position()
         stop = self.ranges.right(factor - 1)
         return callback.call((start, stop))
@@ -54,8 +52,7 @@ class Right(AbstractAction):
 class YankLines(AbstractAction):
     def act(self, callback):
         if self.dispatcher.operator() == "y":
-            factor = (self.dispatcher.count() *
-                self.dispatcher.operatorPendingCount())
+            factor = self.multiplyCounts()
             command = self.dispatcher.command()
             command['count'] = factor
             command['operator'] = "Y"
