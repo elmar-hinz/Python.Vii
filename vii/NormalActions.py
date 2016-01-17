@@ -53,7 +53,6 @@ class EndOfLine(AbstractAction):
 
 class GotoLine(AbstractAction):
     def act(self):
-        debug(str(self.dispatcher.count()))
         if self.dispatcher.count() == None:
             self.cursor.endOfBuffer()
             self.cursor.beginningOfLine()
@@ -80,25 +79,33 @@ class Left(AbstractAction):
 
 class PutBefore(AbstractAction):
     def act(self):
+        count = self.dispatcher.count()
+        if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
-            self.buffer.insertLines(self.cursor.y, string)
+            for i in range(count):
+                self.buffer.insertLines(self.cursor.y, string)
         else:
-            self.buffer.insert(self.cursor.position(), string)
-            self.cursor.right(len(string) - 1)
+            for i in range(count):
+                self.buffer.insert(self.cursor.position(), string)
+            self.cursor.right(count * len(string) - 1)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class PutAfter(AbstractAction):
     def act(self):
+        count = self.dispatcher.count()
+        if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
-            self.buffer.insertLines(self.cursor.y + 1, string)
+            for i in range(count):
+                self.buffer.insertLines(self.cursor.y + 1, string)
             self.cursor.down()
         else:
-            position = (self.cursor.y, self.cursor.x + 1)
-            self.buffer.insert(position, string)
-            self.cursor.right(len(string))
+            for i in range(count):
+                position = (self.cursor.y, self.cursor.x + 1)
+                self.buffer.insert(position, string)
+            self.cursor.right(count * len(string))
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
