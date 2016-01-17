@@ -31,7 +31,7 @@ class ActionManager:
         action.window = self.windowManager.window
         action.buffer = self.windowManager.buffer
         action.cursor = self.windowManager.cursor
-        action.move = self.windowManager.ranges
+        action.ranges = self.windowManager.ranges
         return action
 
     def parseMap(self, text):
