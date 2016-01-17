@@ -1,13 +1,14 @@
 from .Logger import *
 from .Signals import *
+from .BufferRanges import BufferRanges
 
 class Cursor:
 
-    buffer = None
-    y, x = 0, 0
-
-    def __init__(self, buffer):
-        self.buffer = buffer
+    def __init__(self):
+        self.buffer = None
+        self.ranges = None
+        self.x = 0
+        self.y = 0
         slot("verticalInsert", self)
         slot("horizontalInsert", self)
         slot("verticalDelete", self)
@@ -82,4 +83,33 @@ class Cursor:
     def update(self):
         self.guardRange()
         signal("cursorMoved", self)
+
+    """ Buffer range movements """
+
+    def appendInLine(self):
+        self.position(*self.ranges.appendInLine())
+
+    def beginningOfBuffer(self):
+        self.position(*self.ranges.beginningOfBuffer())
+
+    def beginningOfLine(self):
+        self.position(*self.ranges.beginningOfLine())
+
+    def down(self, factor = 1):
+        self.position(*self.ranges.down(factor))
+
+    def endOfBuffer(self):
+        self.position(*self.ranges.endOfBuffer())
+
+    def endOfLine(self):
+        self.position(*self.ranges.endOfLine())
+
+    def left(self, factor = 1):
+        self.position(*self.ranges.left(factor))
+
+    def right(self, factor = 1):
+        self.position(*self.ranges.right(factor))
+
+    def up(self, factor = 1):
+        self.position(*self.ranges.up(factor))
 

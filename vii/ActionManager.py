@@ -17,7 +17,10 @@ class ActionManager:
         self.actionMaps[mode] = self.parseMap(map)
 
     def action(self, mode, operator):
-        action = self.actionMaps[mode][operator]
+        try:
+            action = self.actionMaps[mode][operator]
+        except KeyError:
+            return None
         module = self.actionModules[mode]
         Action = getattr(module, action)
         action = Action()
@@ -28,7 +31,7 @@ class ActionManager:
         action.window = self.windowManager.window
         action.buffer = self.windowManager.buffer
         action.cursor = self.windowManager.cursor
-        action.move = BufferRanges(action.buffer, action.cursor)
+        action.move = self.windowManager.ranges
         return action
 
     def parseMap(self, text):

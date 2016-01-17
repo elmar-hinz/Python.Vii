@@ -17,8 +17,9 @@ class Inserting(AbstractAction):
     def start(self):
         self.startPosition = self.cursor.position()
 
-    # def finish(self):
-    #     self.startPosition = None
+    def finish(self):
+        super().finish()
+        self.cursor.position(*self.move.left())
 
     def insert(self, char):
         debug("Insert: %s" % char)

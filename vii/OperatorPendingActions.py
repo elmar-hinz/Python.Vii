@@ -7,14 +7,19 @@ class AbstractPendingAction(AbstractAction):
             return "operatorPending", self
         else:
             operator = self.dispatcher.operatorPendingOperator()
-            return self.actionManager.action("operatorPending", operator).act(self)
+            action = self.actionManager.action("operatorPending", operator)
+            if action == None:
+                self.dispatcher.reset()
+                return self.actionManager.action("normal", "idle")
+            else:
+                return action.act(self)
 
     def call(self, range): pass
 
 class Yank(AbstractPendingAction):
     def call(self, range):
         string = self.buffer.copyRange(*range)
-        debug(str(string))
+        self.registerManager.unshift(string)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -30,7 +35,6 @@ class Change(AbstractPendingAction):
         return "insert", self.actionManager.action("insert", "inserting")
 
 class Left(AbstractAction):
-
     def act(self, callback):
         factor = (self.dispatcher.count() *
             self.dispatcher.operatorPendingCount())
@@ -40,11 +44,27 @@ class Left(AbstractAction):
         return callback.call((start, stop))
 
 class Right(AbstractAction):
-
     def act(self, callback):
         factor = (self.dispatcher.count() *
             self.dispatcher.operatorPendingCount())
         start = self.cursor.position()
         stop = self.move.right(factor - 1)
         return callback.call((start, stop))
+
+class YankLines(AbstractAction):
+    def act(self, callback):
+        if self.dispatcher.operator() == "y":
+            factor = (self.dispatcher.count() *
+                self.dispatcher.operatorPendingCount())
+            command = self.dispatcher.command()
+            command['count'] = factor
+            command['operator'] = "Y"
+            command['count2'] = 0
+            command['operator2'] = ""
+            return self.actionManager.action("normal", "idle").act()
+
+        else:
+            self.finish()
+            return self.actionManager.action("normal", "idle").act()
+
 

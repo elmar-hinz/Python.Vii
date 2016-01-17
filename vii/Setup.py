@@ -1,17 +1,20 @@
 normalCommandMap = """
 $: EndOfLine
 ^: BeginningOfLine
-A: AppendToLine
-I: InsertBeforeLine
 a: Append
+A: AppendToLine
+c: Change
+d: Delete
 h: Left
 i: Insert
+I: InsertBeforeLine
 j: Down
 k: Up
 l: Right
+p: PutAfter
+P: PutBefore
 y: Yank
-d: Delete
-c: Change
+Y: YankLines
 idle: Idle
 """
 
@@ -22,6 +25,7 @@ h: Left
 j: Down
 k: Up
 l: Right
+y: YankLines
 yank: Yank
 delete: Delete
 change: Change

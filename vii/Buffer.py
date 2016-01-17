@@ -60,7 +60,7 @@ class Buffer:
 
     def deleteRange(self, start, end):
         "Delete from position to position"
-        self._checkRange(start, end)
+        start, end = self._checkRange(start, end)
         y1, x1 = start; y2, x2 = end
         head = self.lines[y1][:x1]
         tail = self.lines[y2][x2+1:]
@@ -84,7 +84,7 @@ class Buffer:
 
     def copyRange(self, start, end):
         "Copy from position to position"
-        self._checkRange(start, end)
+        start, end = self._checkRange(start, end)
         y1, x1 = start; y2, x2 = end
         if y1 == y2:
             count = x2 - x1 + 1
@@ -157,8 +157,27 @@ class Buffer:
 
     def _checkRange(self, start, end):
         y1, x1 = start; y2, x2 = end
-        self._checkLineBounds(y1, x1)
-        self._checkLineBounds(y2, x2)
+
+        if False: # Range Adjustments may be optional in future
+
+            if y1 < 0: y1 = 0
+            if x1 < 0: x1 = 0
+            if y2 < 0: y2 = 0
+            if x2 < 0: x2 = 0
+
+            yLimit = len(self.lines) - 1
+            if y1 > yLimit: y1 = yLimit
+            if y2 > yLimit: y2 = yLimit
+
+            xLimit1 = len(self.lines[y1]) - 1
+            if x1 > xLimit1: x1 = xLimit1
+
+            xLimit2 = len(self.lines[y2]) - 1
+            if x2 > xLimit2: x2 = xLimit2
+
         if y1 > y2: raise RangeExeption()
         if y1 == y2 and x1 > x2: raise RangeExeption()
+        self._checkLineBounds(y1, x1)
+        self._checkLineBounds(y2, x2)
+        return ((y1, x1), (y2, x2))
 
