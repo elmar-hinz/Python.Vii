@@ -19,7 +19,8 @@ class BufferRanges:
     def beginningOfLine(self):
         return (self._y(), 0)
 
-    def down(self, factor = 1):
+    def down(self, factor = None):
+        if not factor: factor = 1
         range = self._y() + factor, self._x()
         return self._forceLimits(range)
 
@@ -28,19 +29,23 @@ class BufferRanges:
         x = self.buffer.lengthOfLine(y) - 1
         return (y, x)
 
-    def endOfLine(self, factor = 1):
+    def endOfLine(self, factor = None):
+        if not factor: factor = 1
         y = self._y() + factor - 1
         return (y, self.buffer.lengthOfLine(y) - 1)
 
-    def left(self, factor = 1):
+    def left(self, factor = None):
+        if not factor: factor = 1
         range = (self._y(), self._x() - factor)
         return self._forceLimits(range)
 
-    def right(self, factor = 1):
+    def right(self, factor = None):
+        if not factor: factor = 1
         range = (self._y(), self._x() + factor)
         return self._forceLimits(range)
 
-    def up(self, factor = 1):
+    def up(self, factor = None):
+        if not factor: factor = 1
         range = (self._y() - factor, self._x())
         return self._forceLimits(range)
 

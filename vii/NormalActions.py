@@ -51,6 +51,18 @@ class EndOfLine(AbstractAction):
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
+class GotoLine(AbstractAction):
+    def act(self):
+        debug(str(self.dispatcher.count()))
+        if self.dispatcher.count() == None:
+            self.cursor.endOfBuffer()
+            self.cursor.beginningOfLine()
+        else:
+            position = self.dispatcher.count(), 0
+            self.cursor.position(*position)
+        self.finish()
+        return "normal", self.actionManager.action("normal", "idle")
+
 class Insert(AbstractAction):
     def act(self):
         return "insert", self.actionManager.action("insert", "inserting")
@@ -109,6 +121,7 @@ class Yank(AbstractAction):
 class YankLines(AbstractAction):
     def act(self):
         count = self.dispatcher.count()
+        if not count: count = 1
         y, x = self.cursor.position()
         string = self.buffer.copyLines(y, count)
         self.registerManager.unshift(string, True)
