@@ -1,4 +1,5 @@
 from .Buffer import Buffer
+from .BufferRanges import BufferRanges
 from .Cursor import Cursor
 from .view.Window import Window
 
@@ -13,11 +14,16 @@ class WindowManager:
     def createWindow(self):
         """ TODO: multiple windows """
         """ TODO: dynamic relation between buffer and windows """
+        self.cursor = Cursor()
         self.buffer = Buffer()
         self.buffer.insertLines(0,"")
+        self.ranges = BufferRanges()
         self.window = Window(self.parentScreen)
-        self.window.buffer = self.buffer
-        self.cursor = Cursor(self.buffer)
+        self.cursor.buffer = self.buffer
+        self.cursor.ranges = self.ranges
+        self.ranges.buffer = self.buffer
+        self.ranges.cursor = self.cursor
         self.window.cursor = self.cursor
+        self.window.buffer = self.buffer
 
 

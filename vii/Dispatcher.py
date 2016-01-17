@@ -55,11 +55,7 @@ class Dispatcher:
             self.currentMode = "normal"
             self.currentAction = self.actionManager.action(
                 "normal", "idle")
-        debug(self.currentMode)
-        debug(str(self.currentAction))
         self.currentMode, self.currentAction = self.currentAction.act()
-        debug("AFTER:")
-        debug(str(self.currentAction))
 
     def ready(self):
         return self.operatorReady

@@ -3,7 +3,7 @@ class RegisterManager:
     def __init__(self):
         self.yankRegister = []
 
-    def shift(self, string, linewise = False):
+    def unshift(self, string, linewise = False):
         t = tuple([string, linewise])
         self.yankRegister = [t] + self.yankRegister[:9]
 
