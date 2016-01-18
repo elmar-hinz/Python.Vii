@@ -41,6 +41,5 @@ class Inserting(AbstractAction):
         debug("Insert: Newline")
         y,x = self.cursor.position()
         self.buffer.insert((y,x), '\n')
-        y = self.cursor.y + 1
-        self.cursor.position(y, 0)
+        self.cursor.position(self.cursor.y + 1, 1)
 
