@@ -2,17 +2,15 @@ from .Logger import *
 from .Signals import *
 from .BufferRanges import BufferRanges
 
+class CursorException(Exception): pass
+
 class Cursor:
     """
-    Observes the buffer.
-    Tracks inserting and deleting.
-
-    Keeps the cursor inside the range of buffer
-    if movements go out of bounds.
-    Cursor can stay 1 behing length of line
-    to enable appending.
-    Position adjustments should happen in BufferRanges,
-    while only exceptions are thrown here.
+    * Observes the buffer.
+    * Tracks inserting and deleting.
+    * Excepts if curser doesn't stay in buffer range.
+    * Cursor can stay 1 behing length of line to enable appending.
+    * TODO: test exceptions
     """
 
     def __init__(self):
@@ -36,47 +34,47 @@ class Cursor:
             if signal == "horizontalDelete":
                 self.trackHorizontalDelete(*args)
 
-    def position(self, y = None, x = None):
-        if y == None and x == None:
-            return (self.y, self.x)
-        if y != None: self.y = y
-        if x != None: self.x = x
-        self.update()
-
-    def guardRange(self):
-        if self.y < 1: self.y = 1
-        elif self.y > self.buffer.countOfLines() :
-            self.y = self.buffer.countOfLines()
-        length = self.buffer.lengthOfLine(self.y)
-        if self.x < 1: self.x = 1
-        elif self.x > length + 1: self.x = length + 1
-
     def trackHorizontalInsert(self, x, length):
         if x <= self.x: self.x += length
-        self.update()
+        self.updated()
 
     def trackHorizontalDelete(self, x, length):
         if x < self.x:
             self.x -= length
             if self.x < x: self.x = x
-        self.update()
+        self.updated()
 
     def trackVerticalInsert(self, y, length):
         print(y, length)
         if y <= self.y: self.y += length
-        self.update()
+        self.updated()
 
     def trackVerticalDelete(self, y, length):
         if y < self.y:
             self.y -= length
             if self.y < y: self.y = y
-        self.update()
+        self.updated()
 
-    def update(self):
-        self.guardRange()
+    def position(self, y = None, x = None):
+        if y == None and x == None:
+            return (self.y, self.x)
+        if y != None: self.y = y
+        if x != None: self.x = x
+        self.updated()
+
+    def updated(self):
+        if self.y < 1:
+            raise CursorException("y < range: %s" % self.y)
+        if self.y > self.buffer.countOfLines() :
+            raise CursorException("y > range: %s > %s" %
+                    (self.y, self.buffer.countOfLines()))
+        if self.x < 1:
+            raise CursorException("x < range: %s" % self.x)
+        if self.x > self.buffer.lengthOfLine(self.y) + 1:
+            raise CursorException("x > range")
         signal("cursorMoved", self)
 
-    """ Buffer range movements """
+    """ Movements """
 
     def appendInLine(self):
         self.position(*self.ranges.appendInLine())

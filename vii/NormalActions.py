@@ -102,10 +102,14 @@ class PutAfter(AbstractAction):
                 self.buffer.insertLines(self.cursor.y + 1, string)
             self.cursor.down()
         else:
-            for i in range(count):
-                position = (self.cursor.y, self.cursor.x + 1)
-                self.buffer.insert(position, string)
-            self.cursor.right(count * len(string))
+            if self.buffer.lengthOfLine(self.cursor.y) > 0:
+                for i in range(count):
+                    position = (self.cursor.y, self.cursor.x + 1)
+                    self.buffer.insert(position, string)
+                self.cursor.right(count * len(string))
+            else:
+                return self.actionManager.action("normal", "P").act()
+
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 

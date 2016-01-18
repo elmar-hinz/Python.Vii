@@ -57,11 +57,11 @@ class BufferRanges:
 
     def _forceLimits(self, position, append = 0):
         y, x = position
-        if y < 1: y = 1
-        if x < 1: x = 1
         yLimit = self.buffer.countOfLines() + append
         if y > yLimit: y = yLimit
+        if y < 1: y = 1
         xLimit = self.buffer.lengthOfLine(y) + append
         if x > xLimit: x = xLimit
+        if x < 1: x = 1
         return (y, x)
 
