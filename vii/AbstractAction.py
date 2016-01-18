@@ -15,4 +15,18 @@ class AbstractAction:
         if not count2: count2 = 1
         return count1 * count2
 
+class AbstractPendingAction(AbstractAction):
 
+    def act(self):
+        if not self.dispatcher.operatorPendingReady():
+            return "operatorPending", self
+        else:
+            operator = self.dispatcher.operatorPendingOperator()
+            action = self.actionManager.action("operatorPending", operator)
+            if action == None:
+                self.dispatcher.reset()
+                return self.actionManager.action("normal", "idle")
+            else:
+                return action.act(self)
+
+    def call(self, range): pass
