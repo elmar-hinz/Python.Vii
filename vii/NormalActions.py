@@ -1,4 +1,5 @@
 from .AbstractAction import AbstractAction
+from .AbstractAction import AbstractPendingAction
 from .Logger import *
 
 class Idle(AbstractAction):
@@ -31,13 +32,15 @@ class BeginningOfLine(AbstractAction):
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
-class Change(AbstractAction):
-    def act(self):
-        return self.actionManager.action("operatorPending", "change").act()
-
-class Delete(AbstractAction):
-    def act(self):
-        return self.actionManager.action("operatorPending", "delete").act()
+class Change(AbstractPendingAction):
+    def call(self, range):
+        self.buffer.deleteRange(*range)
+        return "insert", self.actionManager.action("insert", "inserting")
+class Delete(AbstractPendingAction):
+    def call(self, range):
+        self.buffer.deleteRange(*range)
+        self.finish()
+        return "normal", self.actionManager.action("normal", "idle")
 
 class Down(AbstractAction):
     def act(self):
@@ -125,9 +128,12 @@ class Up(AbstractAction):
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
-class Yank(AbstractAction):
-    def act(self):
-        return self.actionManager.action("operatorPending", "yank").act()
+class Yank(AbstractPendingAction):
+    def call(self, range):
+        string = self.buffer.copyRange(*range)
+        self.registerManager.unshift(string)
+        self.finish()
+        return "normal", self.actionManager.action("normal", "idle")
 
 class YankLines(AbstractAction):
     def act(self):

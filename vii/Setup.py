@@ -34,9 +34,6 @@ j: Down
 k: Up
 l: Right
 y: YankLines
-yank: Yank
-delete: Delete
-change: Change
 """
 
 insertCommandMap = """
