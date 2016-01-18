@@ -1,4 +1,5 @@
 normalCommandMap = """
+0: BeginningOfLine
 $: EndOfLine
 ^: BeginningOfLine
 a: Append
@@ -20,8 +21,14 @@ idle: Idle
 """
 
 operatorPendingMap = """
+0: BeginningOfLine
 $: EndOfLine
 ^: BeginningOfLine
+c: ChangeLines
+d: DeleteLines
+g: GotoLine
+G: GotoLine
+h: Left
 h: Left
 j: Down
 k: Up

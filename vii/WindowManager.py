@@ -16,7 +16,7 @@ class WindowManager:
         """ TODO: dynamic relation between buffer and windows """
         self.cursor = Cursor()
         self.buffer = Buffer()
-        self.buffer.insertLines(0,"")
+        self.buffer.insertLines(1,"")
         self.ranges = BufferRanges()
         self.window = Window(self.parentScreen)
         self.cursor.buffer = self.buffer

@@ -14,39 +14,39 @@ class BufferRanges:
         return self._forceLimits(range, 1)
 
     def beginningOfBuffer(self):
-        return (0, 0)
+        return (1, 1)
 
     def beginningOfLine(self):
-        return (self._y(), 0)
+        return (self._y(), 1)
 
-    def down(self, factor = None):
-        if not factor: factor = 1
-        range = self._y() + factor, self._x()
+    def down(self, step = None):
+        if not step: step = 1
+        range = self._y() + step, self._x()
         return self._forceLimits(range)
 
     def endOfBuffer(self):
-        y = self.buffer.countOfLines() - 1
-        x = self.buffer.lengthOfLine(y) - 1
+        y = self.buffer.countOfLines()
+        x = self.buffer.lengthOfLine(y)
         return (y, x)
 
-    def endOfLine(self, factor = None):
-        if not factor: factor = 1
-        y = self._y() + factor - 1
-        return (y, self.buffer.lengthOfLine(y) - 1)
+    def endOfLine(self, step = None):
+        if not step: step = 1
+        y = self._y() + step - 1
+        return (y, self.buffer.lengthOfLine(y) )
 
-    def left(self, factor = None):
-        if not factor: factor = 1
-        range = (self._y(), self._x() - factor)
+    def left(self, step = None):
+        if not step: step = 1
+        range = (self._y(), self._x() - step)
         return self._forceLimits(range)
 
-    def right(self, factor = None):
-        if not factor: factor = 1
-        range = (self._y(), self._x() + factor)
+    def right(self, step = None):
+        if not step: step = 1
+        range = (self._y(), self._x() + step)
         return self._forceLimits(range)
 
-    def up(self, factor = None):
-        if not factor: factor = 1
-        range = (self._y() - factor, self._x())
+    def up(self, step = None):
+        if not step: step = 1
+        range = (self._y() - step, self._x())
         return self._forceLimits(range)
 
     def _x(self):
@@ -57,13 +57,11 @@ class BufferRanges:
 
     def _forceLimits(self, position, append = 0):
         y, x = position
-        if y < 0: y = 0
-        if x < 0: x = 0
-
-        yLimit = self.buffer.countOfLines() - 1 + append
+        if y < 1: y = 1
+        if x < 1: x = 1
+        yLimit = self.buffer.countOfLines() + append
         if y > yLimit: y = yLimit
-        xLimit = self.buffer.lengthOfLine(y) - 1 + append
+        xLimit = self.buffer.lengthOfLine(y) + append
         if x > xLimit: x = xLimit
-
         return (y, x)
 

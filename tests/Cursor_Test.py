@@ -7,15 +7,16 @@ class BufferMock:
     text = "line one\nline two\nline three".splitlines()
 
     def lengthOfLine(self, index):
-        return len(self.text[index])
+        return len(self.text[index - 1])
 
     def copyLines(self, index, count):
-        return self.text[index]
+        return self.text[index - 1]
 
     def countOfLines(self):
         return len(self.text)
 
-
+class RangesMock:
+    pass
 
 class TestCursor:
 
@@ -23,7 +24,10 @@ class TestCursor:
 
     def setup(self):
         self.buffer = BufferMock()
-        self.fixture = Cursor(self.buffer)
+        self.ranges = RangesMock()
+        self.fixture = Cursor()
+        self.fixture.buffer = self.buffer
+        self.fixture.ranges = self.ranges
         slot("cursorMoved", self)
         self.reception = False
 
@@ -35,74 +39,35 @@ class TestCursor:
     def testInit(self):
         assert self.fixture.__class__ == Cursor
         assert self.fixture.buffer == self.buffer
-        assert self.fixture.x == 0
-        assert self.fixture.y == 0
+        assert self.fixture.x == 1
+        assert self.fixture.y == 1
 
     def testUpdate(self):
         self.fixture.update()
         assert self.reception
 
     def testPosition(self):
-        assert self.fixture.position() == (0,0)
-        self.fixture.position(1,2)
-        assert self.fixture.position() == (1,2)
-        assert self.reception
-
-    def testMoveVertical(self):
-        self.fixture.moveVertical(0)
-        assert self.fixture.y == 0
-        self.fixture.moveVertical(2)
-        assert self.fixture.y == 2
-        self.fixture.moveVertical(-1)
-        assert self.fixture.y == 1
-        assert self.reception
-
-    def testMoveVerticalBounds(self):
-        self.fixture.moveVertical(0)
-        assert self.fixture.y == 0
-        self.fixture.moveVertical(10)
-        assert self.fixture.y == 2
-        self.fixture.moveVertical(-10)
-        assert self.fixture.y == 0
-        assert self.reception
-
-    def testMoveHorizontal(self):
-        self.fixture.moveHorizontal(0)
-        assert self.fixture.x == 0
-        self.fixture.moveHorizontal(1)
-        assert self.fixture.x == 1
-        self.fixture.moveHorizontal(2)
-        assert self.fixture.x == 3
-        self.fixture.moveHorizontal(-2)
-        assert self.fixture.x == 1
-        assert self.reception
-
-    def testMoveHorizontalBounds(self):
-        width = len(self.fixture.buffer.text[0])
-        self.fixture.moveHorizontal(0)
-        assert self.fixture.x == 0
-        self.fixture.moveHorizontal(50)
-        assert self.fixture.x == width
-        self.fixture.moveHorizontal(-50)
-        assert self.fixture.x == 0
+        assert self.fixture.position() == (1,1)
+        self.fixture.position(2,3)
+        assert self.fixture.position() == (2,3)
         assert self.reception
 
     def testTrackHorizontalInsert(self):
         """ insert after: cursor is fix """
-        self.fixture.x = 0
-        signal("horizontalInsert", self.buffer, 1, 3)
-        assert self.fixture.x == 0
-        """ insert before: cursor moves up """
         self.fixture.x = 1
-        signal("horizontalInsert", self.buffer, 1, 3)
-        assert self.fixture.x == 4
+        signal("horizontalInsert", self.buffer, 2, 3)
+        assert self.fixture.x == 1
+        """ insert before: cursor moves up """
+        self.fixture.x = 2
+        signal("horizontalInsert", self.buffer, 2, 3)
+        assert self.fixture.x == 5
         assert self.reception
 
     def testTrackHorizontalDelete(self):
         """ delete after: cursor is fix """
-        self.fixture.x = 0
-        signal("horizontalDelete", self.buffer, 1, 2)
-        assert self.fixture.x == 0
+        self.fixture.x = 1
+        signal("horizontalDelete", self.buffer, 2, 2)
+        assert self.fixture.x == 1
         """ delete before: cursor moves down """
         self.fixture.x = 5
         signal("horizontalDelete", self.buffer, 1, 2)
@@ -116,29 +81,29 @@ class TestCursor:
 
     def testTrackVerticalInsert(self):
         """ insert after: cursor is fix """
-        self.fixture.y = 0
-        signal("verticalInsert", self.buffer, 1, 2)
-        assert self.fixture.y == 0
-        """ insert before: cursor moves up """
         self.fixture.y = 1
-        signal("verticalInsert", self.buffer, 1, 1)
-        assert self.fixture.y == 2
+        signal("verticalInsert", self.buffer, 2, 2)
+        assert self.fixture.y == 1
+        """ insert before: cursor moves up """
+        self.fixture.y = 2
+        signal("verticalInsert", self.buffer, 2, 1)
+        assert self.fixture.y == 3
         assert self.reception
 
     def testTrackVerticalDelete(self):
         """ delete after: cursor is fix """
-        self.fixture.y = 0
+        self.fixture.y = 1
         signal("horizontalDelete", self.buffer, 1, 1)
-        assert self.fixture.y == 0
+        assert self.fixture.y == 1
         """ delete before: cursor moves down """
-        self.fixture.x = 2
-        signal("horizontalDelete", self.buffer, 0, 1)
-        assert self.fixture.x == 1
+        self.fixture.x = 3
+        signal("horizontalDelete", self.buffer, 2, 1)
+        assert self.fixture.x == 2
         """ delete before including cursor """
         """ cursor moves down to position """
-        self.fixture.x = 1
-        signal("horizontalDelete", self.buffer, 0, 2)
-        assert self.fixture.x == 0
+        self.fixture.x = 2
+        signal("horizontalDelete", self.buffer, 1, 2)
+        assert self.fixture.x == 1
         assert self.reception
 
 
