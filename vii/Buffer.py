@@ -110,9 +110,8 @@ class Buffer:
 
     def lengthOfLine(self, y):
         "Length of line y"
-        y = y - 1
         self._checkBufferBounds(y)
-        return len(self.lines[y])
+        return len(self.lines[y-1])
 
     def countOfLines(self):
         "Count of lines"
@@ -159,10 +158,10 @@ class Buffer:
 
     def _checkLineBoundsPlus1(self, y, x):
         self._checkBufferBounds(y)
-        if x < 0:
+        if x < 1:
             raise LineBoundsException("3: y/x: %s/%s"%(y,x))
         line = self.lines[y-1]
-        if x > len(line):
+        if x > len(line) + 1:
             raise LineBoundsException("4: y/x: %s/%s"%(y,x))
 
     def _checkRange(self, start, end):

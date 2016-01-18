@@ -24,6 +24,7 @@ class Inserting(AbstractAction):
     def insert(self, char):
         debug("Insert: %s" % char)
         y,x = self.cursor.position()
+        debug("Position: %s, %s" % (y, x))
         self.buffer.insert((y,x), char)
         self.cursor.position(x = x + 1)
 

@@ -27,6 +27,7 @@ class Window(AbstractWindow):
     def move(self):
         y, x = self.cursor.position()
         debug("move %s %s" % (y, x))
+        y, x = y - 1 , x - 1
         x += numberBarWidth
         self.window.move(y, x)
 

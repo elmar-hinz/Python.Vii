@@ -3,12 +3,23 @@ from .Signals import *
 from .BufferRanges import BufferRanges
 
 class Cursor:
+    """
+    Observes the buffer.
+    Tracks inserting and deleting.
+
+    Keeps the cursor inside the range of buffer
+    if movements go out of bounds.
+    Cursor can stay 1 behing length of line
+    to enable appending.
+    Position adjustments should happen in BufferRanges,
+    while only exceptions are thrown here.
+    """
 
     def __init__(self):
         self.buffer = None
         self.ranges = None
-        self.x = 0
-        self.y = 0
+        self.x = 1
+        self.y = 1
         slot("verticalInsert", self)
         slot("horizontalInsert", self)
         slot("verticalDelete", self)
@@ -33,32 +44,12 @@ class Cursor:
         self.update()
 
     def guardRange(self):
-        if self.y < 0:
-            self.y = 0
-        elif self.y > self.buffer.countOfLines() - 1:
-            self.y = self.buffer.countOfLines() - 1
+        if self.y < 1: self.y = 1
+        elif self.y > self.buffer.countOfLines() :
+            self.y = self.buffer.countOfLines()
         length = self.buffer.lengthOfLine(self.y)
-        if self.x < 0:
-            self.x = 0
-        elif self.x > length:
-            self.x = length
-
-    def moveVertical(self, offset):
-        y = self.y + offset
-        height = self.buffer.countOfLines()
-        if y < 0: y = 0
-        if y >= height: y = height - 1 # cursor can't stay behind last line
-        self.y = y
-        self.update()
-
-    def moveHorizontal(self, offset):
-        y = self.y
-        width = self.buffer.lengthOfLine(y)
-        x = self.x + offset
-        if x < 0: x = 0
-        if x > width: x = width # cursor can stay behind last char by ONE
-        self.x = x
-        self.update()
+        if self.x < 1: self.x = 1
+        elif self.x > length + 1: self.x = length + 1
 
     def trackHorizontalInsert(self, x, length):
         if x <= self.x: self.x += length
@@ -71,6 +62,7 @@ class Cursor:
         self.update()
 
     def trackVerticalInsert(self, y, length):
+        print(y, length)
         if y <= self.y: self.y += length
         self.update()
 
