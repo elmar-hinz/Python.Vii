@@ -1,5 +1,12 @@
 from .Logger import *
 from .BufferRanges import BufferRanges
+from .AbstractAction import AbstractAction
+
+class DummyAction(AbstractAction):
+
+    def act(self, dummyCallback = None):
+        return "normal", self.actionManager.action("normal", "idle")
+
 
 class ActionManager:
 
@@ -19,16 +26,15 @@ class ActionManager:
     def action(self, mode, operator):
         try:
             action = self.actionMaps[mode][operator]
+            module = self.actionModules[mode]
+            Action = getattr(module, action)
+            action = Action()
         except KeyError:
             debug("Key Error: %s %s" % (mode, operator))
             self.dispatcher.reset()
-            mode, operator = "normal", "idle"
-            action = self.actionMaps[mode][operator]
-        module = self.actionModules[mode]
-        Action = getattr(module, action)
-        action = Action()
+            action = DummyAction()
         action.dispatcher = self.dispatcher
-        action.command = self.dispatcher.newCommand
+        action.command = self.dispatcher.currentCommand
         action.windowManager = self.windowManager
         action.actionManager = self
         action.registerManager = self.registerManager

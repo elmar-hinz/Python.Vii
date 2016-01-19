@@ -1,9 +1,8 @@
 from .AbstractAction import AbstractAction
-from .Logger import *
 
 class Left(AbstractAction):
     def act(self, callback):
-        factor = self.multiplyCounts()
+        factor = self.command.multiplyAll()
         stop = self.ranges.left()
         start = self.ranges.left(factor)
         self.cursor.left(factor)
@@ -11,24 +10,17 @@ class Left(AbstractAction):
 
 class Right(AbstractAction):
     def act(self, callback):
-        factor = self.multiplyCounts()
+        factor = self.command.multiplyAll()
         start = self.cursor.position()
         stop = self.ranges.right(factor - 1)
         return callback.call((start, stop))
 
 class YankLines(AbstractAction):
     def act(self, callback):
-        if self.dispatcher.operator() == "y":
-            factor = self.multiplyCounts()
-            command = self.dispatcher.command()
-            command['count'] = factor
-            command['operator'] = "Y"
-            command['count2'] = 0
-            command['operator2'] = ""
-            return self.actionManager.action("normal", "idle").act()
-
+        if self.command.previous().operator == "y":
+            factor = self.command.multiplyAll()
+            return self.redirect("Y", factor)
         else:
-            self.finish()
-            return self.actionManager.action("normal", "idle").act()
+            return skipToIdle()
 
 

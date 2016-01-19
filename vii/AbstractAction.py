@@ -2,26 +2,33 @@ class AbstractAction:
 
     def act(self): pass
 
-    def range(self): pass
-
     def finish(self):
         self.dispatcher.logHistory()
         self.dispatcher.reset()
 
-    def multiplyCounts(self):
-        count1 = self.dispatcher.count()
-        count2 = self.dispatcher.operatorPendingCount()
-        if not count1: count1 = 1
-        if not count2: count2 = 1
-        return count1 * count2
+    def redirect(self, operator, count = None):
+            self.dispatcher.reset()
+            part = self.dispatcher.currentCommand.last()
+            part.operator = "Y"
+            if count:
+                part.numeral = str(count)
+                part.count = count
+            part.ready = True
+            return self.actionManager.action("normal", "idle").act()
+
+    def skipToIdle(self):
+        self.dispatcher.reset()
+        return "normal", self.actionManager.action("normal", "idle")
 
 class AbstractPendingAction(AbstractAction):
 
     def act(self):
-        if not self.dispatcher.operatorPendingReady():
-            return "operatorPending", self
+        mode = self.dispatcher.currentMode
+        if mode == "operatorPending":
+            operator = self.command.lpOperator()
+            return self.actionManager.action(mode, operator).act(self)
         else:
-            operator = self.dispatcher.operatorPendingOperator()
-            return self.actionManager.action("operatorPending", operator).act(self)
+            self.dispatcher.extend()
+            return "operatorPending", self
 
     def call(self, range): pass
