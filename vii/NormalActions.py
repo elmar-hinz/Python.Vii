@@ -6,23 +6,18 @@ class Idle(AbstractAction):
     def act(self, dummyCallback = None):
         """ dummy callback required when used as Null
         action from operartor pending mode. """
-        if self.command.cpReady():
-            operator = self.command.cpOperator()
-            return self.actionManager.action("normal", operator).act()
-        else:
-            return "normal", self
+        operator = self.command.lpOperator()
+        return self.actionManager.action("normal", operator).act()
 
 class Append(AbstractAction):
     def act(self):
         self.cursor.appendInLine()
-        self.command.next()
         return "insert", self.actionManager.action("insert", "inserting")
 
 class AppendToLine(AbstractAction):
     def act(self):
         self.cursor.endOfLine()
         self.cursor.appendInLine()
-        self.command.next()
         return "insert", self.actionManager.action("insert", "inserting")
 
 class BeginningOfLine(AbstractAction):
@@ -34,7 +29,6 @@ class BeginningOfLine(AbstractAction):
 class Change(AbstractPendingAction):
     def call(self, range):
         self.buffer.deleteRange(*range)
-        self.command.next()
         return "insert", self.actionManager.action("insert", "inserting")
 
 class Delete(AbstractPendingAction):
@@ -45,7 +39,7 @@ class Delete(AbstractPendingAction):
 
 class Down(AbstractAction):
     def act(self):
-        self.cursor.down(self.command.cpCount())
+        self.cursor.down(self.command.lpCount())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -57,35 +51,33 @@ class EndOfLine(AbstractAction):
 
 class GotoLine(AbstractAction):
     def act(self):
-        if self.command.cpCount() == None:
+        if self.command.lpCount() == None:
             self.cursor.endOfBuffer()
             self.cursor.beginningOfLine()
         else:
-            position = self.command.cpCount(), 1
+            position = self.command.lpCount(), 1
             self.cursor.position(*position)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class Insert(AbstractAction):
     def act(self):
-        self.command.next()
         return "insert", self.actionManager.action("insert", "inserting")
 
 class InsertBeforeLine(AbstractAction):
     def act(self):
         self.cursor.beginningOfLine()
-        self.command.next()
         return "insert", self.actionManager.action("insert", "inserting")
 
 class Left(AbstractAction):
     def act(self):
-        self.cursor.left(self.command.cpCount())
+        self.cursor.left(self.command.lpCount())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class PutBefore(AbstractAction):
     def act(self):
-        count = self.command.cpCount()
+        count = self.command.lpCount()
         if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
@@ -100,7 +92,7 @@ class PutBefore(AbstractAction):
 
 class PutAfter(AbstractAction):
     def act(self):
-        count = self.command.cpCount()
+        count = self.command.lpCount()
         if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
@@ -121,13 +113,13 @@ class PutAfter(AbstractAction):
 
 class Right(AbstractAction):
     def act(self):
-        self.cursor.right(self.command.cpCount())
+        self.cursor.right(self.command.lpCount())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class Up(AbstractAction):
     def act(self):
-        self.cursor.up(self.command.cpCount())
+        self.cursor.up(self.command.lpCount())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -140,7 +132,7 @@ class Yank(AbstractPendingAction):
 
 class YankLines(AbstractAction):
     def act(self):
-        count = self.command.cpCount()
+        count = self.command.lpCount()
         if not count: count = 1
         y, x = self.cursor.position()
         string = self.buffer.copyLines(y, count)

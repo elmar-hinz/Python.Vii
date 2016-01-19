@@ -42,7 +42,9 @@ class Command:
     def multiplyAll(self):
         result = 1
         for i in range(len(self.parts)):
-            result *= self.parts[i].count
+            count = self.parts[i].count
+            count = count if count else 1
+            result *= count
         return result
 
     """ Shortcuts to the last part """

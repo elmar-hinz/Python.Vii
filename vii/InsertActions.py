@@ -4,11 +4,11 @@ from .AbstractAction import AbstractAction
 class Inserting(AbstractAction):
 
     def act(self):
-        # self.step(self.command.cpToken())
-        self.step(self.dispatcher.token())
+        self.step(self.command.lpInsert())
         return ("insert", self)
 
     def step(self, token):
+        debug("Insert %s" % token)
         if not "startPosition" in dir(self): self.start()
         if False: pass
         elif token == chr(10): self.newline()

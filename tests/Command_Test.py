@@ -47,6 +47,8 @@ class TestCommand:
 
     def test_multiplyAll(self):
         self.fixture.last().count = 2
+        2elf.fixture.extend()
+        self.fixture.last().count = None
         self.fixture.extend()
         self.fixture.last().count = 3
         assert self.fixture.multiplyAll() == 6
