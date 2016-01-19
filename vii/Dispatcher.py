@@ -1,4 +1,5 @@
 from .Logger import *
+from .Command import Command
 
 class TokenExecption(Exception): pass
 
@@ -11,6 +12,7 @@ class Dispatcher:
         self.currentAction = None
         self.currentToken = None
         self.currentCommand = None
+        self.newCommand = None
         self.operatorReady = False
         self.operator2Ready = False
 
@@ -22,25 +24,31 @@ class Dispatcher:
 
     def stepInit(self, token):
         if isinstance(token, int): raise TokenExecption
+        if self.newCommand == None: self.reset()
         if self.currentMode == None or self.currentAction == None:
             self.currentMode = "normal"
             self.currentAction = self.actionManager.action(
                 "normal", "idle")
-        if self.currentCommand == None:
-            self.reset()
+        if self.currentCommand == None: self.reset()
 
     def stepCommand(self, token):
         if self.currentMode == "insert":
             self.currentCommand['inserts'] += token
+            self.newCommand.last().appendToInserts(token)
         elif self.currentMode == "normal":
             if token.isdigit():
                 self.currentCommand['count'] += token
+                self.newCommand.last().appendToNumeral(token)
+                self.newCommand.last().numeralToCount()
             else:
                 count = self.currentCommand['count']
                 if count == "": self.currentCommand['count'] = None
                 else: self.currentCommand['count'] = int(count)
                 self.currentCommand['operator'] += token
                 self.operatorReady = True
+                self.newCommand.last().operator = token
+                self.newCommand.last().ready = True
+                self.newCommand.extend()
         elif self.currentMode == "operatorPending":
             if token.isdigit():
                 self.currentCommand['count2'] += token
@@ -98,7 +106,13 @@ class Dispatcher:
         self.operatorReady = False
         self.operator2Ready = False
 
+        self.newCommand = Command()
+        self.newCommand.extend()
+
     def noneCountTo1(self):
         if self.currentCommand['count'] == None:
             self.currentCommand['count'] = 1
+        if self.newCommand.current().count == None:
+            self.newCommand.current().count = 1
+
 

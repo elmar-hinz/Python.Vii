@@ -4,6 +4,7 @@ from .AbstractAction import AbstractAction
 class Inserting(AbstractAction):
 
     def act(self):
+        # self.step(self.command.cpToken())
         self.step(self.dispatcher.token())
         return ("insert", self)
 

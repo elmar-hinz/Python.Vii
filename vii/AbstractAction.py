@@ -22,11 +22,6 @@ class AbstractPendingAction(AbstractAction):
             return "operatorPending", self
         else:
             operator = self.dispatcher.operatorPendingOperator()
-            action = self.actionManager.action("operatorPending", operator)
-            if action == None:
-                self.dispatcher.reset()
-                return self.actionManager.action("normal", "idle")
-            else:
-                return action.act(self)
+            return self.actionManager.action("operatorPending", operator).act(self)
 
     def call(self, range): pass
