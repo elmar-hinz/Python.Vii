@@ -20,11 +20,15 @@ class ActionManager:
         try:
             action = self.actionMaps[mode][operator]
         except KeyError:
-            return None
+            debug("Key Error: %s %s" % (mode, operator))
+            self.dispatcher.reset()
+            mode, operator = "normal", "idle"
+            action = self.actionMaps[mode][operator]
         module = self.actionModules[mode]
         Action = getattr(module, action)
         action = Action()
         action.dispatcher = self.dispatcher
+        action.command = self.dispatcher.newCommand
         action.windowManager = self.windowManager
         action.actionManager = self
         action.registerManager = self.registerManager

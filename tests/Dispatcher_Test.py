@@ -4,6 +4,7 @@ from nose.tools import *
 class FinshActionSeen(Exception): pass
 
 class Action:
+
     finishSeen = False
     def finish(self): self.finishSeen = True
     def act(self): return "actSeen"
@@ -13,7 +14,7 @@ class ActionManager:
 
     def action(self, mode, operator):
         self.actionCalled += 1
-        return mode, self.Action
+        return self.Action
 
 class Dispatcher_Test:
     def setup(self):
@@ -30,7 +31,9 @@ class Dispatcher_Test:
         assert self.dispatcher.currentAction == None
         assert self.dispatcher.currentToken == None
         assert self.dispatcher.currentCommand == None
+        assert self.dispatcher.newCommand == None
         assert self.dispatcher.operatorReady == False
+        assert self.dispatcher.operator2Ready == False
 
     @raises(TokenExecption)
     def test_stepInit_raises_exception_for_int(self):
@@ -42,6 +45,7 @@ class Dispatcher_Test:
         self.dispatcher.stepInit("a")
         assert self.dispatcher.currentMode == "normal"
         assert self.dispatcher.currentAction == self.action
+
     def test_stepCommand_inserts(self):
         self.dispatcher.reset()
         self.dispatcher.currentMode = "insert"
@@ -66,7 +70,7 @@ class Dispatcher_Test:
                 "inserts" : [],
                 'count': 11,
                 'operator': "a",
-                'count2': "0",
+                'count2': "",
                 'operator2': "",
                 }
         assert self.dispatcher.command() == expect
@@ -82,7 +86,7 @@ class Dispatcher_Test:
         assert self.dispatcher.operatorPendingReady() == True
         expect = {
                 "inserts" : [],
-                'count': "0",
+                'count': "",
                 'operator': "",
                 'count2': 11,
                 'operator2': "a",
@@ -95,9 +99,9 @@ class Dispatcher_Test:
         self.dispatcher.reset()
         expect = {
                 "inserts" : [],
-                'count': "0",
+                'count': "",
                 'operator': "",
-                'count2': "0",
+                'count2': "",
                 'operator2': "",
                 }
         assert self.dispatcher.currentCommand == expect
