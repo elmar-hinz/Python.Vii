@@ -8,10 +8,9 @@ class TestPart:
     def test_setup(self):
         assert self.fixture.numeral == ""
         assert self.fixture.operator == ""
-        assert self.fixture.inserts == ""
+        assert self.fixture.inserts == []
         assert self.fixture.register == None
         assert self.fixture.count == None
-        assert self.fixture.token == None
         assert self.fixture.ready == False
 
     def test_appendToNumeral_and_count(self):
@@ -24,7 +23,12 @@ class TestPart:
     def test_appendToInserts(self):
         self.fixture.appendToInserts("a")
         self.fixture.appendToInserts("b")
-        assert self.fixture.inserts == "ab"
+        assert self.fixture.inserts == ["a", "b"]
+
+    def test_insert(self):
+        self.fixture.appendToInserts("a")
+        self.fixture.appendToInserts("b")
+        assert self.fixture.insert() == "b"
 
 class TestCommand:
 
@@ -34,20 +38,12 @@ class TestCommand:
 
     def test_setup(self):
         assert len(self.fixture.parts) == 1
-        assert self.fixture.position == 0
 
-    def test_extend_and_last(self):
+    def test_part_extend_previous_and_last(self):
         assert self.fixture.last() == self.fixture.part(0)
         self.fixture.extend()
+        assert self.fixture.previous() == self.fixture.part(0)
         assert self.fixture.last() == self.fixture.part(1)
-
-    def test_next_rewind_current(self):
-        self.fixture.extend()
-        assert self.fixture.current() == self.fixture.part(0)
-        self.fixture.next()
-        assert self.fixture.current() == self.fixture.part(1)
-        self.fixture.rewind()
-        assert self.fixture.current() == self.fixture.part(0)
 
     def test_multiplyAll(self):
         self.fixture.last().count = 2
@@ -55,25 +51,21 @@ class TestCommand:
         self.fixture.last().count = 3
         assert self.fixture.multiplyAll() == 6
 
-    def test_shortcuts_to_current_part(self):
+    def test_shortcuts_to_lastPart(self):
         self.fixture.extend()
-        self.fixture.next()
-        assert not self.fixture.cpReady()
+        assert not self.fixture.lpReady()
         self.fixture.part(1).ready = True
-        assert self.fixture.cpReady()
-        assert self.fixture.cpRegister() == None
+        assert self.fixture.lpReady()
+        assert self.fixture.lpRegister() == None
         self.fixture.part(1).register = "R"
-        assert self.fixture.cpRegister() == "R"
-        assert self.fixture.cpOperator() == ""
+        assert self.fixture.lpRegister() == "R"
+        assert self.fixture.lpOperator() == ""
         self.fixture.part(1).operator = "O"
-        assert self.fixture.cpOperator() == "O"
-        assert self.fixture.cpCount() == None
+        assert self.fixture.lpOperator() == "O"
+        assert self.fixture.lpCount() == None
         self.fixture.part(1).count = 7
-        assert self.fixture.cpCount() == 7
-        assert self.fixture.cpInserts() == ""
-        self.fixture.part(1).inserts = "ab"
-        assert self.fixture.cpInserts() == "ab"
-        assert self.fixture.cpToken() == None
-        self.fixture.part(1).token = "T"
-        assert self.fixture.cpToken() == "T"
+        assert self.fixture.lpCount() == 7
+        assert self.fixture.lpInserts() == []
+        self.fixture.part(1).inserts = ['a', 'b']
+        assert self.fixture.lpInserts() == ['a', 'b']
 
