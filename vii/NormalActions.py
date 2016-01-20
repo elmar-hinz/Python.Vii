@@ -45,6 +45,8 @@ class Down(AbstractAction):
 
 class EndOfLine(AbstractAction):
     def act(self):
+        count = self.command.lpCount()
+        if count: self.cursor.down(count - 1)
         self.cursor.endOfLine()
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
