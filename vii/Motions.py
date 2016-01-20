@@ -1,5 +1,5 @@
 
-class BufferRanges:
+class Motions:
     """
     Range control happens here, while the buffer
     is just throwing exectpions.
