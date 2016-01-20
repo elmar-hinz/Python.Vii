@@ -28,12 +28,12 @@ class BeginningOfLine(AbstractAction):
 
 class Change(AbstractPendingAction):
     def call(self, range):
-        self.buffer.deleteRange(*range)
+        self.buffer.deleteRange(*range.toPositions())
         return "insert", self.actionManager.action("insert", "inserting")
 
 class Delete(AbstractPendingAction):
     def call(self, range):
-        self.buffer.deleteRange(*range)
+        self.buffer.deleteRange(*range.toPositions())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -125,7 +125,7 @@ class Up(AbstractAction):
 
 class Yank(AbstractPendingAction):
     def call(self, range):
-        string = self.buffer.copyRange(*range)
+        string = self.buffer.copyRange(*range.toPositions())
         self.registerManager.unshift(string)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
