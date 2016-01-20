@@ -1,5 +1,5 @@
 from .Buffer import Buffer
-from .BufferRanges import BufferRanges
+from .Motions import Motions
 from .Cursor import Cursor
 from .view.Window import Window
 
@@ -17,12 +17,12 @@ class WindowManager:
         self.cursor = Cursor()
         self.buffer = Buffer()
         self.buffer.insertLines(1,"")
-        self.ranges = BufferRanges()
+        self.motions = Motions()
         self.window = Window(self.parentScreen)
         self.cursor.buffer = self.buffer
-        self.cursor.ranges = self.ranges
-        self.ranges.buffer = self.buffer
-        self.ranges.cursor = self.cursor
+        self.cursor.motions = self.motions
+        self.motions.buffer = self.buffer
+        self.motions.cursor = self.cursor
         self.window.cursor = self.cursor
         self.window.buffer = self.buffer
 

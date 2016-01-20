@@ -15,7 +15,7 @@ class BufferMock:
     def countOfLines(self):
         return len(self.text)
 
-class RangesMock:
+class MotionsMock:
     pass
 
 class TestCursor:
@@ -24,10 +24,10 @@ class TestCursor:
 
     def setup(self):
         self.buffer = BufferMock()
-        self.ranges = RangesMock()
+        self.motions = MotionsMock()
         self.fixture = Cursor()
         self.fixture.buffer = self.buffer
-        self.fixture.ranges = self.ranges
+        self.fixture.motions = self.motions
         slot("cursorMoved", self)
         self.reception = False
 
@@ -43,7 +43,7 @@ class TestCursor:
         assert self.fixture.y == 1
 
     def testUpdate(self):
-        self.fixture.update()
+        self.fixture.updated()
         assert self.reception
 
     def testPosition(self):

@@ -1,5 +1,4 @@
 from .Logger import *
-from .BufferRanges import BufferRanges
 from .AbstractAction import AbstractAction
 
 class DummyAction(AbstractAction):
@@ -41,7 +40,7 @@ class ActionManager:
         action.window = self.windowManager.window
         action.buffer = self.windowManager.buffer
         action.cursor = self.windowManager.cursor
-        action.ranges = self.windowManager.ranges
+        action.motions = self.windowManager.motions
         return action
 
     def parseMap(self, text):

@@ -1,6 +1,5 @@
 from .Logger import *
 from .Signals import *
-from .BufferRanges import BufferRanges
 
 class CursorException(Exception): pass
 
@@ -15,7 +14,7 @@ class Cursor:
 
     def __init__(self):
         self.buffer = None
-        self.ranges = None
+        self.motions = None
         self.x = 1
         self.y = 1
         slot("verticalInsert", self)
@@ -77,29 +76,29 @@ class Cursor:
     """ Movements """
 
     def appendInLine(self):
-        self.position(*self.ranges.appendInLine())
+        self.position(*self.motions.appendInLine())
 
     def beginningOfBuffer(self):
-        self.position(*self.ranges.beginningOfBuffer())
+        self.position(*self.motions.beginningOfBuffer())
 
     def beginningOfLine(self):
-        self.position(*self.ranges.beginningOfLine())
+        self.position(*self.motions.beginningOfLine())
 
     def down(self, factor = None):
-        self.position(*self.ranges.down(factor))
+        self.position(*self.motions.down(factor))
 
     def endOfBuffer(self):
-        self.position(*self.ranges.endOfBuffer())
+        self.position(*self.motions.endOfBuffer())
 
     def endOfLine(self):
-        self.position(*self.ranges.endOfLine())
+        self.position(*self.motions.endOfLine())
 
     def left(self, factor = None):
-        self.position(*self.ranges.left(factor))
+        self.position(*self.motions.left(factor))
 
     def right(self, factor = None):
-        self.position(*self.ranges.right(factor))
+        self.position(*self.motions.right(factor))
 
     def up(self, factor = None):
-        self.position(*self.ranges.up(factor))
+        self.position(*self.motions.up(factor))
 

@@ -1,6 +1,6 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.BufferRanges import BufferRanges
+from vii.Motions import Motions
 
 class Dummy():
     text = ["aa", "bbb", "ccccc", "ddd", "ee"]
@@ -11,11 +11,11 @@ class Dummy():
     def countOfLines(self):
         return len(self.text)
 
-class TestBufferRanges:
+class Motions_Test:
     def setup(self):
         self.buffer = Dummy()
         self.cursor = Dummy()
-        self.fixture = BufferRanges()
+        self.fixture = Motions()
         self.fixture.buffer = self.buffer
         self.fixture.cursor = self.cursor
         self.cursor.x = 3

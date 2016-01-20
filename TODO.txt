@@ -1,0 +1,8 @@
+
+* bufferRanges to Motions
+* range into buffer
+* range into motions
+* more pending movements
+* g-Actions return line-ranges?
+* read and write buffer
+
