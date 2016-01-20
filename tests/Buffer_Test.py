@@ -161,6 +161,16 @@ class TestBuffer:
         expect = "e"
         assert self.buffer.copyRange((2,2), (2,2)) == expect
 
+    def test_copy(self):
+        text = "abc\ndef\nghi\njkl"
+        self.buffer.fill(text)
+        range = Range(3, 2)
+        assert self.buffer.copy(range) == "def\nghi"
+        range = Range((3, 3), (2, 2))
+        assert self.buffer.copy(range) == "ef\nghi"
+        range = Range((3, 3), (3, 1))
+        assert self.buffer.copy(range) == "ghi"
+
     """ deleting """
 
     def test_deleteLines(self):
@@ -237,6 +247,23 @@ class TestBuffer:
         expect = "abc\n\njkl"
         self.buffer.deleteRange((2,1), (3,3))
         assert str(self.buffer) == expect
+
+    def test_delete(self):
+        text = "abc\ndef\nghi\njkl"
+        self.buffer.fill(text)
+        range = Range(3, 2)
+        self.buffer.delete(range)
+        assert str(self.buffer) == "abc\njkl"
+        text = "abc\ndef\nghi\njkl"
+        self.buffer.fill(text)
+        range = Range((3, 3), (2, 2))
+        self.buffer.delete(range)
+        assert str(self.buffer) == "abc\nd\njkl"
+        text = "abc\ndef\nghi\njkl"
+        self.buffer.fill(text)
+        range = Range((3, 3), (3, 1))
+        self.buffer.delete(range)
+        assert str(self.buffer) ==  "abc\ndef\n\njkl"
 
     """ inserting """
 
@@ -340,5 +367,14 @@ class TestBuffer:
         expect = "1\n2aa\nbb\ncc2\n3"
         self.buffer.fill(prefill)
         self.buffer.insert((2,2), text)
+        assert str(self.buffer) == expect
+
+    def test_insert_from_Range(self):
+        prefill = "1\n22\n3"
+        text = "aa\nbb\ncc"
+        expect = "1\n2aa\nbb\ncc2\n3"
+        position = Range((2,2), (2,2))
+        self.buffer.fill(prefill)
+        self.buffer.insert(position, text)
         assert str(self.buffer) == expect
 

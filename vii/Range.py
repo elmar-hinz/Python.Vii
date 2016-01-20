@@ -50,6 +50,15 @@ class Range:
         return ("Range: %s, %s : %s, %s" %
                 (*self.position1, *self.position2))
 
+    def isInverse(self):
+        if self.position1[0] > self.position2[0]:
+            return True
+        if(self.isPositions()
+                and self.position1[0] == self.position2[0]
+                and self.position1[1] > self.position2[1]):
+            return True
+        return False
+
     def isLines(self):
         return (self.position1[1] == None
             and self.position2[1] == None)
