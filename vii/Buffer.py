@@ -1,4 +1,5 @@
 from .Signals import signal
+from .Range import Range
 
 class BufferBoundsException(IndexError): pass
 class LineBoundsException(IndexError): pass
@@ -26,7 +27,10 @@ class Buffer:
         "Insert string at position y, x"
         "Plus1 for appending"
         if string == "": return
-        y, x = position
+        if isinstance(position, Range):
+            y, x = position.toPosition()
+        else:
+            y, x = position
         self._checkLineBoundsPlus1(y, x)
         tokens = self._parse(string)
         head = self.lines[y-1][:x-1]
@@ -48,6 +52,18 @@ class Buffer:
         self._checkBufferBoundsPlus1(y)
         self.lines[y-1:y-1] = self._parse(text)
         signal(self.updateSignal, self)
+
+    def delete(self, range):
+        "Based on type of range run the accoring method"
+        if range.isLines():
+            y1, y2 = range.toLines()
+            if range.isInverse(): y1, y2 = y2, y1
+            self.deleteLines(y1, y2 - y1 + 1)
+
+        if range.isPositions():
+            p1, p2 = range.toPositions()
+            if range.isInverse(): p1, p2 = p2, p1
+            self.deleteRange(p1, p2)
 
     def deleteFromLine(self, position, count):
         "Delete count chars from position"
@@ -75,6 +91,18 @@ class Buffer:
         tail = self.lines[y2-1][x2-1+1:]
         self.lines[y1-1:y2] = [head + tail]
         signal(self.updateSignal, self)
+
+    def copy(self, range):
+        "Based on type of range run the accoring method"
+        if range.isLines():
+            y1, y2 = range.toLines()
+            if range.isInverse(): y1, y2 = y2, y1
+            return self.copyLines(y1, y2 - y1 + 1)
+
+        if range.isPositions():
+            p1, p2 = range.toPositions()
+            if range.isInverse(): p1, p2 = p2, p1
+            return self.copyRange(p1, p2)
 
     def copyFromLine(self, position, count):
         "Copy count chars from position"

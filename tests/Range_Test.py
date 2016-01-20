@@ -8,6 +8,7 @@ class Range_Test:
         assert range == Range(3, 3)
         assert range.toLine() == 3
         assert range.toLines() == (3, 3)
+        assert not range.isInverse()
         assert range.isLines()
         assert range.isOneLine()
         range.assertLines()
@@ -17,6 +18,7 @@ class Range_Test:
         range = Range(1, 3)
         assert range == Range((1,3))
         assert range.toLines() == (1, 3)
+        assert not range.isInverse()
         assert range.isLines()
         assert range.isTwoLines()
         range.assertLines()
@@ -30,6 +32,7 @@ class Range_Test:
         assert range == range3
         assert range.toPosition() == (1, 3)
         assert range.toPositions() == ((1, 3), (1, 3))
+        assert not range.isInverse()
         assert range.isPositions()
         assert range.isOnePosition()
         range.assertPositions()
@@ -38,10 +41,16 @@ class Range_Test:
     def test_postions(self):
         range = Range((1, 3), (2, 4))
         assert range.toPositions() == ((1, 3), (2, 4))
+        assert not range.isInverse()
         assert range.isPositions()
         assert range.isTwoPositions()
         range.assertPositions()
         range.assertTwoPositions()
+
+    def test_isInverse(self):
+        assert Range(3, 2).isInverse()
+        assert Range((3, 1), (2, 1)).isInverse()
+        assert Range((3, 3), (3, 2)).isInverse()
 
     @raises(NotLinesRangeException)
     def test_NotLinesRangeException_1(self):
