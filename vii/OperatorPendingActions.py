@@ -1,5 +1,12 @@
 from .AbstractAction import AbstractAction
 from .Range import Range
+from .Logger import debug
+
+class Down(AbstractAction):
+    def act(self, callback):
+        factor = self.command.multiplyAll()
+        range = self.ranges.down(factor)
+        return callback.call(Range(range))
 
 class Left(AbstractAction):
     def act(self, callback):
@@ -15,6 +22,12 @@ class Right(AbstractAction):
         start = self.cursor.position()
         stop = self.ranges.right(factor - 1)
         return callback.call(Range(start, stop))
+
+class Up(AbstractAction):
+    def act(self, callback):
+        factor = self.command.multiplyAll()
+        range = self.ranges.up(factor)
+        return callback.call(Range(range))
 
 class YankLines(AbstractAction):
     def act(self, callback):
