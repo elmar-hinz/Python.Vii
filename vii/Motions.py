@@ -1,3 +1,5 @@
+from .Range import Range
+from .Logger import debug
 
 class Motions:
     """
@@ -10,44 +12,49 @@ class Motions:
         self.cursor = None
 
     def appendInLine(self):
-        range = (self._y(), self._x() + 1)
-        return self._forceLimits(range, 1)
+        position = (self._y(), self._x() + 1)
+        return (self._toRange(
+            self._forceLimits(position, 1)))
 
     def beginningOfBuffer(self):
-        return (1, 1)
+        return self._toRange((1, 1))
 
     def beginningOfLine(self):
-        return (self._y(), 1)
+        return self._toRange((self._y(), 1))
 
     def down(self, step = None):
         if not step: step = 1
-        range = self._y() + step, self._x()
-        return self._forceLimits(range)
+        position = self._y() + step, self._x()
+        return (self._toRange(
+            self._forceLimits(position)))
 
     def endOfBuffer(self):
         y = self.buffer.countOfLines()
         x = self.buffer.lengthOfLine(y)
-        return (y, x)
+        return self._toRange((y, x))
 
     def endOfLine(self, step = None):
         if not step: step = 1
         y = self._y() + step - 1
-        return (y, self.buffer.lengthOfLine(y) )
+        return self._toRange((y, self.buffer.lengthOfLine(y) ))
 
     def left(self, step = None):
         if not step: step = 1
-        range = (self._y(), self._x() - step)
-        return self._forceLimits(range)
+        position = (self._y(), self._x() - step)
+        return self._toRange(
+                self._forceLimits(position))
 
     def right(self, step = None):
         if not step: step = 1
-        range = (self._y(), self._x() + step)
-        return self._forceLimits(range)
+        position = (self._y(), self._x() + step)
+        return self._toRange(
+                self._forceLimits(position))
 
     def up(self, step = None):
         if not step: step = 1
-        range = (self._y() - step, self._x())
-        return self._forceLimits(range)
+        position = (self._y() - step, self._x())
+        return self._toRange(
+                self._forceLimits(position))
 
     def _x(self):
         return self.cursor.x
@@ -64,4 +71,7 @@ class Motions:
         if x > xLimit: x = xLimit
         if x < 1: x = 1
         return (y, x)
+
+    def _toRange(self, position):
+        return Range(self.cursor.position().toPosition(), position)
 
