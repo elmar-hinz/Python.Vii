@@ -252,8 +252,8 @@ class Buffer_Test:
         self.fillAndClear(text)
         self.buffer.delete(Range(1, 1))
         assert self.buffer.lines == ['22\n', '3\n', '44\n', '5\n', '66\n']
-        assert self.deleted("startPosition") == Position(1,1)
-        assert self.deleted("afterPosition") == Position(2,1)
+        assert self.deleted("afterPosition") == Position(1,1)
+        assert self.deleted("startPosition") == Position(2,1)
         assert "updatedBuffer" in self.signals
 
     def test_delete_intermediate_line(self):
@@ -261,40 +261,40 @@ class Buffer_Test:
         self.fillAndClear(text)
         self.buffer.delete(Range(2, 2))
         assert self.buffer.lines == ['1\n', '3\n', '44\n', '5\n', '66\n']
-        assert self.deleted("startPosition") == Position(2,1)
-        assert self.deleted("afterPosition") == Position(3,1)
+        assert self.deleted("afterPosition") == Position(2,1)
+        assert self.deleted("startPosition") == Position(3,1)
 
     def test_delete_last_line(self):
         text = "1\n22\n3\n44\n5\n66\n"
         self.fillAndClear(text)
         self.buffer.delete(Range(6, 6))
         assert self.buffer.lines == ['1\n', '22\n', '3\n', '44\n', '5\n']
-        assert self.deleted("startPosition") == Position(6,1)
-        assert self.deleted("afterPosition") == Position(7,1)
+        assert self.deleted("afterPosition") == Position(6,1)
+        assert self.deleted("startPosition") == Position(7,1)
 
     def test_delete_muliple_lines_at_start(self):
         text = "1\n22\n3\n44\n5\n66\n"
         self.fillAndClear(text)
         self.buffer.delete(Range(1, 2))
         assert self.buffer.lines == ['3\n', '44\n', '5\n', '66\n']
-        assert self.deleted("startPosition") == Position(1,1)
-        assert self.deleted("afterPosition") == Position(3,1)
+        assert self.deleted("afterPosition") == Position(1,1)
+        assert self.deleted("startPosition") == Position(3,1)
 
     def test_delete_muliple_lines_inversed(self):
         text = "1\n22\n3\n44\n5\n66\n"
         self.fillAndClear(text)
         self.buffer.delete(Range(5, 2))
         assert self.buffer.lines == ['1\n', '66\n']
-        assert self.deleted("startPosition") == Position(2,1)
-        assert self.deleted("afterPosition") == Position(6,1)
+        assert self.deleted("afterPosition") == Position(2,1)
+        assert self.deleted("startPosition") == Position(6,1)
 
     def test_delete_muliple_lines_at_end(self):
         text = "1\n22\n3\n44\n5\n66\n"
         self.fillAndClear(text)
         self.buffer.delete(Range(5, 6))
         assert self.buffer.lines == ['1\n', '22\n', '3\n', '44\n']
-        assert self.deleted("startPosition") == Position(5,1)
-        assert self.deleted("afterPosition") == Position(7,1)
+        assert self.deleted("afterPosition") == Position(5,1)
+        assert self.deleted("startPosition") == Position(7,1)
 
     def test_delete_all_lines(self):
         text = "1\n22\n3\n44\n5\n66\n"
@@ -302,8 +302,8 @@ class Buffer_Test:
         self.buffer.delete(Range(1, 6))
         assert str(self.buffer) == ""
         assert self.buffer.lines == []
-        assert self.deleted("startPosition") == Position(1,1)
-        assert self.deleted("afterPosition") == Position(7,1)
+        assert self.deleted("afterPosition") == Position(1,1)
+        assert self.deleted("startPosition") == Position(7,1)
 
     def test_delete_all_lines_inversed(self):
         text = "1\n22\n3\n44\n5\n66\n"
@@ -311,8 +311,8 @@ class Buffer_Test:
         self.buffer.delete(Range(6, 1))
         assert str(self.buffer) == ""
         assert self.buffer.lines == []
-        assert self.deleted("startPosition") == Position(1,1)
-        assert self.deleted("afterPosition") == Position(7,1)
+        assert self.deleted("afterPosition") == Position(1,1)
+        assert self.deleted("startPosition") == Position(7,1)
 
     """ deleting inside line """
 
@@ -321,24 +321,24 @@ class Buffer_Test:
         self.fillAndClear(text)
         self.buffer.delete(Position(1,1))
         assert self.buffer.lines == ["\n", "1234\n"]
-        assert self.deleted("startPosition") == Position(1,1)
-        assert self.deleted("afterPosition") == Position(1,2)
+        assert self.deleted("afterPosition") == Position(1,1)
+        assert self.deleted("startPosition") == Position(1,2)
 
     def test_delete_last_sign_in_line(self):
         text = "1\n1234\n"
         self.fillAndClear(text)
         self.buffer.delete(Range((1,2), (1,2)))
         assert self.buffer.lines == ["11234\n"]
-        assert self.deleted("startPosition") == Position(1,2)
-        assert self.deleted("afterPosition") == Position(2,1)
+        assert self.deleted("afterPosition") == Position(1,2)
+        assert self.deleted("startPosition") == Position(2,1)
 
     def test_delete_in_line_without_bounds(self):
         text = "1\n1234\n"
         self.fillAndClear(text)
         self.buffer.delete(Range((2,1), (2,4)))
         assert self.buffer.lines == ["1\n", "\n"]
-        assert self.deleted("startPosition") == Position(2,1)
-        assert self.deleted("afterPosition") == Position(2,5)
+        assert self.deleted("afterPosition") == Position(2,1)
+        assert self.deleted("startPosition") == Position(2,5)
 
     @raises(LastLinebreakLostExecption)
     def test_delete_last_singn_in_last_line_excepts(self):
@@ -359,40 +359,40 @@ class Buffer_Test:
         self.buffer.fill(text)
         self.buffer.delete(Range((2,3), (5,6)))
         assert self.buffer.lines == ["1\n", "22666666\n"]
-        assert self.deleted("startPosition") == Position(2,3)
-        assert self.deleted("afterPosition") == Position(6,1)
+        assert self.deleted("afterPosition") == Position(2,3)
+        assert self.deleted("startPosition") == Position(6,1)
 
     def test_delete_from_range_amidst_lines(self):
         text = "1\n22\n333\n4444\n55555\n666666\n"
         self.buffer.fill(text)
         self.buffer.delete(Range((2,2), (3,2)))
         assert self.buffer.lines == ['1\n', '23\n', '4444\n', '55555\n', '666666\n']
-        assert self.deleted("startPosition") == Position(2,2)
-        assert self.deleted("afterPosition") == Position(3,3)
+        assert self.deleted("afterPosition") == Position(2,2)
+        assert self.deleted("startPosition") == Position(3,3)
 
     def test_delete_from_range_amidst_lines_inversed(self):
         text = "1\n22\n333\n4444\n55555\n666666\n"
         self.buffer.fill(text)
         self.buffer.delete(Range((3,2), (2,2)))
         assert self.buffer.lines == ['1\n', '23\n', '4444\n', '55555\n', '666666\n']
-        assert self.deleted("startPosition") == Position(2,2)
-        assert self.deleted("afterPosition") == Position(3,3)
+        assert self.deleted("afterPosition") == Position(2,2)
+        assert self.deleted("startPosition") == Position(3,3)
 
     def test_delete_from_range_amidst_to_end(self):
         text = "1\n22\n333\n4444\n55555\n666666\n"
         self.buffer.fill(text)
         self.buffer.delete(Range((2,2), (5,6)))
         assert self.buffer.lines == ['1\n', '2666666\n']
-        assert self.deleted("startPosition") == Position(2,2)
-        assert self.deleted("afterPosition") == Position(6,1)
+        assert self.deleted("afterPosition") == Position(2,2)
+        assert self.deleted("startPosition") == Position(6,1)
 
     def test_delete_from_range_end_to_amidst(self):
         text = "1\n22\n333\n4444\n55555\n666666\n"
         self.buffer.fill(text)
         self.buffer.delete(Range((2,3), (5,2)))
         assert self.buffer.lines == ['1\n', '22555\n', '666666\n']
-        assert self.deleted("startPosition") == Position(2,3)
-        assert self.deleted("afterPosition") == Position(5,3)
+        assert self.deleted("afterPosition") == Position(2,3)
+        assert self.deleted("startPosition") == Position(5,3)
 
     """ inserting """
     def inserted(self, key):

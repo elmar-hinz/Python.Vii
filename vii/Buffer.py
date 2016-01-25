@@ -93,11 +93,11 @@ class Buffer:
             self.lines[y1-1:y2] = [string]
         else:
             self.lines[y1-1:y2] = []
-        afterY = y2
-        afterX = x2 + 1
+        startY = y2
+        startX = x2 + 1
         signal(self.deletedSignal, self,
-            startPosition=Position(y1, x1),
-            afterPosition=Position(afterY,afterX))
+            startPosition=Position(startY,startX),
+            afterPosition=Position(y1, x1))
         signal(self.updatedSignal, self)
 
     def isEmpty(self):
