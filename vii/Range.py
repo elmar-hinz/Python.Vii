@@ -121,3 +121,15 @@ class Range:
         self.assertPositions()
         return self.position1, self.position2
 
+    def linewise(self):
+        return Range(self.position1[0], self.position2[0])
+
+    def swap(self):
+        return Range(self.position2, self.position1)
+
+class Position(Range):
+
+    def __init__(self, x, y):
+        super().__init__(x, y, isPosition = True)
+
+
