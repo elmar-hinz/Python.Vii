@@ -1,13 +1,15 @@
 from .Signals import signal
-from .Range import Range
+from .Range import Range, Position
+from .Logger import *
 
 class BufferBoundsException(IndexError): pass
 class LineBoundsException(IndexError): pass
 class RangeExeption(IndexError): pass
+class LastLinebreakLostExecption(Exception): pass
 
 class Buffer:
     """
-    All ranges are inclusive.
+    All ranges are inclusive, no null range possible.
 
     Indexing of all functions is based on 1
     for y and x while the internal lines array
@@ -15,129 +17,108 @@ class Buffer:
 
     The y direction (linewise) is always named
     before x.
+
+    Every line ends with "\n".
+    Empty lines contain just  "\n".
+    For zero lines __str__ returns "".
+    Line length includes the linebreak.
+
+    Operations are rejected with an exception,
+    if they cauuse a missing "\n" at the end
+    of the last line.
     """
 
-    updateSignal = "bufferUpdate"
+    filledSignal = "filledBuffer"
+    deletedSignal = "deletedFromBuffer"
+    insertedSignal = "insertedIntoBuffer"
+    updatedSignal = "updatedBuffer"
 
     def __init__(self):
         self.lines = []
-        signal(self.updateSignal, self)
+        signal(self.updatedSignal, self)
 
     def insert(self, position, string):
         "Insert string at position y, x"
-        "Plus1 for appending"
+        "plus 1 in y or x for appending"
         if string == "": return
-        if isinstance(position, Range):
-            y, x = position.toPosition()
-        else:
-            y, x = position
-        self._checkLineBoundsPlus1(y, x)
+        y, x = position.toPosition()
         tokens = self._parse(string)
-        head = self.lines[y-1][:x-1]
-        tail = self.lines[y-1][x-1:]
-        if len(tokens) == 1:
-            body = tokens[0]
-            replacement = [head + body + tail]
-        else:
-            head = head + tokens[0]
-            body = tokens[1:-1]
-            tail = tokens[-1] + tail
-            replacement = [head] + body + [tail]
-        self.lines[y-1:y] = replacement
-        signal(self.updateSignal, self)
+        try: head = self.lines[y-1][:x-1]
+        except IndexError: head = ""
+        try: tail = self.lines[y-1][x-1:]
+        except IndexError: tail = ""
 
-    def insertLines(self, y, text):
-        "Insert text at y as full lines"
-        "Plus1 for appending"
-        self._checkBufferBoundsPlus1(y)
-        self.lines[y-1:y-1] = self._parse(text)
-        signal(self.updateSignal, self)
+        if tail and tokens[-1][-1] == "\n":
+            tokens.append("")
+        tokens[0] = head + tokens[0]
+        tokens[-1] = tokens[-1] + tail
+        length = self.countOfLines()
+        if(y in (length, length + 1)
+            and tokens[-1][-1] != "\n"):
+                raise LastLinebreakLostExecption()
+        self.lines[y-1:y] = tokens
 
-    def delete(self, range):
-        "Based on type of range run the accoring method"
-        if range.isLines():
-            y1, y2 = range.toLines()
-            if range.isInverse(): y1, y2 = y2, y1
-            self.deleteLines(y1, y2 - y1 + 1)
-
-        if range.isPositions():
-            p1, p2 = range.toPositions()
-            if range.isInverse(): p1, p2 = p2, p1
-            self.deleteRange(p1, p2)
-
-    def deleteFromLine(self, position, count):
-        "Delete count chars from position"
-        if count == 0: return
-        y, x = position
-        self._checkLineBounds(y, x)
-        self._checkLineBounds(y, x + count - 1)
-        line = self.lines[y-1]
-        self.lines[y-1] = line[:x-1] + line[x-1+count:]
-        signal(self.updateSignal, self)
-
-    def deleteLines(self, y, count):
-        if count == 0: return
-        self._checkBufferBounds(y)
-        self._checkBufferBounds(y+count-1)
-        self.lines[y-1:y-1+count] = []
-        "Delete count lines from y"
-        signal(self.updateSignal, self)
-
-    def deleteRange(self, start, end):
-        "Delete from position to position"
-        start, end = self._checkRange(start, end)
-        y1, x1 = start; y2, x2 = end
-        head = self.lines[y1-1][:x1-1]
-        tail = self.lines[y2-1][x2-1+1:]
-        self.lines[y1-1:y2] = [head + tail]
-        signal(self.updateSignal, self)
+        afterX = len(tokens[-1]) - len(tail) + 1
+        afterY = y + len(tokens) - 1
+        deltaX = len(tokens[-1]) - len(head) - len(tail)
+        signal(self.insertedSignal, self,
+            startPosition=position,
+            afterPosition=Position(afterY,afterX),
+            deltaX=deltaX)
+        signal(self.updatedSignal, self)
 
     def copy(self, range):
-        "Based on type of range run the accoring method"
-        if range.isLines():
-            y1, y2 = range.toLines()
-            if range.isInverse(): y1, y2 = y2, y1
-            return self.copyLines(y1, y2 - y1 + 1)
-
-        if range.isPositions():
-            p1, p2 = range.toPositions()
-            if range.isInverse(): p1, p2 = p2, p1
-            return self.copyRange(p1, p2)
-
-    def copyFromLine(self, position, count):
-        "Copy count chars from position"
-        if count == 0: return ""
-        y, x = position
-        self._checkLineBounds(y, x)
-        self._checkLineBounds(y, x + count - 1)
-        return self.lines[y-1][x-1:x-1+count]
-
-    def copyLines(self, y, count):
-        "Copy count lines from y"
-        if count == 0: return ""
-        self._checkBufferBounds(y)
-        self._checkBufferBounds(y + count - 1)
-        return self._join(self.lines[y-1:y-1+count])
-
-    def copyRange(self, start, end):
-        "Copy from position to position"
-        start, end = self._checkRange(start, end)
-        y1, x1 = start; y2, x2 = end
+        range = self._resolveRange(range)
+        (y1, x1), (y2, x2) = range.toPositions()
         if y1 == y2:
-            count = x2 - x1 + 1
-            return self.copyFromLine(start, count)
+            return self.lines[y1-1][x1-1:x2]
         else:
-            count = self.lengthOfLine(y1) - x1 + 1
-            head = self.copyFromLine(start, count)
-            tail = self.copyFromLine((y2, 1), x2)
-            if y2 - y1 >= 2:
-                body = self.copyLines(y1 + 1, y2 - y1 - 1)
-                return '\n'.join([head, body, tail])
-            else:
-                return '\n'.join([head, tail])
+            head = self.lines[y1-1][x1-1:]
+            tail = self.lines[y2-1][:x2]
+            body = self._join(self.lines[y1:y2-1])
+            return head + body + tail
+
+    def delete(self, range):
+        range = self._resolveRange(range)
+        (y1, x1), (y2, x2) = range.toPositions()
+        head = self.lines[y1-1][:x1-1]
+        tail = self.lines[y2-1][x2:]
+        if not tail:
+            y2 = y2 + 1
+            x2 = 0
+            try: tail = self.lines[y2 - 1]
+            except IndexError: tail = ""
+        try:
+            deltaX = -len(self.lines[y2-1]) + len(head) + len(tail)
+        except IndexError:
+            deltaX = 0
+        string = head + tail
+        if string:
+            if string[-1] != "\n":
+                raise LastLinebreakLostExecption()
+            self.lines[y1-1:y2] = [string]
+        else:
+            self.lines[y1-1:y2] = []
+        afterY = y2
+        afterX = x2 + 1
+        signal(self.deletedSignal, self,
+            startPosition=Position(y1, x1),
+            afterPosition=Position(afterY,afterX),
+            deltaX=deltaX)
+        signal(self.updatedSignal, self)
+
+    def isEmpty(self):
+        "Has Zero lines"
+        return (len(self.lines) == 0)
+
+    def characterCount(self):
+        "Character count"
+        count = 0
+        for line in self.lines: count += len(line)
+        return count
 
     def lengthOfLine(self, y):
-        "Length of line y"
+        "Length of line including linebreak"
         self._checkBufferBounds(y)
         return len(self.lines[y-1])
 
@@ -147,33 +128,43 @@ class Buffer:
 
     def fill(self, text):
         "Clear and fill the buffer with text"
-        self.deleteLines(1, self.countOfLines())
-        self.insertLines(1, text)
+        if text == "": return
+        if text[-1] != "\n":
+            raise LastLinebreakLostExecption()
+        self.lines = self._parse(text)
+        signal(self.filledSignal, self)
+        signal(self.updatedSignal, self)
 
     def _parse(self, string):
         "Parse to list of lines"
+        if string == "": return []
         lines = string.splitlines()
-        if lines == []: lines = [""]
-        elif string[-1] == '\n': lines += [""]
+        for i in range(len(lines) - 1):
+            lines[i] += "\n"
+        if string[-1] == "\n":
+            lines[-1] += "\n"
         return lines
 
     def _join(self, lines):
         "Join str from list of lines"
-        return "\n".join(lines)
+        return "".join(lines)
 
     def __str__(self):
         return self._join(self.lines)
 
-    def _checkBufferBounds(self, y):
-        if y < 1:
-            raise BufferBoundsException()
-        if y > len(self.lines):
-            raise BufferBoundsException()
+    def _resolveRange(self, range):
+        if range.isInverse(): range = range.swap()
+        if range.isLines():
+            y1, y2 = range.toLines()
+            start = (y1, 1)
+            stop = (y2, self.lengthOfLine(y2))
+            range = Range(start, stop)
+        return range
 
-    def _checkBufferBoundsPlus1(self, y):
+    def _checkBufferBounds(self, y, plus = 0):
         if y < 1:
             raise BufferBoundsException()
-        if y > len(self.lines) + 1:
+        if y > len(self.lines) + plus:
             raise BufferBoundsException()
 
     def _checkLineBounds(self, y, x):
