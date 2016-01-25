@@ -47,6 +47,14 @@ class Range_Test:
         range.assertPositions()
         range.assertTwoPositions()
 
+    def test_init_by_positions(self):
+        pos1 = Position(1,1)
+        pos2 = Range(2,2, isPosition = True)
+        assert Range(pos1, pos2) == Range((1,1),(2,2))
+        assert Range(pos2, pos1) == Range((2,2),(1,1))
+        assert Range((1,1), pos2) == Range((1,1),(2,2))
+        assert Range(pos1, (2,2)) == Range((1,1),(2,2))
+
     def test_isInverse(self):
         assert Range(3, 2).isInverse()
         assert Range((3, 1), (2, 1)).isInverse()

@@ -10,7 +10,7 @@ class AbstractWindow:
         window = curses.newwin(*self.layout(parentWindow))
         window.refresh()
         self.window = window
-        slot("bufferUpdate", self)
+        slot("updatedBuffer", self)
 
     def draw(self):
         self.window.clear()
@@ -19,4 +19,5 @@ class AbstractWindow:
 
     def receive(self, signal, sender, *args):
         self.draw()
+
 

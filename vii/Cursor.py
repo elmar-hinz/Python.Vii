@@ -22,7 +22,6 @@ class Cursor:
         slot("deletedFromBuffer", self)
 
     def receive(self, signal, sender, **kwargs):
-        debug("received")
         if sender == self.buffer:
             if signal == "insertedIntoBuffer":
                 self.trackDelta(**kwargs)
@@ -53,7 +52,6 @@ class Cursor:
             return Position(self.y, self.x)
 
     def move(self, range):
-        debug("move")
         first, second = range.toPositions()
         self.y, self.x = second
         self.updated()
@@ -91,8 +89,8 @@ class Cursor:
     def endOfBuffer(self):
         self.move(self.motions.endOfBuffer())
 
-    def endOfLine(self):
-        self.move(self.motions.endOfLine())
+    def endOfLine(self, count = None):
+        self.move(self.motions.endOfLine(count))
 
     def left(self, factor = None):
         self.move(self.motions.left(factor))
@@ -102,4 +100,6 @@ class Cursor:
 
     def up(self, factor = None):
         self.move(self.motions.up(factor))
+
+
 
