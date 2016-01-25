@@ -184,6 +184,9 @@ class Buffer_Test:
 
     """ copying """
 
+    def test_copy_from_empty_buffer(self):
+        assert self.buffer.copy(Range(1,10)) == ""
+
     def test_copy_lines(self):
         text = "1\n22\n3\n44\n5\n66\n"
         self.buffer.fill(text)
@@ -244,6 +247,11 @@ class Buffer_Test:
 
     def deleted(self, key):
         return self.signals["deletedFromBuffer"][key]
+
+    def test_delete_from_empty_buffer_does_nothing(self):
+        assert self.buffer.lines == []
+        self.buffer.delete(Range(1,1))
+        assert self.buffer.lines == []
 
     """ deleting linewise """
 
