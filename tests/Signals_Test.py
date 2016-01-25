@@ -9,11 +9,12 @@ sender1 = Sender()
 sender2 = Sender()
 
 class Receiver():
-    def receive(self, signal, sender, *args):
+    def receive(self, signal, sender, **kwargs):
         if signal == "sig" and sender == sender1:
             raise ObserverCorrectlyCalled1
         if(signal == "sig" and sender == sender2
-            and args == (1,2)):
+            and kwargs == {'key1':1, 'key2':2}
+            ):
             raise ObserverCorrectlyCalled2
 
 receiver1 = Receiver()
@@ -42,7 +43,7 @@ def test_signalCallsAllObservers():
     assert seen
 
     seen = False
-    try: signals.signal("sig", sender2, 1, 2)
+    try: signals.signal("sig", sender2, key1=1, key2=2)
     except ObserverCorrectlyCalled2: seen = True
     assert seen
 
