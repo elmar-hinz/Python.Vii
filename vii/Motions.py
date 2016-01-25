@@ -67,7 +67,7 @@ class Motions:
         yLimit = self.buffer.countOfLines() + append
         if y > yLimit: y = yLimit
         if y < 1: y = 1
-        xLimit = self.buffer.lengthOfLine(y) + append
+        xLimit = self.buffer.lengthOfLine(y) - 1 + append
         if x > xLimit: x = xLimit
         if x < 1: x = 1
         return (y, x)
