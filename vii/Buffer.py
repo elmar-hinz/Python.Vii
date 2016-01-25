@@ -66,6 +66,7 @@ class Buffer:
         signal(self.updatedSignal, self)
 
     def copy(self, range):
+        if self.isEmpty(): return ""
         range = self._resolveRange(range)
         (y1, x1), (y2, x2) = range.toPositions()
         if y1 == y2:
@@ -77,6 +78,7 @@ class Buffer:
             return head + body + tail
 
     def delete(self, range):
+        if self.isEmpty(): return
         range = self._resolveRange(range)
         (y1, x1), (y2, x2) = range.toPositions()
         head = self.lines[y1-1][:x1-1]
@@ -95,6 +97,7 @@ class Buffer:
             self.lines[y1-1:y2] = []
         startY = y2
         startX = x2 + 1
+        debug(self.lines)
         signal(self.deletedSignal, self,
             startPosition=Position(startY,startX),
             afterPosition=Position(y1, x1))

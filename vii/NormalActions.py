@@ -1,6 +1,8 @@
 from .AbstractAction import AbstractAction
 from .AbstractAction import AbstractPendingAction
 from .Logger import *
+from .Range import Range, Position
+from .Cursor import CursorException as CursorException
 
 class Idle(AbstractAction):
     def act(self, dummyCallback = None):
@@ -28,12 +30,15 @@ class BeginningOfLine(AbstractAction):
 
 class Change(AbstractPendingAction):
     def call(self, range):
-        self.buffer.deleteRange(*range.toPositions())
+        self.buffer.delete(range)
         return "insert", self.actionManager.action("insert", "inserting")
 
 class Delete(AbstractPendingAction):
     def call(self, range):
-        self.buffer.deleteRange(*range.toPositions())
+        debug("Delete")
+        debug(range)
+        self.buffer.delete(range)
+        if range.isLines(): self.cursor.beginningOfLine()
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -46,8 +51,7 @@ class Down(AbstractAction):
 class EndOfLine(AbstractAction):
     def act(self):
         count = self.command.lpCount()
-        if count: self.cursor.down(count - 1)
-        self.cursor.endOfLine()
+        self.cursor.endOfLine(count)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -57,8 +61,9 @@ class GotoLine(AbstractAction):
             self.cursor.endOfBuffer()
             self.cursor.beginningOfLine()
         else:
-            position = self.command.lpCount(), 1
-            self.cursor.position(*position)
+            position = Position(self.command.lpCount(), 1)
+            try: self.cursor.position(position)
+            except CursorException: pass
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -83,12 +88,13 @@ class PutBefore(AbstractAction):
         if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
-            for i in range(count):
-                self.buffer.insertLines(self.cursor.y, string)
+            position = Position(self.cursor.y, 1)
+            for i in range(count): self.buffer.insert(position, string)
+            self.cursor.position(position)
         else:
             for i in range(count):
                 self.buffer.insert(self.cursor.position(), string)
-            self.cursor.right(count * len(string) - 1)
+            self.cursor.left()
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -98,13 +104,13 @@ class PutAfter(AbstractAction):
         if count == None: count = 1
         string, linewise = self.registerManager.read()
         if linewise:
-            for i in range(count):
-                self.buffer.insertLines(self.cursor.y + 1, string)
-            self.cursor.down()
+            position = Position(self.cursor.y + 1, 1)
+            for i in range(count): self.buffer.insert(position, string)
+            self.cursor.position(position)
         else:
-            if self.buffer.lengthOfLine(self.cursor.y) > 0:
+            if self.buffer.lengthOfLine(self.cursor.y) > 1:
                 for i in range(count):
-                    position = (self.cursor.y, self.cursor.x + 1)
+                    position = Position(self.cursor.y, self.cursor.x + 1)
                     self.buffer.insert(position, string)
                 self.cursor.right(count * len(string))
             else:
@@ -127,7 +133,8 @@ class Up(AbstractAction):
 
 class Yank(AbstractPendingAction):
     def call(self, range):
-        string = self.buffer.copyRange(*range.toPositions())
+        string = self.buffer.copy(range)
+        debug(string)
         self.registerManager.unshift(string)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
@@ -136,9 +143,10 @@ class YankLines(AbstractAction):
     def act(self):
         count = self.command.lpCount()
         if not count: count = 1
-        y, x = self.cursor.position()
-        string = self.buffer.copyLines(y, count)
+        y = self.cursor.y
+        string = self.buffer.copy(Range(y, y + count - 1))
         self.registerManager.unshift(string, True)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
+
 

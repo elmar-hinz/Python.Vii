@@ -1,5 +1,6 @@
 from .Logger import *
 from .AbstractAction import AbstractAction
+from .Range import Range, Position
 
 class Inserting(AbstractAction):
 
@@ -8,10 +9,8 @@ class Inserting(AbstractAction):
         return ("insert", self)
 
     def step(self, token):
-        debug("Insert %s" % token)
         if not "startPosition" in dir(self): self.start()
         if False: pass
-        elif token == chr(10): self.newline()
         elif token == chr(127): self.backspace()
         else: self.insert(token)
 
@@ -20,27 +19,19 @@ class Inserting(AbstractAction):
 
     def finish(self):
         super().finish()
-        self.cursor.position(*self.motions.left())
+        self.cursor.left()
 
     def insert(self, char):
-        debug("Insert: %s" % char)
-        y,x = self.cursor.position()
-        debug("Position: %s, %s" % (y, x))
-        self.buffer.insert((y,x), char)
-        self.cursor.position(x = x + 1)
+        if self.buffer.isEmpty():
+            self.buffer.insert(Position(1,1), "\n")
+            self.cursor.position(Position(1,1))
+        y,x = self.cursor.position().toPosition()
+        self.buffer.insert(self.cursor.position(), char)
 
     def backspace(self):
-        debug("Insert: Backspace")
         y = self.cursor.y
         x = self.cursor.x - 1
-        if y > self.startPosition[0] or x >= self.startPosition[1]:
-            if x >= 0:
-                self.buffer.deleteRange((y,x), (y,x))
-                self.cursor.position(x = x)
-
-    def newline(self):
-        debug("Insert: Newline")
-        y,x = self.cursor.position()
-        self.buffer.insert((y,x), '\n')
-        self.cursor.position(self.cursor.y + 1, 1)
+        startY, startX = self.startPosition.toPosition()
+        if (y > startY or x >= startX) and x > 0:
+            self.buffer.delete(Position(y, x))
 

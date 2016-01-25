@@ -58,6 +58,7 @@ class Motions_Test:
         assert self.fixture.endOfBuffer() == self.range(5,3)
 
     def test_endOfLine(self):
-        assert self.fixture.endOfLine() == self.range(3,6)
-        assert self.fixture.endOfLine(2) == self.range(4,4)
+        assert self.fixture.endOfLine() == self.range(3,5)
+        assert self.fixture.endOfLine(2) == self.range(4,3)
+        assert self.fixture.endOfLine(4) == self.range(5, 2)
 

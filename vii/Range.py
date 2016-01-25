@@ -9,6 +9,14 @@ class NotTwoPositionsRangeException(Exception): pass
 class Range:
 
     def __init__(self, *args, isPosition = False):
+        newArgs = []
+        for i in range(len(args)):
+            if (isinstance(args[i], Range)
+                    and args[i].isOnePosition()):
+                newArgs.append(args[i].toPosition())
+            else:
+                newArgs.append(args[i])
+        args = tuple(newArgs)
         if (len(args) == 1
                 and isinstance(args[0], int)):
             self.position1 = (args[0], None)
