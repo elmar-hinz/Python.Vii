@@ -52,6 +52,10 @@ class Range_Test:
         assert Range((3, 1), (2, 1)).isInverse()
         assert Range((3, 3), (3, 2)).isInverse()
 
+    def test_linewise(self):
+        lines = Range((3, 1), (2, 1)).linewise()
+        assert lines == Range(3, 2)
+
     @raises(NotLinesRangeException)
     def test_NotLinesRangeException_1(self):
         range = Range((1, 3), (2, 4))
