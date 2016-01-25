@@ -1,10 +1,13 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.Cursor import Cursor
+from vii.Cursor import *
 from vii.Signals import *
 
 class BufferMock:
-    text = "line one\nline two\nline three".splitlines()
+    text = "line one\nline two\nline three\n".splitlines()
+
+    def isEmpty(self):
+        return len(self.text) == 0
 
     def lengthOfLine(self, index):
         return len(self.text[index - 1])
@@ -18,7 +21,7 @@ class BufferMock:
 class MotionsMock:
     pass
 
-class TestCursor:
+class Cursor_Test:
 
     reception = False
 
@@ -29,81 +32,173 @@ class TestCursor:
         self.fixture.buffer = self.buffer
         self.fixture.motions = self.motions
         slot("cursorMoved", self)
-        self.reception = False
+        self.cursorMoved = False
 
     def receive(self, signal, sender):
         if signal == "cursorMoved":
             if sender == self.fixture:
-                self.reception = True
+                self.cursorMoved = True
 
-    def testInit(self):
+    def test_init(self):
         assert self.fixture.__class__ == Cursor
         assert self.fixture.buffer == self.buffer
+        assert self.fixture.motions == self.motions
         assert self.fixture.x == 1
         assert self.fixture.y == 1
 
-    def testUpdate(self):
+    def test_update(self):
         self.fixture.updated()
-        assert self.reception
+        assert self.cursorMoved
+        # TODO test execptions
 
-    def testPosition(self):
-        assert self.fixture.position() == (1,1)
-        self.fixture.position(2,3)
-        assert self.fixture.position() == (2,3)
-        assert self.reception
+    def test_position(self):
+        assert self.fixture.position() == Position(1,1)
+        assert not self.cursorMoved
+        self.fixture.position(Position(2,3))
+        assert self.fixture.position() == Position(2,3)
+        assert self.cursorMoved
 
-    def testTrackHorizontalInsert(self):
-        """ insert after: cursor is fix """
-        self.fixture.x = 1
-        signal("horizontalInsert", self.buffer, 2, 3)
-        assert self.fixture.x == 1
-        """ insert before: cursor moves up """
-        self.fixture.x = 2
-        signal("horizontalInsert", self.buffer, 2, 3)
-        assert self.fixture.x == 5
-        assert self.reception
+    """ Track insertions """
 
-    def testTrackHorizontalDelete(self):
-        """ delete after: cursor is fix """
-        self.fixture.x = 1
-        signal("horizontalDelete", self.buffer, 2, 2)
-        assert self.fixture.x == 1
-        """ delete before: cursor moves down """
-        self.fixture.x = 5
-        signal("horizontalDelete", self.buffer, 1, 2)
-        assert self.fixture.x == 3
-        """ delete before including cursor """
-        """ cursor moves down to position """
-        self.fixture.x = 2
-        signal("horizontalDelete", self.buffer, 1, 5)
-        assert self.fixture.x == 1
-        assert self.reception
+    def test_insert_vertically_after_cursor(self):
+        """ cursor is fix """
+        signal("insertedIntoBuffer", self.buffer,
+                startPosition = Position(2,1),
+                afterPosition = Position(3,1))
+        assert self.fixture.position() == Position(1,1)
+        assert not self.cursorMoved
 
-    def testTrackVerticalInsert(self):
-        """ insert after: cursor is fix """
-        self.fixture.y = 1
-        signal("verticalInsert", self.buffer, 2, 2)
-        assert self.fixture.y == 1
-        """ insert before: cursor moves up """
-        self.fixture.y = 2
-        signal("verticalInsert", self.buffer, 2, 1)
-        assert self.fixture.y == 3
-        assert self.reception
+    def test_insert_horizontally_after_cursor(self):
+        """ cursor is fix """
+        signal("insertedIntoBuffer", self.buffer,
+                startPosition = Position(1,2),
+                afterPosition = Position(1,3))
+        assert self.fixture.position() == Position(1,1)
+        assert not self.cursorMoved
 
-    def testTrackVerticalDelete(self):
-        """ delete after: cursor is fix """
-        self.fixture.y = 1
-        signal("horizontalDelete", self.buffer, 1, 1)
-        assert self.fixture.y == 1
-        """ delete before: cursor moves down """
-        self.fixture.x = 3
-        signal("horizontalDelete", self.buffer, 2, 1)
-        assert self.fixture.x == 2
-        """ delete before including cursor """
-        """ cursor moves down to position """
-        self.fixture.x = 2
-        signal("horizontalDelete", self.buffer, 1, 2)
-        assert self.fixture.x == 1
-        assert self.reception
+    def test_insert_vertically_before_cursor(self):
+        """ cursor moves down """
+        self.fixture.position(Position(3, 2))
+        text = "line one\naa\nbb\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("insertedIntoBuffer", self.buffer,
+                startPosition = Position(2,1),
+                afterPosition = Position(4,1))
+        assert self.fixture.position() == Position(5,2)
+        assert self.cursorMoved
 
+    def test_insert_horizontally_before_cursor(self):
+        """ cursor moves right """
+        self.fixture.position(Position(2, 4))
+        text = "line one\nlxxxine two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("insertedIntoBuffer", self.buffer,
+                startPosition = Position(2,2),
+                afterPosition = Position(2,5))
+        assert self.fixture.position() == Position(2, 7)
+        assert self.cursorMoved
+
+    def test_insert_before_cursor(self):
+        """ cursor moves in both dimensions """
+        self.fixture.position(Position(2, 8))
+        text = "line one\nline xxx\n\nytwo\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("insertedIntoBuffer", self.buffer,
+                startPosition = Position(2,6),
+                afterPosition = Position(4,2))
+        assert self.fixture.position() == Position(4, 4)
+        assert self.cursorMoved
+
+    """ Track deletions """
+
+    def test_delete_vertically_after_cursor(self):
+        """ cursor is fix """
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(2,1),
+                startPosition = Position(3,1))
+        assert self.fixture.position() == Position(1,1)
+        assert not self.cursorMoved
+
+    def test_delete_horizontally_after_cursor(self):
+        """ cursor is fix """
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(1,2),
+                startPosition = Position(1,3))
+        assert self.fixture.position() == Position(1,1)
+        assert not self.cursorMoved
+
+    def test_delete_vertically_before_cursor(self):
+        """ cursor moves up """
+        text = "line one\naa\nbb\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        self.fixture.position(Position(5, 2))
+        text = "line one\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(2,1),
+                startPosition = Position(4,1))
+        assert self.fixture.position() == Position(3,2)
+        assert self.cursorMoved
+
+    def test_delete_horizontally_before_cursor(self):
+        """ cursor moves left """
+        text = "line one\nlxxxine two\nline three\n".splitlines()
+        self.buffer.text = text
+        self.fixture.position(Position(2, 7))
+        text = "line one\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(2,2),
+                startPosition = Position(2,5))
+        assert self.fixture.position() == Position(2, 4)
+        assert self.cursorMoved
+
+    def test_delete_before_cursor(self):
+        """ cursor moves in both dimensions """
+        text = "line one\nline xxx\n\nytwo\nline three\n".splitlines()
+        self.buffer.text = text
+        self.fixture.position(Position(4, 4))
+        text = "line one\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(2,6),
+                startPosition = Position(4,2))
+        assert self.fixture.position() == Position(2, 8)
+        assert self.cursorMoved
+
+    def test_delete_around_cursor(self):
+        """ cursor moves in both dimensions """
+        text = "line one\nline xxx\nyyy\nzzz two\nline three\n".splitlines()
+        self.buffer.text = text
+        self.fixture.position(Position(3, 2))
+        text = "line one\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(2,6),
+                startPosition = Position(4,5))
+        assert self.fixture.position() == Position(2, 6)
+        assert self.cursorMoved
+
+    def test_delete_last_lines_with_cursor(self):
+        """ cursor moves to beginning of last line """
+        text = "line one\nline two\nline three\n44\n55\n".splitlines()
+        self.buffer.text = text
+        self.fixture.position(Position(5, 2))
+        text = "line one\nline two\nline three\n".splitlines()
+        self.buffer.text = text
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(4,1),
+                startPosition = Position(5,3))
+        assert self.fixture.position() == Position(3, 1)
+        assert self.cursorMoved
+
+    def test_delete_all_lines(self):
+        """ cursor moves to 1,1 """
+        self.fixture.position(Position(2, 2))
+        self.buffer.text = []
+        signal("deletedFromBuffer", self.buffer,
+                afterPosition = Position(1, 1),
+                startPosition = Position(4, 1))
+        assert self.fixture.position() == Position(1, 1)
+        assert self.cursorMoved
 

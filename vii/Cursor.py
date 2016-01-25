@@ -1,5 +1,6 @@
 from .Logger import *
 from .Signals import *
+from .Range import Range, Position
 
 class CursorException(Exception): pass
 
@@ -17,88 +18,88 @@ class Cursor:
         self.motions = None
         self.x = 1
         self.y = 1
-        slot("verticalInsert", self)
-        slot("horizontalInsert", self)
-        slot("verticalDelete", self)
-        slot("horizontalDelete", self)
+        slot("insertedIntoBuffer", self)
+        slot("deletedFromBuffer", self)
 
-    def receive(self, signal, sender, *args):
+    def receive(self, signal, sender, **kwargs):
+        debug("received")
         if sender == self.buffer:
-            if signal == "verticalInsert":
-                self.trackVerticalInsert(*args)
-            if signal == "horizontalInsert":
-                self.trackHorizontalInsert(*args)
-            if signal == "verticalDelete":
-                self.trackVerticalDelete(*args)
-            if signal == "horizontalDelete":
-                self.trackHorizontalDelete(*args)
+            if signal == "insertedIntoBuffer":
+                self.trackDelta(**kwargs)
+            if signal == "deletedFromBuffer":
+                self.trackDelta(**kwargs)
 
-    def trackHorizontalInsert(self, x, length):
-        if x <= self.x: self.x += length
-        self.updated()
+    def trackDelta(self, **kwargs):
+        fromY, fromX = kwargs["startPosition"].toPosition()
+        toY, toX = kwargs["afterPosition"].toPosition()
+        if(self.y > fromY or
+                (self.y == fromY and self.x >= fromX)):
+            "cursor after range moves by deltas"
+            self.y += toY - fromY
+            self.x += toX - fromX
+            self.updated()
+        elif(self.y > toY or (self.y == toY and self.x > toX)):
+            "deleting: cursor in range moves to position of deletion"
+            self.y, self.x = toY, toX
+            if self.y > self.buffer.countOfLines():
+                self.y = self.buffer.countOfLines()
+            self.updated()
 
-    def trackHorizontalDelete(self, x, length):
-        if x < self.x:
-            self.x -= length
-            if self.x < x: self.x = x
-        self.updated()
+    def position(self, position = None):
+        if position:
+            self.y, self.x = position.toPosition()
+            self.updated()
+        else:
+            return Position(self.y, self.x)
 
-    def trackVerticalInsert(self, y, length):
-        print(y, length)
-        if y <= self.y: self.y += length
-        self.updated()
-
-    def trackVerticalDelete(self, y, length):
-        if y < self.y:
-            self.y -= length
-            if self.y < y: self.y = y
-        self.updated()
-
-    def position(self, y = None, x = None):
-        if y == None and x == None:
-            return (self.y, self.x)
-        if y != None: self.y = y
-        if x != None: self.x = x
+    def move(self, range):
+        debug("move")
+        first, second = range.toPositions()
+        self.y, self.x = second
         self.updated()
 
     def updated(self):
-        if self.y < 1:
-            raise CursorException("y < range: %s" % self.y)
-        if self.y > self.buffer.countOfLines() :
-            raise CursorException("y > range: %s > %s" %
-                    (self.y, self.buffer.countOfLines()))
-        if self.x < 1:
-            raise CursorException("x < range: %s" % self.x)
-        if self.x > self.buffer.lengthOfLine(self.y) + 1:
-            raise CursorException("x > range")
+        if self.buffer.isEmpty():
+            self.x = 1
+            self.y = 1
+        else:
+            if self.y < 1:
+                raise CursorException("y < range: %s" % self.y)
+            if self.y > self.buffer.countOfLines():
+                raise CursorException("y > range: %s > %s" %
+                        (self.y, self.buffer.countOfLines()))
+            if self.x < 1:
+                raise CursorException("x < range: %s" % self.x)
+            if self.x > self.buffer.lengthOfLine(self.y) + 1:
+                raise CursorException("x > range")
         signal("cursorMoved", self)
 
     """ Movements """
 
     def appendInLine(self):
-        self.position(*self.motions.appendInLine())
+        self.move(self.motions.appendInLine())
 
     def beginningOfBuffer(self):
-        self.position(*self.motions.beginningOfBuffer())
+        self.move(self.motions.beginningOfBuffer())
 
     def beginningOfLine(self):
-        self.position(*self.motions.beginningOfLine())
+        self.move(self.motions.beginningOfLine())
 
     def down(self, factor = None):
-        self.position(*self.motions.down(factor))
+        self.move(self.motions.down(factor))
 
     def endOfBuffer(self):
-        self.position(*self.motions.endOfBuffer())
+        self.move(self.motions.endOfBuffer())
 
     def endOfLine(self):
-        self.position(*self.motions.endOfLine())
+        self.move(self.motions.endOfLine())
 
     def left(self, factor = None):
-        self.position(*self.motions.left(factor))
+        self.move(self.motions.left(factor))
 
     def right(self, factor = None):
-        self.position(*self.motions.right(factor))
+        self.move(self.motions.right(factor))
 
     def up(self, factor = None):
-        self.position(*self.motions.up(factor))
+        self.move(self.motions.up(factor))
 
