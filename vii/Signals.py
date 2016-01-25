@@ -2,9 +2,9 @@ from collections import defaultdict
 
 register = defaultdict(list)
 
-def signal(signal, sender, *args):
+def signal(signal, sender, **kwargs):
     for observer in register[signal]:
-        observer.receive(signal, sender, *args)
+        observer.receive(signal, sender, **kwargs)
 
 def slot(signal, receiver):
     register[signal].append(receiver)
