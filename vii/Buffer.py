@@ -60,11 +60,9 @@ class Buffer:
 
         afterX = len(tokens[-1]) - len(tail) + 1
         afterY = y + len(tokens) - 1
-        deltaX = len(tokens[-1]) - len(head) - len(tail)
         signal(self.insertedSignal, self,
             startPosition=position,
-            afterPosition=Position(afterY,afterX),
-            deltaX=deltaX)
+            afterPosition=Position(afterY,afterX))
         signal(self.updatedSignal, self)
 
     def copy(self, range):
@@ -88,10 +86,6 @@ class Buffer:
             x2 = 0
             try: tail = self.lines[y2 - 1]
             except IndexError: tail = ""
-        try:
-            deltaX = -len(self.lines[y2-1]) + len(head) + len(tail)
-        except IndexError:
-            deltaX = 0
         string = head + tail
         if string:
             if string[-1] != "\n":
@@ -103,8 +97,7 @@ class Buffer:
         afterX = x2 + 1
         signal(self.deletedSignal, self,
             startPosition=Position(y1, x1),
-            afterPosition=Position(afterY,afterX),
-            deltaX=deltaX)
+            afterPosition=Position(afterY,afterX))
         signal(self.updatedSignal, self)
 
     def isEmpty(self):
