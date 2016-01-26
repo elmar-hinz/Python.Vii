@@ -1,43 +1,43 @@
 normalCommandMap = """
-0: BeginningOfLine
-$: EndOfLine
-^: BeginningOfLine
-a: Append
-A: AppendToLine
-c: Change
-d: Delete
-G: GotoLine
-h: Left
-i: Insert
-I: InsertBeforeLine
-j: Down
-k: Up
-l: Right
-p: PutAfter
-P: PutBefore
-y: Yank
-Y: YankLines
-idle: Idle
+0: vii.Actions.BeginningOfLine
+$: vii.Actions.EndOfLine
+^: vii.Actions.BeginningOfLine
+a: vii.Actions.Append
+A: vii.Actions.AppendToLine
+c: vii.Actions.Change
+d: vii.Actions.Delete
+G: vii.Actions.GotoLine
+h: vii.Actions.Left
+i: vii.Actions.Insert
+I: vii.Actions.InsertBeforeLine
+j: vii.Actions.Down
+k: vii.Actions.Up
+l: vii.Actions.Right
+p: vii.Actions.PutAfter
+P: vii.Actions.PutBefore
+y: vii.Actions.Yank
+Y: vii.Actions.YankLines
+idle: vii.Actions.Idle
 """
 
 operatorPendingMap = """
-0: BeginningOfLine
-$: EndOfLine
-^: BeginningOfLine
-c: ChangeLines
-d: DeleteLines
-g: GotoLine
-G: GotoLine
-h: Left
-h: Left
-j: Down
-k: Up
-l: Right
-y: YankLines
+0: vii.Actions.BeginningOfLine
+$: vii.Actions.EndOfLine
+^: vii.Actions.BeginningOfLine
+c: vii.Actions.ChangeLines
+d: vii.Actions.DeleteLines
+g: vii.Actions.GotoLine
+G: vii.Actions.GotoLine
+h: vii.Actions.Left
+h: vii.Actions.Left
+j: vii.Actions.Down
+k: vii.Actions.Up
+l: vii.Actions.Right
+y: vii.Actions.YankLines
 """
 
 insertCommandMap = """
-inserting: Inserting
+inserting: vii.Actions.Inserting
 """
 
 """Window"""

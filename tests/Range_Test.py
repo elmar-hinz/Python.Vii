@@ -64,6 +64,13 @@ class Range_Test:
         lines = Range((3, 1), (2, 1)).linewise()
         assert lines == Range(3, 2)
 
+    def test_zero(self):
+        assert Range(0) == Range((0,None), (0, None))
+        assert Range(0).isLines()
+        assert Position(0,0) == Range((0,0),(0,0))
+        assert Position(0,0).isOnePosition()
+        assert Position(0,0).toPosition() == (0,0)
+
     @raises(NotLinesRangeException)
     def test_NotLinesRangeException_1(self):
         range = Range((1, 3), (2, 4))

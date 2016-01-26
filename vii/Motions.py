@@ -5,6 +5,13 @@ class Motions:
     """
     Range control happens here, while the buffer
     is just throwing exectpions.
+
+    Range doesn't control the start position,
+    because the movement may happen as result
+    of a deletion, after which the start position
+    doesn't exist any more.
+
+    Start positons are 1, 0 for empty lines or buffer.
     """
 
     def __init__(self):
@@ -17,10 +24,13 @@ class Motions:
             self._forceLimits(position, appendX = 1)))
 
     def beginningOfBuffer(self):
-        return self._toRange((1, 1))
+        position = (1,1)
+        return self._toRange(
+                self._forceLimits(position))
 
     def beginningOfLine(self):
-        return self._toRange((self._y(), 1))
+        return self._toRange(
+                self._forceLimits((self._y(), 1)))
 
     def down(self, step = None):
         if not step: step = 1
@@ -30,8 +40,9 @@ class Motions:
 
     def endOfBuffer(self):
         y = self.buffer.countOfLines()
-        x = self.buffer.lengthOfLine(y)
-        return self._toRange((y, x))
+        x = self.buffer.lengthOfLine(y) - 1
+        return self._toRange(
+            self._forceLimits((y, x)))
 
     def endOfLine(self, step = None):
         if not step: step = 1
@@ -67,16 +78,22 @@ class Motions:
     def _forceLimits(self, position, appendX = 0, appendY = 0):
         y, x = position
         countOfLines = self.buffer.countOfLines()
-        if countOfLines == 0: return Position(1, 1)
+        if countOfLines == 0: return Position(0,0)
         if y < 1: y = 1
-        if x < 1: x = 1
         yLimit = countOfLines + appendY
         if y > yLimit: y = yLimit
         if y > countOfLines:
-            x = 1
+            x = 0
         else:
-            xLimit = self.buffer.lengthOfLine(y) - 1 + appendX
-            if x > xLimit: x = xLimit
+            lengthOfLine = self.buffer.lengthOfLine(y)
+            if lengthOfLine == 1:
+                x = 0
+            elif lengthOfLine > 1:
+                if x < 1: x = 1
+                xLimit = lengthOfLine - 1 + appendX
+                if x > xLimit: x = xLimit
+            else:
+                raise Exception("Never reached")
         return Position(y, x)
 
     def _toRange(self, position):

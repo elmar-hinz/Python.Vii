@@ -1,11 +1,11 @@
 from .Logger import *
 from .AbstractAction import AbstractAction
+import importlib
 
 class DummyAction(AbstractAction):
 
     def act(self, dummyCallback = None):
         return "normal", self.actionManager.action("normal", "idle")
-
 
 class ActionManager:
 
@@ -14,10 +14,6 @@ class ActionManager:
         self.windowManager =  None
         self.registerManager = None
         self.actionMaps = dict()
-        self.actionModules = dict()
-
-    def addModule(self, mode, module):
-        self.actionModules[mode] = module
 
     def addMap(self, mode, map):
         self.actionMaps[mode] = self.parseMap(map)
@@ -25,8 +21,10 @@ class ActionManager:
     def action(self, mode, operator):
         try:
             action = self.actionMaps[mode][operator]
-            module = self.actionModules[mode]
-            Action = getattr(module, action)
+            moduleName, className = action.rsplit(".", 1)
+            Action = getattr(
+                importlib.import_module(moduleName),
+                className)
             action = Action()
         except KeyError:
             debug("Key Error: %s %s" % (mode, operator))

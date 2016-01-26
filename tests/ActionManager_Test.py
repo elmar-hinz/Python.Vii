@@ -8,15 +8,17 @@ class Mock():
     window = "Window"
     buffer = "Buffer"
     cursor = "Cursor"
+    motions = "Motions"
+    currentCommand = "Command"
 
 class ActionManager_Test:
 
     mode = "mmm"
     operator = "a"
-    actionMap = {"a":"Alpha", "b":"Beta"}
+    actionMap = {"a":"tests.ActionManager_Test.Alpha", "b":"tests.ActionManager_Test.Beta"}
     mapString = """
-    a: Alpha
-    b: Beta
+    a: tests.ActionManager_Test.Alpha
+    b: tests.ActionManager_Test.Beta
     """
 
     def setup(self):
@@ -24,6 +26,9 @@ class ActionManager_Test:
         self.manager.dispatcher = Mock()
         self.manager.windowManager = Mock()
         self.manager.registerManager = Mock()
+
+    def test_init(self):
+        pass
 
     def test_parseMap(self):
         result = self.manager.parseMap(self.mapString)
@@ -34,25 +39,16 @@ class ActionManager_Test:
         result = self.manager.actionMaps[self.mode]
         assert result == self.actionMap
 
-    def test_addModule(self):
-        me = sys.modules[__name__]
-        self.manager.addModule(self.mode, me)
-        result = self.manager.actionModules[self.mode]
-        assert result == me
-
     def test_action(self):
-        me = sys.modules[__name__]
-        self.manager.addModule(self.mode, me)
         self.manager.addMap(self.mode, self.mapString)
-        mode, action = self.manager.action("mmm", "a")
+        action = self.manager.action("mmm", "a")
+        assert action.__module__ == __name__
         assert action.__class__ == Alpha
-        assert mode == "mmm"
-        wanted = ("dispatcher windowManager actionManager"
-        " window buffer cursor registerManager ")
-        for w in wanted.split():
-            print(w)
-            assert w in dir(action)
-
-
-
+        wanted = ("""
+        command dispatcher windowManager
+        actionManager registerManager
+        window buffer cursor motions
+            """)
+        for word in wanted.split():
+            assert word in dir(action)
 
