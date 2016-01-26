@@ -1,6 +1,6 @@
 class AbstractAction:
 
-    def act(self): pass
+    def act(self, callback = None): pass
 
     def finish(self):
         self.dispatcher.logHistory()
@@ -22,7 +22,7 @@ class AbstractAction:
 
 class AbstractPendingAction(AbstractAction):
 
-    def act(self):
+    def act(self, callback = None):
         mode = self.dispatcher.currentMode
         if mode == "operatorPending":
             operator = self.command.lpOperator()

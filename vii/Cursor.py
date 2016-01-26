@@ -16,8 +16,8 @@ class Cursor:
     def __init__(self):
         self.buffer = None
         self.motions = None
-        self.x = 1
-        self.y = 1
+        self.x = 0
+        self.y = 0
         slot("insertedIntoBuffer", self)
         slot("deletedFromBuffer", self)
 
@@ -52,23 +52,24 @@ class Cursor:
             return Position(self.y, self.x)
 
     def move(self, range):
+        debug(range)
         first, second = range.toPositions()
         self.y, self.x = second
         self.updated()
 
     def updated(self):
         if self.buffer.isEmpty():
-            self.x = 1
-            self.y = 1
+            self.x = 0
+            self.y = 0
         else:
-            if self.y < 1:
+            if self.y < 0:
                 raise CursorException("y < range: %s" % self.y)
             if self.y > self.buffer.countOfLines():
                 raise CursorException("y > range: %s > %s" %
                         (self.y, self.buffer.countOfLines()))
-            if self.x < 1:
+            if self.x < 0:
                 raise CursorException("x < range: %s" % self.x)
-            if self.x > self.buffer.lengthOfLine(self.y) + 1:
+            if self.x > self.buffer.lengthOfLine(self.y):
                 raise CursorException("x > range")
         signal("cursorMoved", self)
 

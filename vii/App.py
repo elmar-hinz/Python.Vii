@@ -4,9 +4,7 @@ from .view.View import View
 from .WindowManager import WindowManager
 from .ActionManager import ActionManager
 from .RegisterManager import RegisterManager
-from . import NormalActions
-from . import InsertActions
-from . import OperatorPendingActions
+from . import Actions
 from .Setup import insertCommandMap, normalCommandMap, operatorPendingMap
 
 os.environ.setdefault('ESCDELAY', '25')
@@ -19,11 +17,8 @@ class App:
         actionManager = ActionManager()
         registerManager = RegisterManager()
         actionManager.addMap("normal", normalCommandMap)
-        actionManager.addModule("normal", NormalActions)
         actionManager.addMap("insert", insertCommandMap)
-        actionManager.addModule("insert", InsertActions)
         actionManager.addMap("operatorPending", operatorPendingMap)
-        actionManager.addModule("operatorPending", OperatorPendingActions)
         actionManager.dispatcher = dispatcher
         actionManager.registerManager = registerManager
         actionManager.windowManager = windowManager
