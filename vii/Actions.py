@@ -45,6 +45,17 @@ class Change(AbstractPendingAction):
             self.cursor.gotoPositionRelaxed(range.upperPosition())
         return "insert", self.actionManager.action("insert", "inserting")
 
+class ChangeLines(AbstractAction):
+    def act(self, callback = None):
+        factor = self.command.multiplyAll()
+        if callback:
+            if not self.command.previous().operator == "c":
+                return self.skipToIdle()
+            range = self.motions.down(factor - 1).linewise()
+        else:
+            range = self.motions.endOfLine(factor)
+        return self.actionManager.action("normal", "c").call(range)
+
 class Delete(AbstractPendingAction):
     def call(self, range):
         self.buffer.delete(range)
@@ -55,6 +66,17 @@ class Delete(AbstractPendingAction):
             self.cursor.gotoPositionRelaxed(range.upperPosition())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
+
+class DeleteLines(AbstractAction):
+    def act(self, callback = None):
+        factor = self.command.multiplyAll()
+        if callback:
+            if not self.command.previous().operator == "d":
+                return self.skipToIdle()
+            range = self.motions.down(factor - 1).linewise()
+        else:
+            range = self.motions.endOfLine(factor)
+        return self.actionManager.action("normal", "d").call(range)
 
 class Down(AbstractAction):
     def act(self, callback = None):
@@ -79,15 +101,18 @@ class EndOfLine(AbstractAction):
             return "normal", self.actionManager.action("normal", "idle")
 
 class GotoLine(AbstractAction):
-    def act(self):
-        if self.command.lpCount() == None:
-            self.cursor.endOfBuffer()
-            self.cursor.beginningOfLine()
+    def act(self, callback = None):
+        if self.command.hasNoCounts():
+            y = self.buffer.countOfLines()
         else:
-            position = Position(self.command.lpCount(), 1)
-            self.cursor.gotoPositionStrict(position)
-        self.finish()
-        return "normal", self.actionManager.action("normal", "idle")
+            y = self.command.multiplyAll()
+        motion = self.motions.gotoPositionStrict(Position(y,1))
+        if callback:
+            return callback.call(motion.linewise())
+        else:
+            self.cursor.move(motion)
+            self.finish()
+            return "normal", self.actionManager.action("normal", "idle")
 
 class Insert(AbstractAction):
     def act(self):
@@ -219,16 +244,9 @@ class Yank(AbstractPendingAction):
 
 class YankLines(AbstractAction):
     def act(self, callback = None):
-        factor = self.command.multiplyAll()
-        if callback:
-            if self.command.previous().operator == "y":
-                return self.redirect("Y", factor)
-            else:
-                return skipToIdle()
+        if callback and not self.command.previous().operator == "y":
+            return self.skipToIdle()
         else:
+            factor = self.command.multiplyAll()
             yRange = self.motions.down(factor - 1).linewise()
-            string = self.buffer.copy(yRange)
-            self.registerManager.unshift(string, True)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
-
+            return self.actionManager.action("normal", "y").call(yRange)
