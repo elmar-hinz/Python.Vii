@@ -2,7 +2,6 @@ from .AbstractAction import AbstractAction
 from .AbstractAction import AbstractPendingAction
 from .Logger import *
 from .Range import Range, Position
-from .Cursor import CursorException
 
 class Idle(AbstractAction):
     def act(self, callback = None):
@@ -131,6 +130,33 @@ class GotoLine(AbstractAction):
             self.cursor.move(motion)
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
+
+class GCommand(AbstractAction):
+
+    def __init__(self):
+        self.callback = None
+
+    def act(self, callback = None):
+        """
+        If act() is called from a pending action that
+        action is given as callback. While collecting the
+        g command components this callback is stored into
+        **self.callback**. When the command is ready and
+        finally called, that callback is submitted with
+        act(). It's call() method is called directly,
+        hence no call() command needed here. """
+        mode = self.dispatcher.currentMode
+        if mode == "gPending":
+            operator = self.command.lpOperator()
+            if self.callback:
+                return self.actionManager.action(mode, operator).act(self.callback)
+            else:
+                return self.actionManager.action(mode, operator).act()
+        else:
+            if callback:
+                self.callback = callback
+            self.dispatcher.extend()
+            return "gPending", self
 
 class Insert(AbstractAction):
     def act(self):

@@ -8,11 +8,13 @@ c: vii.Actions.Change
 C: vii.Actions.ChangeLines
 d: vii.Actions.Delete
 D: vii.Actions.DeleteLines
+g: vii.Actions.GCommand
 G: vii.Actions.GotoLine
 h: vii.Actions.Left
 i: vii.Actions.Insert
 I: vii.Actions.InsertBeforeLine
 j: vii.Actions.Down
+J: vii.Actions.JoinLines
 k: vii.Actions.Up
 l: vii.Actions.Right
 p: vii.Actions.PutAfter
@@ -24,12 +26,13 @@ Y: vii.Actions.YankLines
 idle: vii.Actions.Idle
 """
 
-operatorPendingMap = """
+operatorPendingCommandMap = """
 0: vii.Actions.BeginningOfLine
 $: vii.Actions.EndOfLine
 ^: vii.Actions.BeginningOfLine
 c: vii.Actions.ChangeLines
 d: vii.Actions.DeleteLines
+g: vii.Actions.GCommand
 G: vii.Actions.GotoLine
 h: vii.Actions.Left
 h: vii.Actions.Left
@@ -37,6 +40,11 @@ j: vii.Actions.Down
 k: vii.Actions.Up
 l: vii.Actions.Right
 y: vii.Actions.YankLines
+"""
+
+gCommandMap = """
+g: vii.GActions.GotoTop
+J: vii.GActions.JoinLinesNoSpace
 """
 
 insertCommandMap = """
