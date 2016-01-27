@@ -1,4 +1,3 @@
-* delete character
 * g-Actions
 * fix register
 * read and write buffer

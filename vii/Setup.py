@@ -17,6 +17,8 @@ k: vii.Actions.Up
 l: vii.Actions.Right
 p: vii.Actions.PutAfter
 P: vii.Actions.PutBefore
+x: vii.Actions.DeleteCharacters
+X: vii.Actions.DeleteCharactersBefore
 y: vii.Actions.Yank
 Y: vii.Actions.YankLines
 idle: vii.Actions.Idle
@@ -51,3 +53,4 @@ logPath = "."
 logFileName = "vii.log"
 logFormat = "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
 logLevel = logging.DEBUG
+
