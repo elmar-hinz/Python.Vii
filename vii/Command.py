@@ -67,5 +67,3 @@ class Command:
     def lpInsert(self):
         return self.last().insert()
 
-
-

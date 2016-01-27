@@ -18,17 +18,28 @@ class BufferMock:
     def countOfLines(self):
         return len(self.text)
 
+    # def gotoPositionStrict(self, position):
+    #     pass
+
 class MotionsMock:
-    pass
+
+    def gotoPositionStrict(self, position):
+        self.targetPosition = position
+        if position == Position(1,1):
+            " test_delete_all_lines() "
+            return Range((0,0), (0,0))
+        else:
+            " other tests "
+            return Range((1,1), (1,1))
 
 class Cursor_Test:
-
-    reception = False
 
     def setup(self):
         self.buffer = BufferMock()
         self.motions = MotionsMock()
         self.fixture = Cursor()
+        self.fixture.x = 1
+        self.fixture.y = 1
         self.fixture.buffer = self.buffer
         self.fixture.motions = self.motions
         slot("cursorMoved", self)
@@ -167,7 +178,7 @@ class Cursor_Test:
         assert self.cursorMoved
 
     def test_delete_around_cursor(self):
-        """ cursor moves in both dimensions """
+        " cursor moves in both dimensions "
         text = "line one\nline xxx\nyyy\nzzz two\nline three\n".splitlines()
         self.buffer.text = text
         self.fixture.position(Position(3, 2))
@@ -176,11 +187,11 @@ class Cursor_Test:
         signal("deletedFromBuffer", self.buffer,
                 afterPosition = Position(2,6),
                 startPosition = Position(4,5))
-        assert self.fixture.position() == Position(2, 6)
+        assert self.motions.targetPosition == Position(2,6)
         assert self.cursorMoved
 
     def test_delete_last_lines_with_cursor(self):
-        """ cursor moves to beginning of last line """
+        " cursor moves to beginning of last line "
         text = "line one\nline two\nline three\n44\n55\n".splitlines()
         self.buffer.text = text
         self.fixture.position(Position(5, 2))
@@ -189,16 +200,17 @@ class Cursor_Test:
         signal("deletedFromBuffer", self.buffer,
                 afterPosition = Position(4,1),
                 startPosition = Position(5,3))
-        assert self.fixture.position() == Position(3, 1)
+        assert self.motions.targetPosition == Position(4,1)
         assert self.cursorMoved
 
     def test_delete_all_lines(self):
-        """ cursor moves to 1,1 """
+        " cursor moves to 0, 0 "
         self.fixture.position(Position(2, 2))
         self.buffer.text = []
         signal("deletedFromBuffer", self.buffer,
                 afterPosition = Position(1, 1),
                 startPosition = Position(4, 1))
-        assert self.fixture.position() == Position(1, 1)
+        assert self.motions.targetPosition == Position(1,1)
+        assert self.fixture.position() == Position(0,0)
         assert self.cursorMoved
 

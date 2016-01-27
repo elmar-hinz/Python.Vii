@@ -1,6 +1,8 @@
-
-* range into motions
-* more pending movements
-* g-Actions return line-ranges?
+* check existing actions
+* change behaviour
+* delete lines
+* delete character
+* g-Actions
+* fix register
 * read and write buffer
 
