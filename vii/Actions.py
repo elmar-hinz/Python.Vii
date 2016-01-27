@@ -67,6 +67,24 @@ class Delete(AbstractPendingAction):
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
+class DeleteCharacters(AbstractAction):
+    def act(self):
+        factor = self.command.multiplyAll()
+        range = self.motions.right(factor - 1)
+        self.buffer.delete(range)
+        self.finish()
+        return "normal", self.actionManager.action("normal", "idle")
+
+class DeleteCharactersBefore(AbstractAction):
+    def act(self):
+        factor = self.command.multiplyAll()
+        if self.cursor.x > 1:
+            start = self.motions.left(factor).lastPosition()
+            stop = self.motions.left().lastPosition()
+            self.buffer.delete(Range(start, stop))
+        self.finish()
+        return "normal", self.actionManager.action("normal", "idle")
+
 class DeleteLines(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
@@ -250,3 +268,5 @@ class YankLines(AbstractAction):
             factor = self.command.multiplyAll()
             yRange = self.motions.down(factor - 1).linewise()
             return self.actionManager.action("normal", "y").call(yRange)
+
+
