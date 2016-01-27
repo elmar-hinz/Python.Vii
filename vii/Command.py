@@ -47,6 +47,13 @@ class Command:
             result *= count
         return result
 
+    def hasNoCounts(self):
+        result = True
+        for i in range(len(self.parts)):
+            count = self.parts[i].count
+            if count: result = False
+        return result
+
     """ Shortcuts to the last part """
 
     def lpReady(self):

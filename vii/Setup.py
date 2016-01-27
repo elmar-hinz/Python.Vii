@@ -5,7 +5,9 @@ $: vii.Actions.EndOfLine
 a: vii.Actions.Append
 A: vii.Actions.AppendToLine
 c: vii.Actions.Change
+C: vii.Actions.ChangeLines
 d: vii.Actions.Delete
+D: vii.Actions.DeleteLines
 G: vii.Actions.GotoLine
 h: vii.Actions.Left
 i: vii.Actions.Insert
@@ -26,7 +28,6 @@ $: vii.Actions.EndOfLine
 ^: vii.Actions.BeginningOfLine
 c: vii.Actions.ChangeLines
 d: vii.Actions.DeleteLines
-g: vii.Actions.GotoLine
 G: vii.Actions.GotoLine
 h: vii.Actions.Left
 h: vii.Actions.Left

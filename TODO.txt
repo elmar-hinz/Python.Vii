@@ -1,6 +1,3 @@
-* check existing actions
-* change behaviour
-* delete lines
 * delete character
 * g-Actions
 * fix register

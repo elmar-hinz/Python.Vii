@@ -41,7 +41,7 @@ class Motions:
                 self._forceLimits((self._y(), 1)))
 
     def down(self, step = None):
-        if not step: step = 1
+        if step == None: step = 1
         position = self._y() + step, self._x()
         return (self._toRange(
             self._forceLimits(position)))
@@ -53,26 +53,27 @@ class Motions:
             self._forceLimits((y, x)))
 
     def endOfLine(self, step = None):
-        if not step: step = 1
+        if step == None: step = 1
+        if step == 0: step = 1
         y = self._y() + step - 1
         if y > self.buffer.countOfLines():
             y = self.buffer.countOfLines()
         return self._toRange((y, self.buffer.lengthOfLine(y) - 1 ))
 
     def left(self, step = None):
-        if not step: step = 1
+        if step == None: step = 1
         position = (self._y(), self._x() - step)
         return self._toRange(
                 self._forceLimits(position))
 
     def right(self, step = None):
-        if not step: step = 1
+        if step == None: step = 1
         position = (self._y(), self._x() + step)
         return self._toRange(
                 self._forceLimits(position))
 
     def up(self, step = None):
-        if not step: step = 1
+        if step == None: step = 1
         position = (self._y() - step, self._x())
 
         return self._toRange(self._forceLimits(position))
