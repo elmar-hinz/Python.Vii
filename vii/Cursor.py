@@ -37,12 +37,11 @@ class Cursor:
             self.y += toY - fromY
             self.x += toX - fromX
             self.updated()
-        elif(self.y > toY or (self.y == toY and self.x > toX)):
-            "deleting: cursor in range moves to position of deletion"
-            self.y, self.x = toY, toX
-            if self.y > self.buffer.countOfLines():
-                self.y = self.buffer.countOfLines()
-            self.updated()
+        elif(self.y > toY or (self.y == toY and self.x >= toX)):
+            """" Deletion only. Cursor in range moves to position of deletion.
+            Position of deletion needs to be included itself to trigger
+            range enforcing for that case. """
+            self.gotoPositionStrict(Position(toY, toX))
 
     def position(self, position = None):
         if position:
@@ -52,28 +51,39 @@ class Cursor:
             return Position(self.y, self.x)
 
     def move(self, range):
-        debug(range)
         first, second = range.toPositions()
         self.y, self.x = second
         self.updated()
 
     def updated(self):
         if self.buffer.isEmpty():
-            self.x = 0
-            self.y = 0
+            if self.x != 0:
+                raise CursorException( "Empty buffer but x == %s" % self.x)
+            if self.y != 0:
+                raise CursorException( "Empty buffer but y == %s" % self.y)
         else:
             if self.y < 0:
-                raise CursorException("y < range: %s" % self.y)
+                raise CursorException("y < 0: %s < 0" % self.y)
             if self.y > self.buffer.countOfLines():
-                raise CursorException("y > range: %s > %s" %
+                raise CursorException("y > buffer: %s > %s" %
                         (self.y, self.buffer.countOfLines()))
             if self.x < 0:
-                raise CursorException("x < range: %s" % self.x)
+                raise CursorException("x < 0: %s" % self.x)
             if self.x > self.buffer.lengthOfLine(self.y):
-                raise CursorException("x > range")
+                raise CursorException("x > line: %s > %s" %
+                        (self.x, self.buffer.lengthOfLine(self.y)))
         signal("cursorMoved", self)
 
+    def isLastLine(self):
+        return self.y == self.buffer.countOfLines()
+
     """ Movements """
+
+    def gotoPositionRelaxed(self, position):
+        self.move(self.motions.gotoPositionRelaxed(position))
+
+    def gotoPositionStrict(self, position):
+        self.move(self.motions.gotoPositionStrict(position))
 
     def appendInLine(self):
         self.move(self.motions.appendInLine())
@@ -101,6 +111,4 @@ class Cursor:
 
     def up(self, factor = None):
         self.move(self.motions.up(factor))
-
-
 

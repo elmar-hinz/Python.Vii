@@ -18,6 +18,14 @@ class Motions:
         self.buffer = None
         self.cursor = None
 
+    def gotoPositionStrict(self, position):
+        return self._toRange(
+            self._forceLimits(position.toPosition()))
+
+    def gotoPositionRelaxed(self, position):
+        return self._toRange(
+            self._forceLimits(position.toPosition(), appendX = 1))
+
     def appendInLine(self):
         position = (self._y(), self._x() + 1)
         return (self._toRange(
@@ -75,25 +83,21 @@ class Motions:
     def _y(self):
         return self.cursor.y
 
-    def _forceLimits(self, position, appendX = 0, appendY = 0):
+    def _forceLimits(self, position, appendX = 0):
         y, x = position
         countOfLines = self.buffer.countOfLines()
         if countOfLines == 0: return Position(0,0)
         if y < 1: y = 1
-        yLimit = countOfLines + appendY
-        if y > yLimit: y = yLimit
-        if y > countOfLines:
+        if y > countOfLines: y = countOfLines
+        lengthOfLine = self.buffer.lengthOfLine(y)
+        if lengthOfLine == 1:
             x = 0
+        elif lengthOfLine > 1:
+            if x < 1: x = 1
+            xLimit = lengthOfLine - 1 + appendX
+            if x > xLimit: x = xLimit
         else:
-            lengthOfLine = self.buffer.lengthOfLine(y)
-            if lengthOfLine == 1:
-                x = 0
-            elif lengthOfLine > 1:
-                if x < 1: x = 1
-                xLimit = lengthOfLine - 1 + appendX
-                if x > xLimit: x = xLimit
-            else:
-                raise Exception("Never reached")
+            raise Exception("Never reached")
         return Position(y, x)
 
     def _toRange(self, position):

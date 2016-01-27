@@ -135,6 +135,30 @@ class Range:
     def swap(self):
         return Range(self.position2, self.position1)
 
+    def firstPosition(self):
+        return Range(self.position1, isPosition = True)
+
+    def lastPosition(self):
+        return Range(self.position2, isPosition = True)
+
+    def upperPosition(self):
+        if self.isInverse():
+            return self.lastPosition()
+        else:
+            return self.firstPosition()
+
+    def lowerPosition(self):
+        if self.isInverse():
+            return self.firstPosition()
+        else:
+            return self.lastPosition()
+
+    def upperY(self):
+        if self.isInverse():
+            return self.position2[0]
+        else:
+            return self.position1[0]
+
 class Position(Range):
 
     def __init__(self, x, y):
