@@ -1,5 +1,4 @@
-* gg with line number
-* J ang gJ
+* O and o
 * fix register
 * deletiongs into register
 * read and write buffer
