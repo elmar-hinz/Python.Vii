@@ -1,4 +1,6 @@
+* word motions
+* f and F motions
 * fix register
-* deletiongs into register
+* deletions into register
 * read and write buffer
 

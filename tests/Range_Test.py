@@ -6,8 +6,9 @@ class Range_Test:
     def test_line(self):
         range = Range(3)
         assert range == Range(3, 3)
-        assert range.toLine() == 3
-        assert range.toLines() == (3, 3)
+        assert range.upperY() == 3
+        assert range.lowerY() == 3
+        assert range.toLineTuples() == (3, 3)
         assert not range.isInverse()
         assert range.isLines()
         assert range.isOneLine()
@@ -17,7 +18,7 @@ class Range_Test:
     def test_lines(self):
         range = Range(1, 3)
         assert range == Range((1,3))
-        assert range.toLines() == (1, 3)
+        assert range.toLineTuples() == (1, 3)
         assert not range.isInverse()
         assert range.isLines()
         assert range.isTwoLines()
@@ -30,8 +31,8 @@ class Range_Test:
         range3 = Range((1, 3), (1, 3))
         assert range == range2
         assert range == range3
-        assert range.toPosition() == (1, 3)
-        assert range.toPositions() == ((1, 3), (1, 3))
+        assert range.toPositionTuple() == (1, 3)
+        assert range.toPositionTuples() == ((1, 3), (1, 3))
         assert not range.isInverse()
         assert range.isPositions()
         assert range.isOnePosition()
@@ -40,7 +41,7 @@ class Range_Test:
 
     def test_postions(self):
         range = Range((1, 3), (2, 4))
-        assert range.toPositions() == ((1, 3), (2, 4))
+        assert range.toPositionTuples() == ((1, 3), (2, 4))
         assert not range.isInverse()
         assert range.isPositions()
         assert range.isTwoPositions()
@@ -60,16 +61,12 @@ class Range_Test:
         assert Range((3, 1), (2, 1)).isInverse()
         assert Range((3, 3), (3, 2)).isInverse()
 
-    def test_linewise(self):
-        lines = Range((3, 1), (2, 1)).linewise()
-        assert lines == Range(3, 2)
-
     def test_zero(self):
         assert Range(0) == Range((0,None), (0, None))
         assert Range(0).isLines()
         assert Position(0,0) == Range((0,0),(0,0))
         assert Position(0,0).isOnePosition()
-        assert Position(0,0).toPosition() == (0,0)
+        assert Position(0,0).toPositionTuple() == (0,0)
 
     @raises(NotLinesRangeException)
     def test_NotLinesRangeException_1(self):
@@ -120,4 +117,72 @@ class Range_Test:
     def test_NotTwoPositionsRangeException_2(self):
         range = Range((1, 3), (1, 3))
         range.assertTwoPositions()
+
+    """ Getters """
+
+    def test_linewise(self):
+        lines = Range((3, 1), (2, 1)).linewise()
+        assert lines == Range(3, 2)
+
+    def test_toLineTuples(self):
+        assert Range(3, 2).toLineTuples() == (3,2)
+
+    def test_toPositionTuple(self):
+        assert Position(3, 5).toPositionTuple() == (3, 5)
+
+    def test_toPositionTuples(self):
+        assert Range((3,1), (4,2)).toPositionTuples() == (
+                (3,1), (4,2))
+
+    def test_firstPosition(self):
+        assert Range((4,1), (2,3)).firstPosition() == (
+                Position(4,1))
+
+    def test_firstY(self):
+        assert Range((4,1), (2,3)).firstY() == 4
+
+    def test_firstX(self):
+        assert Range((4,1), (2,3)).firstX() == 1
+
+    def test_lastPosition(self):
+        assert Range((4,1), (2,3)).lastPosition() == (
+                Position(2,3))
+
+    def test_lastY(self):
+        assert Range((4,1), (2,3)).lastY() == 2
+
+    def test_lastX(self):
+        assert Range((4,1), (2,3)).lastX() == 3
+
+    def test_linewise(self):
+        assert Range((4,1), (2,3)).linewise() == Range(4, 2)
+
+    def test_lowerPosition(self):
+        assert Range((4,1), (2,3)).lowerPosition() == (
+                Position(4,1))
+
+    def test_lowerX(self):
+        assert Range((4,1), (2,3)).lowerX() == 1
+
+    def test_lowerY(self):
+        assert Range((4,1), (2,3)).lowerY() == 4
+
+    def test_swap(self):
+        assert Range((2,3), (4,1)).swap() == Range(
+                (4,1), (2,3))
+
+    def test_upperPosition(self):
+        assert Range((4,1), (2,3)).upperPosition() == (
+                Position(2,3))
+
+    def test_upperX(self):
+        assert Range((4,1), (2,3)).upperX() == 3
+
+    def test_upperY(self):
+        assert Range((4,1), (2,3)).upperY() == 2
+
+
+
+
+
 

@@ -25,7 +25,7 @@ class Window(AbstractWindow):
         self.window.refresh()
 
     def move(self):
-        y, x = self.cursor.position().toPosition()
+        y, x = self.cursor.position().toPositionTuple()
         debug("move %s %s" % (y, x))
         if y == 0: y = 1
         if x == 0: x = 1

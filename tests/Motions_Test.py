@@ -1,6 +1,6 @@
 # from nose.tools import *
 from nose.plugins.skip import SkipTest
-from vii.Motions import Motions
+from vii.Motions import Motions, Motion
 from vii.Range import Range, Position
 
 class Dummy():
@@ -90,4 +90,12 @@ class Motions_Test:
         assert self.fixture.endOfLine(10) == self.range(6,0)
         self.buffer.text[5:] = []
         assert self.fixture.endOfLine(10) == self.range(5, 2)
+
+    def test_motion_exclusive(self):
+        motion = Motion((2,2), (4,1))
+        motion.buffer = Dummy()
+        assert motion.exclusive() == Range((2,2), (3,5))
+        motion = Motion((2,2), (3,5))
+        motion.buffer = Dummy()
+        assert motion.exclusive() == Range((2,2), (3,4))
 
