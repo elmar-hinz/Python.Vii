@@ -5,8 +5,8 @@ from .Logger import debug
 
 class GotoTop(AbstractAction):
     def act(self, callback = None):
-        debug("GotoTop")
-        motion = self.motions.beginningOfBuffer()
+        y = self.command.multiplyAll()
+        motion = self.motions.gotoPositionStrict(Position(y,1))
         if callback:
             return callback.call(motion.linewise())
         else:
