@@ -30,42 +30,19 @@ There are other projects with the goal to write a better editor than Vim. I
 think an editor should first catch up with Vim before it can outrun. Without
 full Vim compatibility the habitual users will not join the company.
 
-# Component model
+# Progress
 
-May be a little out of sync with actual development.
+I am getting close to a minimal Editor with one Window. Moving, editing,
+copying and delting already work in a reasonable way.
 
-* Config
-* Logger
-* App
-    * Model
-        * CommandLine
-        * BufferList
-            * Buffer
-                * Cursor
-                * Line
-                * Line
-            * Buffer
-                * Cursor
-                * Line
-                * Line
-    * View
-        * CommandLineWindow
-        * WindowList
-            * Window
-                * Sheet
-            * Window
-                * Sheet
-    * Controller
-        * NormalMode
-            * NormalActions
-            * InsertMode
-            * VisualMode
-            * OperatorPendingMode
-            * CommandLineMode
-            * CommandHistory
+See https://github.com/elmar-hinz/Python.Vii/blob/master/vii/Setup.py
 
-The criterium of this model is, in which class other classes are instantiated.
-There are a lot more of relations not shown in this overview.
-The directory structure isn't that deep.
+The commandline to read and write files is still missing. Once that is
+working, the first version will be published.
+
+
+
+
+
 
 

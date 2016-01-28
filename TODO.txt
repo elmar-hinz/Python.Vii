@@ -1,4 +1,6 @@
-* g-Actions
+* gg with line number
+* J ang gJ
 * fix register
+* deletiongs into register
 * read and write buffer
 
