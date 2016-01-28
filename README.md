@@ -32,11 +32,13 @@ full Vim compatibility the habitual users will not join the company.
 
 ## Progress
 
-I am getting close to a minimal Editor with one Window. Moving, editing,
-copying and delting already work in a reasonable way.
+I am getting close to a minimal Editor with one Window only. Moving, editing,
+copying and deleting already work in a sufficiant way.
 
 See https://github.com/elmar-hinz/Python.Vii/blob/master/vii/Setup.py
 
-The commandline to read and write files is still missing. Once that is
-working, the first version will be published.
+* The commandline to read and write files is still missing.
+* Window scrolling is still missing.
+
+Once these is working, the first version will be published.
 
