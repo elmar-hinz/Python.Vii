@@ -234,6 +234,18 @@ class Left(AbstractAction):
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
 
+class OpenLineAbove(AbstractAction):
+    def act(self):
+        self.buffer.insert(Position(self.cursor.y, 1), "\n")
+        self.cursor.up()
+        return "insert", self.actionManager.action("insert", "inserting")
+
+class OpenLineBelow(AbstractAction):
+    def act(self):
+        self.buffer.insert(Position(self.cursor.y + 1, 1), "\n")
+        self.cursor.down()
+        return "insert", self.actionManager.action("insert", "inserting")
+
 class PutBefore(AbstractAction):
     def act(self):
         count = self.command.lpCount()

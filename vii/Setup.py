@@ -17,6 +17,8 @@ j: vii.Actions.Down
 J: vii.Actions.JoinLinesWithAdjustments
 k: vii.Actions.Up
 l: vii.Actions.Right
+o: vii.Actions.OpenLineBelow
+O: vii.Actions.OpenLineAbove
 p: vii.Actions.PutAfter
 P: vii.Actions.PutBefore
 x: vii.Actions.DeleteCharacters
