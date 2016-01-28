@@ -41,7 +41,7 @@ class Buffer:
         "Insert string at position y, x"
         "plus 1 in y or x for appending"
         if string == "": return
-        y, x = position.toPosition()
+        y, x = position.toPositionTuple()
         tokens = self._parse(string)
         try: head = self.lines[y-1][:x-1]
         except IndexError: head = ""
@@ -68,7 +68,7 @@ class Buffer:
     def copy(self, range):
         if self.isEmpty(): return ""
         range = self._resolveRange(range)
-        (y1, x1), (y2, x2) = range.toPositions()
+        (y1, x1), (y2, x2) = range.toPositionTuples()
         if y1 == y2:
             return self.lines[y1-1][x1-1:x2]
         else:
@@ -80,7 +80,7 @@ class Buffer:
     def delete(self, range):
         if self.isEmpty(): return
         range = self._resolveRange(range)
-        (y1, x1), (y2, x2) = range.toPositions()
+        (y1, x1), (y2, x2) = range.toPositionTuples()
         head = self.lines[y1-1][:x1-1]
         tail = self.lines[y2-1][x2:]
         if not tail:
@@ -151,7 +151,7 @@ class Buffer:
     def _resolveRange(self, range):
         if range.isInverse(): range = range.swap()
         if range.isLines():
-            y1, y2 = range.toLines()
+            y1, y2 = range.toLineTuples()
             start = (y1, 1)
             stop = (y2, self.lengthOfLine(y2))
             range = Range(start, stop)

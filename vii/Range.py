@@ -7,13 +7,18 @@ class NotOnePositionRangeException(Exception): pass
 class NotTwoPositionsRangeException(Exception): pass
 
 class Range:
+    """
+    Ranges are immutable. No copy function is needed.
+    By design no manipulations. Getters return new
+    objects where needed.
+    """
 
     def __init__(self, *args, isPosition = False):
         newArgs = []
         for i in range(len(args)):
             if (isinstance(args[i], Range)
                     and args[i].isOnePosition()):
-                newArgs.append(args[i].toPosition())
+                newArgs.append(args[i].toPositionTuple())
             else:
                 newArgs.append(args[i])
         args = tuple(newArgs)
@@ -115,31 +120,60 @@ class Range:
         if not self.isTwoPositions():
             raise NotTwoPositionsRangeException()
 
-    def toLine(self):
-        return self.position1[0]
+    # Getters
 
-    def toLines(self):
+    def toLineTuples(self):
         return self.position1[0], self.position2[0]
 
-    def toPosition(self):
+    def toPositionTuple(self):
         self.assertPositions()
         return self.position1
 
-    def toPositions(self):
+    def toPositionTuples(self):
         self.assertPositions()
         return self.position1, self.position2
-
-    def linewise(self):
-        return Range(self.position1[0], self.position2[0])
-
-    def swap(self):
-        return Range(self.position2, self.position1)
 
     def firstPosition(self):
         return Range(self.position1, isPosition = True)
 
+    def firstY(self):
+            return self.position1[0]
+
+    def firstX(self):
+            return self.position1[1]
+
     def lastPosition(self):
         return Range(self.position2, isPosition = True)
+
+    def lastX(self):
+            return self.position2[1]
+
+    def lastY(self):
+            return self.position2[0]
+
+    def linewise(self):
+        return Range(self.position1[0], self.position2[0])
+
+    def lowerPosition(self):
+        if self.isInverse():
+            return self.firstPosition()
+        else:
+            return self.lastPosition()
+
+    def lowerX(self):
+        if self.isInverse():
+            return self.position1[1]
+        else:
+            return self.position2[1]
+
+    def lowerY(self):
+        if self.isInverse():
+            return self.position1[0]
+        else:
+            return self.position2[0]
+
+    def swap(self):
+        return Range(self.position2, self.position1)
 
     def upperPosition(self):
         if self.isInverse():
@@ -147,11 +181,11 @@ class Range:
         else:
             return self.firstPosition()
 
-    def lowerPosition(self):
+    def upperX(self):
         if self.isInverse():
-            return self.firstPosition()
+            return self.position2[1]
         else:
-            return self.lastPosition()
+            return self.position1[1]
 
     def upperY(self):
         if self.isInverse():

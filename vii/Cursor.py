@@ -29,8 +29,8 @@ class Cursor:
                 self.trackDelta(**kwargs)
 
     def trackDelta(self, **kwargs):
-        fromY, fromX = kwargs["startPosition"].toPosition()
-        toY, toX = kwargs["afterPosition"].toPosition()
+        fromY, fromX = kwargs["startPosition"].toPositionTuple()
+        toY, toX = kwargs["afterPosition"].toPositionTuple()
         if(self.y > fromY or
                 (self.y == fromY and self.x >= fromX)):
             "cursor after range moves by deltas"
@@ -45,13 +45,13 @@ class Cursor:
 
     def position(self, position = None):
         if position:
-            self.y, self.x = position.toPosition()
+            self.y, self.x = position.toPositionTuple()
             self.updated()
         else:
             return Position(self.y, self.x)
 
     def move(self, range):
-        first, second = range.toPositions()
+        first, second = range.toPositionTuples()
         self.y, self.x = second
         self.updated()
 

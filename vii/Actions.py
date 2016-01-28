@@ -185,13 +185,12 @@ class Inserting(AbstractAction):
         if self.buffer.isEmpty():
             self.buffer.insert(Position(1,1), "\n")
             self.cursor.position(Position(1,1))
-        y,x = self.cursor.position().toPosition()
         self.buffer.insert(self.cursor.position(), char)
 
     def backspace(self):
         y = self.cursor.y
         x = self.cursor.x - 1
-        startY, startX = self.startPosition.toPosition()
+        startY, startX = self.startPosition.toPositionTuple()
         if (y > startY or x >= startX) and x > 0:
             self.buffer.delete(Position(y, x))
 

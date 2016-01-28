@@ -1,6 +1,22 @@
 from .Range import Range, Position
 from .Logger import debug
 
+class Motion(Range):
+
+    def exclusive(self):
+        if not self.isTwoPositions():
+            raise Exception()
+        firstPosition = self.upperPosition()
+        if self.lowerX() == 1:
+            y = self.lowerY() - 1
+            x = self.buffer.lengthOfLine(y) - 1
+            lastPosition = Position(y, x)
+        else:
+            lastPosition = Position(
+                self.lastY(), self.lastX() - 1)
+        return Range(firstPosition, lastPosition)
+
+
 class Motions:
     """
     Range control happens here, while the buffer
@@ -20,11 +36,11 @@ class Motions:
 
     def gotoPositionStrict(self, position):
         return self._toRange(
-            self._forceLimits(position.toPosition()))
+            self._forceLimits(position.toPositionTuple()))
 
     def gotoPositionRelaxed(self, position):
         return self._toRange(
-            self._forceLimits(position.toPosition(), appendX = 1))
+            self._forceLimits(position.toPositionTuple(), appendX = 1))
 
     def appendInLine(self):
         position = (self._y(), self._x() + 1)
@@ -102,5 +118,7 @@ class Motions:
         return Position(y, x)
 
     def _toRange(self, position):
-        return Range(self.cursor.position(), position)
+        motion = Motion(self.cursor.position(), position)
+        motion.buffer = self.buffer
+        return motion
 
