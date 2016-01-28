@@ -14,7 +14,7 @@ h: vii.Actions.Left
 i: vii.Actions.Insert
 I: vii.Actions.InsertBeforeLine
 j: vii.Actions.Down
-J: vii.Actions.JoinLines
+J: vii.Actions.JoinLinesWithAdjustments
 k: vii.Actions.Up
 l: vii.Actions.Right
 p: vii.Actions.PutAfter
@@ -44,7 +44,7 @@ y: vii.Actions.YankLines
 
 gCommandMap = """
 g: vii.GActions.GotoTop
-J: vii.GActions.JoinLinesNoSpace
+J: vii.GActions.JoinLinesWithoutAdjustments
 """
 
 insertCommandMap = """

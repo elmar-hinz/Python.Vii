@@ -2,6 +2,7 @@ from .AbstractAction import AbstractAction
 from .AbstractAction import AbstractPendingAction
 from .Logger import *
 from .Range import Range, Position
+from .Buffer import LastLinebreakLostExecption
 
 class Idle(AbstractAction):
     def act(self, callback = None):
@@ -199,6 +200,28 @@ class InsertBeforeLine(AbstractAction):
         self.cursor.beginningOfLine()
         return "insert", self.actionManager.action("insert", "inserting")
 
+class JoinLinesWithAdjustments(AbstractAction):
+    def act(self):
+        factor = self.command.multiplyAll()
+        y = self.cursor.y
+        for i in range(factor):
+            if y < self.buffer.countOfLines():
+                joinPosition = Position(y, self.buffer.lengthOfLine(y))
+                # firstLine without newline
+                firstLine = self.buffer.copy(Range(y,y))
+                firstLine = firstLine[:-1]
+                firstLengthTrimmed = len(firstLine.rstrip())
+                if (len(firstLine) - firstLengthTrimmed) > 0: joint = ""
+                else: joint = " "
+                # last line left stripped
+                lastLine = self.buffer.copy(Range(y+1, y+1)).lstrip()
+                if lastLine == "": lastLine = "\n"
+                self.buffer.delete(Range(y, y+1))
+                joined = firstLine + joint  + lastLine
+                self.buffer.insert(Position(y, 1), joined)
+                self.cursor.gotoPositionStrict(joinPosition)
+        return "normal", self.actionManager.action("normal", "idle")
+
 class Left(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
@@ -294,5 +317,4 @@ class YankLines(AbstractAction):
             factor = self.command.multiplyAll()
             yRange = self.motions.down(factor - 1).linewise()
             return self.actionManager.action("normal", "y").call(yRange)
-
 
