@@ -29,12 +29,13 @@ class Dispatcher:
             debug("INSERT")
             self.currentCommand.last().appendToInserts(token)
         else:
-            if token.isdigit():
-                self.currentCommand.last().appendToNumeral(token)
-                self.currentCommand.last().numeralToCount()
-            else:
+            if(len(self.currentCommand.last().numeral) == 0
+                and token == '0') or not token.isdigit():
                 self.currentCommand.last().operator = token
                 self.currentCommand.last().ready = True
+            else:
+                self.currentCommand.last().appendToNumeral(token)
+                self.currentCommand.last().numeralToCount()
 
     def stepAction(self, token):
         if token == chr(27):
@@ -55,4 +56,5 @@ class Dispatcher:
     def reset(self):
         self.currentCommand = Command()
         self.currentCommand.extend()
+
 

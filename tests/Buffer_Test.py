@@ -14,6 +14,14 @@ class Receiver:
     def receive(self, signal, sender, **args):
         self.seen[signal] = args
 
+class SearchResult_Test:
+
+    def test_(self):
+        result = SearchResult()
+        result.position = Position(2, 2)
+        result.string = "Hello"
+        assert str(result) == "2,2:'Hello'"
+
 class Buffer_Test:
 
     def fillAndClear(self, text):
@@ -573,6 +581,5 @@ class Buffer_Test:
         self.buffer.insert(Position(2,2), text)
         assert self.buffer.lines == expect
         assert self.inserted("afterPosition") == Position(4,3)
-
 
 

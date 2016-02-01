@@ -118,6 +118,23 @@ class Range_Test:
         range = Range((1, 3), (1, 3))
         range.assertTwoPositions()
 
+    def test_contains(self):
+        range = Range((3, 3), (5, 5))
+        assert not range.contains(Position(2,2))
+        assert not range.contains(Position(3,2))
+        assert range.contains(Position(3,3))
+        assert range.contains(Position(4,4))
+        assert range.contains(Position(5,5))
+        assert not range.contains(Position(5,6))
+        assert not range.contains(Position(6,6))
+        range = Range((3, 3), (3, 5))
+        assert not range.contains(Position(2,2))
+        assert not range.contains(Position(3,2))
+        assert range.contains(Position(3,3))
+        assert range.contains(Position(3,5))
+        assert not range.contains(Position(3,6))
+        assert not range.contains(Position(4,4))
+
     """ Getters """
 
     def test_linewise(self):

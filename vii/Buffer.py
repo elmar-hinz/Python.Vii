@@ -1,6 +1,7 @@
 from .Signals import signal
 from .Range import Range, Position
 from .Logger import *
+import builtins, re
 
 class BufferBoundsException(IndexError): pass
 class LineBoundsException(IndexError): pass

@@ -1,4 +1,4 @@
-from .AbstractAction import AbstractAction
+from .AbstractAction import *
 from .Range import Range, Position
 from .Logger import debug
 
@@ -30,5 +30,15 @@ class JoinLinesWithoutAdjustments(AbstractAction):
                 self.buffer.insert(Position(y, 1), joined)
                 self.cursor.gotoPositionStrict(joinPosition)
         return "normal", self.actionManager.action("normal", "idle")
+
+class EndOfWordBackwards(AbstractWord):
+    backwards = True
+    pattern = r"\w\W"
+    exclusive = False
+
+class EndOfWORDBackwards(AbstractWord):
+    backwards = True
+    pattern = r"\S\s"
+    exclusive = False
 
 
