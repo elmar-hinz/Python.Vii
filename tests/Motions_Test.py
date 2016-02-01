@@ -4,7 +4,6 @@ from vii.Motions import Motions, Motion
 from vii.Range import Range, Position
 
 class Dummy():
-
     def __init__(self):
         self.text = ["aa\n", "bbb\n", "ccccc\n", "ddd\n", "ee\n", "\n"]
 
@@ -34,6 +33,7 @@ class Motions_Test:
         return Range(self.cursor.position(), (y, x))
 
     def test_up(self):
+        assert self.fixture.up(0).__class__ == Motion
         assert self.fixture.up(0) == self.range(3,3)
         assert self.fixture.up() == self.range(2,3)
         assert self.fixture.up(2) == self.range(1,2)
@@ -98,4 +98,12 @@ class Motions_Test:
         motion = Motion((2,2), (3,5))
         motion.buffer = Dummy()
         assert motion.exclusive() == Range((2,2), (3,4))
+
+    def test_motion_word(self):
+        text = ["\n", "ww ww ww\n",
+                "  ww ww ww \n", "ww ww ww\n" ]
+        self.buffer = text
+        self.cursor.x = 1
+        self.cursor.y = 1
+        print(self.fixture.word())
 

@@ -1,6 +1,7 @@
 from .Buffer import Buffer
 from .Motions import Motions
 from .Cursor import Cursor
+from .Search import Search
 from .view.Window import Window
 
 class WindowManager:
@@ -22,6 +23,8 @@ class WindowManager:
         self.cursor.motions = self.motions
         self.motions.buffer = self.buffer
         self.motions.cursor = self.cursor
+        self.motions.search = Search()
+        self.motions.search.buffer = self.buffer
         self.window.cursor = self.cursor
         self.window.buffer = self.buffer
 

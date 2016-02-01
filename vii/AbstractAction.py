@@ -1,5 +1,4 @@
 class AbstractAction:
-
     def act(self, callback = None): pass
 
     def finish(self):
@@ -21,7 +20,6 @@ class AbstractAction:
         return "normal", self.actionManager.action("normal", "idle")
 
 class AbstractPendingAction(AbstractAction):
-
     def act(self, callback = None):
         mode = self.dispatcher.currentMode
         if mode == "operatorPending":
@@ -32,3 +30,54 @@ class AbstractPendingAction(AbstractAction):
             return "operatorPending", self
 
     def call(self, range): pass
+
+class AbstractFindInLine(AbstractAction):
+    backwards = False
+
+    def __init__(self):
+        self.callback = None
+
+    def act(self, callback = None):
+        mode = self.dispatcher.currentMode
+        if mode == "pending":
+            token = self.command.lpOperator()
+            factor = self.command.multiplyAll()
+            if self.backwards:
+                range = self.motions.beginningOfLine()
+            else:
+                range = self.motions.endOfLine()
+            motion = self.motions.find(token, range,
+                    factor, self.backwards)
+            if self.callback:
+                return self.callback.call(motion)
+            else:
+                self.cursor.move(motion)
+                self.finish()
+                return "normal", self.actionManager.action("normal", "idle")
+        else:
+            if callback: self.callback = callback
+            self.dispatcher.extend()
+            return "pending", self
+
+class AbstractWord(AbstractAction):
+    backwards = False
+    pattern = None
+    exclusive = True
+
+    def __init__(self):
+        self.callback = None
+
+    def act(self, callback = None):
+            factor = self.command.multiplyAll()
+            if self.backwards: range = self.motions.beginningOfBuffer()
+            else: range = self.motions.endOfBuffer()
+            motion = self.motions.find(self.pattern, range,
+               factor, self.backwards)
+            if callback:
+                if self.exclusive: motion = motion.exclusive()
+                return callback.call(motion)
+            else:
+                self.cursor.move(motion)
+                self.finish()
+                return "normal", self.actionManager.action("normal", "idle")
+

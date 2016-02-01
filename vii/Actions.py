@@ -1,5 +1,4 @@
-from .AbstractAction import AbstractAction
-from .AbstractAction import AbstractPendingAction
+from .AbstractAction import *
 from .Logger import *
 from .Range import Range, Position
 from .Buffer import LastLinebreakLostExecption
@@ -33,6 +32,14 @@ class BeginningOfLine(AbstractAction):
             self.cursor.move(motion)
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
+
+class BackWord(AbstractWord):
+    backwards = True
+    pattern = r'\w+'
+
+class BackWORD(AbstractWord):
+    backwards = True
+    pattern = r'\S+'
 
 class Change(AbstractPendingAction):
     def call(self, range):
@@ -118,6 +125,20 @@ class EndOfLine(AbstractAction):
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
 
+class EndOfWord(AbstractWord):
+    backwards = False
+    pattern = r'\w\W'
+
+class EndOfWORD(AbstractWord):
+    backwards = False
+    pattern = r'\S\s'
+
+class FindInLine(AbstractFindInLine):
+    backwards = False
+
+class FindInLineBackwards(AbstractFindInLine):
+    backwards = True
+
 class GotoLine(AbstractAction):
     def act(self, callback = None):
         if self.command.hasNoCounts():
@@ -133,7 +154,6 @@ class GotoLine(AbstractAction):
             return "normal", self.actionManager.action("normal", "idle")
 
 class GCommand(AbstractAction):
-
     def __init__(self):
         self.callback = None
 
@@ -154,8 +174,7 @@ class GCommand(AbstractAction):
             else:
                 return self.actionManager.action(mode, operator).act()
         else:
-            if callback:
-                self.callback = callback
+            if callback: self.callback = callback
             self.dispatcher.extend()
             return "gPending", self
 
@@ -306,6 +325,14 @@ class Up(AbstractAction):
             self.cursor.up(factor)
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
+
+class Word(AbstractWord):
+    backwards = False
+    pattern = r'\w+'
+
+class WORD(AbstractWord):
+    backwards = False
+    pattern = r'\S+'
 
 class Yank(AbstractPendingAction):
     def call(self, range):

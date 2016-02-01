@@ -1,5 +1,10 @@
-* word motions
-* f and F motions
+* r
+* dispatcher find digits
+* check delete in last line
+* check delete last linebreak lost
+* check inclusive/Exclusive
+* cw like ce
+* cW line cE
 * fix register
 * deletions into register
 * read and write buffer

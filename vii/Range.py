@@ -120,6 +120,20 @@ class Range:
         if not self.isTwoPositions():
             raise NotTwoPositionsRangeException()
 
+    def contains(self, position):
+        position.assertOnePosition()
+        y, x = position.toPositionTuple()
+        if y < self.upperY():
+            return False
+        elif y > self.lowerY():
+            return False
+        elif y == self.upperY() and x < self.upperX():
+            return False
+        elif y == self.lowerY() and x > self.lowerX():
+            return False
+        else:
+            return True
+
     # Getters
 
     def toLineTuples(self):
@@ -194,7 +208,6 @@ class Range:
             return self.position1[0]
 
 class Position(Range):
-
     def __init__(self, x, y):
         super().__init__(x, y, isPosition = True)
 
