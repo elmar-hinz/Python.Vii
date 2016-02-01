@@ -315,6 +315,24 @@ class Right(AbstractAction):
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
 
+class ReplaceCharacters(AbstractAction):
+    def act(self):
+        mode = self.dispatcher.currentMode
+        if mode == "pending":
+            position = self.cursor.position()
+            factor = self.command.multiplyAll()
+            range = self.motions.right(factor - 1)
+            self.buffer.delete(range)
+            self.buffer.insert(position,
+                factor*self.command.lpOperator())
+            self.cursor.move(position)
+            self.cursor.right(factor - 1)
+            self.finish()
+            return "normal", self.actionManager.action("normal", "idle")
+        else:
+            self.dispatcher.extend()
+            return "pending", self
+
 class Up(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
