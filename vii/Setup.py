@@ -27,6 +27,7 @@ o: vii.Actions.OpenLineBelow
 O: vii.Actions.OpenLineAbove
 p: vii.Actions.PutAfter
 P: vii.Actions.PutBefore
+r: vii.Actions.ReplaceCharacters
 x: vii.Actions.DeleteCharacters
 X: vii.Actions.DeleteCharactersBefore
 w: vii.Actions.Word
@@ -82,4 +83,5 @@ logPath = "."
 logFileName = "vii.log"
 logFormat = "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
 logLevel = logging.DEBUG
+
 
