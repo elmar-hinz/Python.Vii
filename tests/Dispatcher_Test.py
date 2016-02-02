@@ -30,6 +30,7 @@ class Dispatcher_Test:
         assert fixture.currentMode == None
         assert fixture.currentAction == None
         assert fixture.currentCommand == None
+        assert fixture.forceTokenToString == False
 
     @raises(TokenExecption)
     def test_stepInit_raises_exception_for_int(self):
@@ -57,10 +58,12 @@ class Dispatcher_Test:
         self.fixture.reset()
         self.fixture.currentMode = "normal"
         self.fixture.stepCommand("1")
-        self.fixture.stepCommand("1")
+        self.fixture.stepCommand("2")
+        assert self.fixture.forceTokenToString == False
         assert self.fixture.currentCommand.lpReady() == False
-        assert self.fixture.currentCommand.lpCount() == 11
+        assert self.fixture.currentCommand.lpCount() == 12
         self.fixture.stepCommand("a")
+        assert self.fixture.forceTokenToString == True
         assert self.fixture.currentCommand.lpReady() == True
         assert self.fixture.currentCommand.lpOperator() == "a"
 
@@ -68,9 +71,18 @@ class Dispatcher_Test:
         pass
         # TODO
 
+    def test_extend(self):
+        self.fixture.reset()
+        assert self.fixture.forceTokenToString == False
+        self.fixture.forceTokenToString = True
+        self.fixture.extend()
+        assert self.fixture.forceTokenToString == False
+
     def test_reset(self):
         self.fixture.currentCommand = None
+        self.fixture.forceTokenToString = True
         self.fixture.reset()
+        assert self.fixture.forceTokenToString == False
         command = self.fixture.currentCommand
         assert command.__class__ == Command
         assert len(command.parts) == 1
