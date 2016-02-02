@@ -1,4 +1,3 @@
-* dispatcher find digits
 * check delete in last line
 * check delete last linebreak lost
 * check inclusive/Exclusive

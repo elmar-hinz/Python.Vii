@@ -57,6 +57,7 @@ class AbstractFindInLine(AbstractAction):
         else:
             if callback: self.callback = callback
             self.dispatcher.extend()
+            self.dispatcher.forceTokenToString = True
             return "pending", self
 
 class AbstractWord(AbstractAction):
