@@ -18,26 +18,29 @@ class Search:
     def __init__(self):
         self.buffer = None
 
-    def search(self, pattern, range, limit = None):
+    def search(self, pattern, range, limit = None,
+            matchEmptyLines = False):
         buffer = self.buffer
         range = buffer._resolveRange(range)
-        debug(range)
         pattern = re.compile(pattern)
         results = []
         for y in builtins.range(range.firstY(), range.lastY() + 1):
             startX, stopX = 1, buffer.lengthOfLine(y)
-            if y == range.lastY(): endX = range.lastX()
-            line = buffer.copy(Range(y, y))
-            for hit in re.finditer(pattern, line):
+            if stopX == 1 and matchEmptyLines:
                 result = SearchResult()
-                result.string = hit.group()
-                x = hit.start() + 1
-                debug(Position(y, x))
-                if range.contains(Position(y,x)):
-                    debug("Yes")
-                    result.position = Position(y, x)
-                    results.append(result)
+                result.string = ""
+                result.position = Position(y, 0)
+                results.append(result)
+            else:
+                if y == range.lastY(): endX = range.lastX()
+                line = buffer.copy(Range(y, y))
+                for hit in re.finditer(pattern, line):
+                    result = SearchResult()
+                    result.string = hit.group()
+                    x = hit.start() + 1
+                    if range.contains(Position(y,x)):
+                        result.position = Position(y, x)
+                        results.append(result)
         if limit: results = results[:limit]
-        debug(results)
         return results
 

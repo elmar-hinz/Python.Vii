@@ -1,15 +1,23 @@
 from .Range import Range, Position
 from .Logger import debug
 
+class MotionException(Exception): pass
+
 class Motion(Range):
     def exclusive(self):
         if not self.isTwoPositions():
-            raise Exception()
+            raise MotionException("Not two different positions.")
+        if self.buffer.lengthOfLine(self.upperY()) == self.upperX():
+            raise MotionException("First position is end of line.")
         firstPosition = self.upperPosition()
-        if self.lowerX() == 1:
-            y = self.lowerY() - 1
-            x = self.buffer.lengthOfLine(y) - 1
-            lastPosition = Position(y, x)
+        if self.lowerX() == 0 or self.lowerX() == 1:
+            if self.upperX() == 1 or self.upperX() == 0:
+                # exclusive-linewise
+                return Range(self.upperY(), self.lowerY() - 1)
+            else:
+                y = self.lowerY() - 1
+                x = self.buffer.lengthOfLine(y) - 1
+                lastPosition = Position(y, x)
         else:
             lastPosition = Position(
                 self.lastY(), self.lastX() - 1)
@@ -84,10 +92,15 @@ class Motions:
         return self._toRange(position)
 
     def find(self, pattern, range,
-            step = None, backwards = False):
+            step = None, backwards = False,
+            matchEmptyLines = False):
         if step == None: step = 1
-        results = self.search.search(pattern, range)
-        if len(results) < 1: return self.cursor.position()
+        results = self.search.search(
+            pattern = pattern, range = range,
+            matchEmptyLines = matchEmptyLines)
+        if len(results) < 1:
+            position = self.cursor.position()
+            return self._toRange(position.toPositionTuple())
         if backwards:
             step = -step
             if results[-1].position == self.cursor.position():
