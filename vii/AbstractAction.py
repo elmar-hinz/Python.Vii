@@ -1,3 +1,5 @@
+from .Logger import *
+
 class AbstractAction:
     def act(self, callback = None): pass
 
@@ -72,10 +74,15 @@ class AbstractWord(AbstractAction):
             factor = self.command.multiplyAll()
             if self.backwards: range = self.motions.beginningOfBuffer()
             else: range = self.motions.endOfBuffer()
-            motion = self.motions.find(self.pattern, range,
-               factor, self.backwards)
+            motion = self.motions.find(
+               pattern = self.pattern,
+               range = range, step = factor,
+               backwards = self.backwards,
+               matchEmptyLines = True)
             if callback:
+                debug(motion)
                 if self.exclusive: motion = motion.exclusive()
+                debug(motion)
                 return callback.call(motion)
             else:
                 self.cursor.move(motion)
