@@ -52,13 +52,11 @@ F: vii.Actions.FindInLineBackwards
 g: vii.Actions.GCommand
 G: vii.Actions.GotoLine
 h: vii.Actions.Left
-h: vii.Actions.Left
 j: vii.Actions.Down
 k: vii.Actions.Up
 l: vii.Actions.Right
 w: vii.Actions.Word
 W: vii.Actions.WORD
-y: vii.Actions.Yank
 y: vii.Actions.YankLines
 """
 

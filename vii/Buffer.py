@@ -67,6 +67,7 @@ class Buffer:
         signal(self.updatedSignal, self)
 
     def copy(self, range):
+        if not range: return ""
         if self.isEmpty(): return ""
         range = self._resolveRange(range)
         (y1, x1), (y2, x2) = range.toPositionTuples()
@@ -79,6 +80,7 @@ class Buffer:
             return head + body + tail
 
     def delete(self, range):
+        if not range: return
         if self.isEmpty(): return
         range = self._resolveRange(range)
         (y1, x1), (y2, x2) = range.toPositionTuples()
@@ -98,7 +100,6 @@ class Buffer:
             self.lines[y1-1:y2] = []
         startY = y2
         startX = x2 + 1
-        debug(self.lines)
         signal(self.deletedSignal, self,
             startPosition=Position(startY,startX),
             afterPosition=Position(y1, x1))
@@ -116,7 +117,9 @@ class Buffer:
 
     def lengthOfLine(self, y):
         "Length of line including linebreak"
-        self._checkBufferBounds(y)
+        "0 for non-existing y"
+        if y == 0: return 0
+        if y > self.countOfLines(): return 0
         return len(self.lines[y-1])
 
     def countOfLines(self):
@@ -188,4 +191,29 @@ class Buffer:
         self._checkLineBounds(y1, x1)
         self._checkLineBounds(y2, x2)
         return ((y1, x1), (y2, x2))
+
+    """ Get Positions """
+
+    def firstPosition(self):
+        if self.isEmpty():
+            return Position(0,0)
+        else:
+            return Position(1,1)
+
+    def lastPosition(self):
+        y = self.countOfLines()
+        x = self.lengthOfLine(y)
+        return Position(y, x)
+
+    def firstPositionInLine(self, y):
+        if self.lengthOfLine(y) == 0:
+            return Position(y, 0)
+        else:
+            return Position(y, 1)
+
+    def lastPositionInLine(self, y):
+        if self.lengthOfLine(y) == 0:
+            return Position(y, 0)
+        else:
+            return Position(y, self.lengthOfLine(y))
 

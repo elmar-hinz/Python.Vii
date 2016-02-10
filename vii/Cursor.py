@@ -44,6 +44,7 @@ class Cursor:
             self.gotoPositionStrict(Position(toY, toX))
 
     def position(self, position = None):
+        debug(position)
         if position:
             self.y, self.x = position.toPositionTuple()
             self.updated()
@@ -51,6 +52,7 @@ class Cursor:
             return Position(self.y, self.x)
 
     def move(self, range):
+        if not range: return
         first, second = range.toPositionTuples()
         self.y, self.x = second
         self.updated()
@@ -77,38 +79,43 @@ class Cursor:
     def isLastLine(self):
         return self.y == self.buffer.countOfLines()
 
+    def isEmptyLine(self):
+        return self.buffer.lengthOfLine(self.y) < 2
+
     """ Movements """
 
     def gotoPositionRelaxed(self, position):
-        self.move(self.motions.gotoPositionRelaxed(position))
+        self.move(self.motions.makeMotion(
+            position).forceLimits(1))
 
     def gotoPositionStrict(self, position):
-        self.move(self.motions.gotoPositionStrict(position))
+        self.move(self.motions.makeMotion(
+            position).forceLimits())
 
     def appendInLine(self):
-        self.move(self.motions.appendInLine())
+        self.move(self.motions.appendInLine().forceLimits(1))
 
     def beginningOfBuffer(self):
-        self.move(self.motions.beginningOfBuffer())
+        self.move(self.motions.beginningOfBuffer().forceLimits())
 
     def beginningOfLine(self):
-        self.move(self.motions.beginningOfLine())
+        self.move(self.motions.beginningOfLine().forceLimits())
 
     def down(self, factor = None):
-        self.move(self.motions.down(factor))
+        self.move(self.motions.down(factor).forceLimits())
 
     def endOfBuffer(self):
-        self.move(self.motions.endOfBuffer())
+        self.move(self.motions.endOfBuffer().forceLimits())
 
     def endOfLine(self, count = None):
-        self.move(self.motions.endOfLine(count))
+        self.move(self.motions.endOfLine(count).forceLimits())
 
     def left(self, factor = None):
-        self.move(self.motions.left(factor))
+        self.move(self.motions.left(factor).forceLimits())
 
     def right(self, factor = None):
-        self.move(self.motions.right(factor))
+        self.move(self.motions.right(factor).forceLimits())
 
     def up(self, factor = None):
-        self.move(self.motions.up(factor))
+        self.move(self.motions.up(factor).forceLimits())
 

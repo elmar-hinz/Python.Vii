@@ -99,11 +99,4 @@ class Motions_Test:
         motion.buffer = Dummy()
         assert motion.exclusive() == Range((2,2), (3,4))
 
-    def test_motion_word(self):
-        text = ["\n", "ww ww ww\n",
-                "  ww ww ww \n", "ww ww ww\n" ]
-        self.buffer = text
-        self.cursor.x = 1
-        self.cursor.y = 1
-        print(self.fixture.word())
 
