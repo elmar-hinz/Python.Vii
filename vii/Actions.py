@@ -25,13 +25,9 @@ class BeginningOfLine(AbstractAction):
     def act(self, callback = None):
         motion = self.motions.beginningOfLine()
         if callback:
-            start = motion.lastPosition()
-            stop = self.motions.left().lastPosition()
-            return callback.call(Range(start, stop))
+            return callback.call(motion.exclusive())
         else:
-            self.cursor.move(motion)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class BackWord(AbstractWord):
     backwards = True
@@ -42,96 +38,102 @@ class BackWORD(AbstractWord):
     pattern = r'\S+'
 
 class Change(AbstractPendingAction):
-    def call(self, range):
-        self.buffer.delete(range)
-        if range.isLines():
-            y = range.upperY()
-            self.buffer.insert(Position(y, 1), "\n")
-            self.cursor.gotoPositionRelaxed(Position(y, 1))
-        else:
-            self.cursor.gotoPositionRelaxed(range.upperPosition())
+    def call(self, motion):
+        if motion:
+            self.buffer.delete(motion)
+            if motion.isLines():
+                y = motion.upperY()
+                self.buffer.insert(Position(y, 1), "\n")
+                self.cursor.gotoPositionRelaxed(Position(y, 1))
+            else:
+                self.cursor.gotoPositionRelaxed(motion.upperPosition())
         return "insert", self.actionManager.action("insert", "inserting")
 
 class ChangeLines(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
         if callback:
+            """ cc acts linewise """
             if not self.command.previous().operator == "c":
                 return self.skipToIdle()
-            range = self.motions.down(factor - 1).linewise()
+            motion = self.motions.down(factor - 1).limitVertical().linewise()
         else:
-            range = self.motions.endOfLine(factor)
-        return self.actionManager.action("normal", "c").call(range)
+            """ C acts from current position """
+            motion = self.motions.endOfLine(factor)
+        return self.actionManager.action("normal", "c").call(motion)
 
 class Delete(AbstractPendingAction):
-    def call(self, range):
-        self.buffer.delete(range)
-        if range.isLines():
-            y = range.upperY()
-            self.cursor.gotoPositionRelaxed(Position(y, 1))
-        else:
-            self.cursor.gotoPositionRelaxed(range.upperPosition())
+    def call(self, motion):
+        if motion:
+            self.buffer.delete(motion)
+            if motion.isLines():
+                y = motion.upperY()
+                self.cursor.gotoPositionStrict(Position(y, 1))
+            else:
+                self.cursor.gotoPositionStrict(motion.upperPosition())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class DeleteCharacters(AbstractAction):
     def act(self):
         factor = self.command.multiplyAll()
-        range = self.motions.right(factor - 1)
-        self.buffer.delete(range)
+        motion = self.motions.right(factor - 1).forceLimits()
+        self.buffer.delete(motion)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class DeleteCharactersBefore(AbstractAction):
     def act(self):
         factor = self.command.multiplyAll()
-        if self.cursor.x > 1:
-            start = self.motions.left(factor).lastPosition()
-            stop = self.motions.left().lastPosition()
-            self.buffer.delete(Range(start, stop))
-        self.finish()
-        return "normal", self.actionManager.action("normal", "idle")
+        motion = self.motions.left(factor)
+        motion = motion.forceLimits()
+        motion = motion.exclusive()
+        self.buffer.delete(motion)
+        return self.moveAndFinshToIdle(motion)
 
 class DeleteLines(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
         if callback:
+            """ dd acts linewise """
             if not self.command.previous().operator == "d":
                 return self.skipToIdle()
-            range = self.motions.down(factor - 1).linewise()
+            motion = self.motions.down(factor - 1).limitVertical().linewise()
         else:
-            range = self.motions.endOfLine(factor)
-        return self.actionManager.action("normal", "d").call(range)
+            """ D acts from current position """
+            motion = self.motions.endOfLine(factor).forceLimits()
+        return self.actionManager.action("normal", "d").call(motion)
 
 class Down(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
+        motion = self.motions.down(factor).limitVertical()
         if callback:
-            motion = self.motions.down(factor).linewise()
-            return callback.call(motion)
+            return callback.call(motion.linewise())
         else:
-            self.cursor.down(factor)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class EndOfLine(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
         motion = self.motions.endOfLine(factor)
+        motion = motion.forceLimits()
         if callback:
             return callback.call(motion)
         else:
-            self.cursor.move(motion)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class EndOfWord(AbstractWord):
     backwards = False
     pattern = r'\w\W'
+    matchEmptyLines = False
+    exclusive = False
 
 class EndOfWORD(AbstractWord):
     backwards = False
     pattern = r'\S\s'
+    matchEmptyLines = False
+    exclusive = False
 
 class FindInLine(AbstractFindInLine):
     backwards = False
@@ -145,13 +147,12 @@ class GotoLine(AbstractAction):
             y = self.buffer.countOfLines()
         else:
             y = self.command.multiplyAll()
-        motion = self.motions.gotoPositionStrict(Position(y,1))
+        motion = self.motions.makeMotion(Position(y,1))
+        motion = motion.limitVertical()
         if callback:
             return callback.call(motion.linewise())
         else:
-            self.cursor.move(motion)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class GCommand(AbstractAction):
     def __init__(self):
@@ -243,14 +244,13 @@ class JoinLinesWithAdjustments(AbstractAction):
 class Left(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
+        motion = self.motions.left(factor)
+        motion = motion.forceLimits()
+        motion = motion.exclusive()
         if callback:
-            start = self.motions.left(factor).lastPosition()
-            stop = self.motions.left().lastPosition()
-            return callback.call(Range(start, stop))
+            return callback.call(motion)
         else:
-            self.cursor.left(factor)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class OpenLineAbove(AbstractAction):
     def act(self):
@@ -271,7 +271,8 @@ class PutBefore(AbstractAction):
         string, linewise = self.registerManager.read()
         string *= count
         if linewise:
-            position = Position(self.cursor.y, 1)
+            y = self.cursor.y
+            position = Position(y if y else 1, 1)
             self.buffer.insert(position, string)
             self.cursor.position(position)
         else:
@@ -307,13 +308,13 @@ class PutAfter(AbstractAction):
 class Right(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
+        motion = self.motions.right(factor)
         if callback:
-            range = self.motions.right(factor -1)
-            return callback.call(range)
+            motion = motion.forceLimits(1)
+            return callback.call(motion.exclusive())
         else:
-            self.cursor.right(factor)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            motion = motion.forceLimits()
+            return self.moveAndFinshToIdle(motion)
 
 class ReplaceCharacters(AbstractAction):
     def act(self):
@@ -321,8 +322,9 @@ class ReplaceCharacters(AbstractAction):
         if mode == "pending":
             position = self.cursor.position()
             factor = self.command.multiplyAll()
-            range = self.motions.right(factor - 1)
-            self.buffer.delete(range)
+            motion = self.motions.right(factor - 1)
+            motion = motion.forceLimits()
+            self.buffer.delete(motion)
             self.buffer.insert(position,
                 factor*self.command.lpOperator())
             self.cursor.move(position)
@@ -336,13 +338,11 @@ class ReplaceCharacters(AbstractAction):
 class Up(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
+        motion = self.motions.up(factor).limitVertical()
         if callback:
-            range = self.motions.up(factor).linewise()
-            return callback.call(range)
+            return callback.call(motion.linewise())
         else:
-            self.cursor.up(factor)
-            self.finish()
-            return "normal", self.actionManager.action("normal", "idle")
+            return self.moveAndFinshToIdle(motion)
 
 class Word(AbstractWord):
     backwards = False
@@ -353,24 +353,29 @@ class WORD(AbstractWord):
     pattern = r'\S+'
 
 class Yank(AbstractPendingAction):
-    def call(self, range):
-        string = self.buffer.copy(range)
-        self.registerManager.unshift(string, range.isLines())
-        if range.isLines():
-            y = range.upperY()
-            x = self.cursor.x
-            self.cursor.gotoPositionStrict(Position(y, x))
+    def call(self, motion):
+        if not motion:
+            string = ""
+            self.registerManager.unshift(string)
         else:
-            self.cursor.gotoPositionStrict(range.upperPosition())
+            string = self.buffer.copy(motion)
+            self.registerManager.unshift(string, motion.isLines())
+            if motion.isLines():
+                y = motion.upperY()
+                x = self.cursor.x
+                self.cursor.gotoPositionStrict(Position(y, x))
+            else:
+                self.cursor.gotoPositionStrict(motion.upperPosition())
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
 class YankLines(AbstractAction):
     def act(self, callback = None):
         if callback and not self.command.previous().operator == "y":
+            """ yy and Y work both linewise """
             return self.skipToIdle()
         else:
             factor = self.command.multiplyAll()
-            yRange = self.motions.down(factor - 1).linewise()
+            yRange = self.motions.down(factor - 1).limitVertical().linewise()
             return self.actionManager.action("normal", "y").call(yRange)
 

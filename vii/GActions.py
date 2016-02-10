@@ -5,11 +5,11 @@ from .Logger import debug
 class GotoTop(AbstractAction):
     def act(self, callback = None):
         y = self.command.multiplyAll()
-        motion = self.motions.gotoPositionStrict(Position(y,1))
+        motion = self.motions.makeMotion(Position(y,1))
         if callback:
-            return callback.call(motion.linewise())
+            return callback.call(motion.limitVertical().linewise())
         else:
-            self.cursor.move(motion)
+            self.cursor.move(motion.forceLimits())
             self.finish()
             return "normal", self.actionManager.action("normal", "idle")
 
@@ -40,5 +40,4 @@ class EndOfWORDBackwards(AbstractWord):
     backwards = True
     pattern = r"\S\s"
     exclusive = False
-
 

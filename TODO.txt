@@ -1,8 +1,8 @@
-* check delete last linebreak lost
-* check delete including last line
 * cw like ce
 * cW line cE
 * fix register
 * deletions into register
+* ;, motions
+* scroll window
 * read and write buffer
 

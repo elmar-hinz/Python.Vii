@@ -11,8 +11,8 @@ class SearchResult:
         return self.string
 
     def __repr__(self):
-        return "%s,%s:'%s'"%( self.position.firstY(),
-                self.position.firstX(), self.string)
+        return "%s,%s:'%s'"%( self.position.upperY(),
+                self.position.upperX(), self.string)
 
 class Search:
     def __init__(self):
@@ -21,10 +21,9 @@ class Search:
     def search(self, pattern, range, limit = None,
             matchEmptyLines = False):
         buffer = self.buffer
-        range = buffer._resolveRange(range)
         pattern = re.compile(pattern)
         results = []
-        for y in builtins.range(range.firstY(), range.lastY() + 1):
+        for y in builtins.range(range.upperY(), range.lowerY() + 1):
             startX, stopX = 1, buffer.lengthOfLine(y)
             if stopX == 1 and matchEmptyLines:
                 result = SearchResult()
@@ -32,7 +31,7 @@ class Search:
                 result.position = Position(y, 0)
                 results.append(result)
             else:
-                if y == range.lastY(): endX = range.lastX()
+                if y == range.lowerY(): endX = range.lowerX()
                 line = buffer.copy(Range(y, y))
                 for hit in re.finditer(pattern, line):
                     result = SearchResult()
@@ -43,4 +42,5 @@ class Search:
                         results.append(result)
         if limit: results = results[:limit]
         return results
+
 
