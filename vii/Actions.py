@@ -347,10 +347,12 @@ class Up(AbstractAction):
 class Word(AbstractWord):
     backwards = False
     pattern = r'\w+'
+    changeAlternativePattern = r'\w\W'
 
 class WORD(AbstractWord):
     backwards = False
     pattern = r'\S+'
+    changeAlternativePattern = r'\S\s'
 
 class Yank(AbstractPendingAction):
     def call(self, motion):
