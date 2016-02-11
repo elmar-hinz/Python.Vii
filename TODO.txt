@@ -1,5 +1,3 @@
-* cw like ce
-* cW line cE
 * fix register
 * deletions into register
 * ;, motions

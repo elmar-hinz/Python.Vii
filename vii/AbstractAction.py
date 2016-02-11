@@ -8,10 +8,10 @@ class AbstractAction:
         self.dispatcher.logHistory()
         self.dispatcher.reset()
 
-    def redirect(self, operator, count = None):
+    def XXXredirect(self, operator, count = None):
             self.dispatcher.reset()
             part = self.dispatcher.currentCommand.last()
-            part.operator = "Y"
+            part.operator = operator
             if count:
                 part.numeral = str(count)
                 part.count = count
@@ -85,23 +85,27 @@ class AbstractWord(AbstractAction):
         self.callback = None
 
     def act(self, callback = None):
-            factor = self.command.multiplyAll()
-            start = self.cursor.position()
-            if self.backwards: stop = Position(1,0)
-            else: stop = self.buffer.lastPosition()
-            range = Range(start, stop)
-            motion = self.motions.find(
-               pattern = self.pattern,
-               range = range, step = factor,
-               backwards = self.backwards,
-               matchEmptyLines = self.matchEmptyLines,
-               matchRangeBorders = self.matchRangeBorders)
-            motion = motion.forceLimits()
-            if not motion.isTwoPositions():
-                return self.skipToIdle()
-            elif callback:
-                if self.exclusive: motion = motion.exclusive()
-                return callback.call(motion)
-            else:
-                return self.moveAndFinshToIdle(motion)
+        if(callback and
+            self.command.previous().operator == "c"):
+            self.pattern = self.changeAlternativePattern
+            self.exclusive = False
+        factor = self.command.multiplyAll()
+        start = self.cursor.position()
+        if self.backwards: stop = Position(1,0)
+        else: stop = self.buffer.lastPosition()
+        range = Range(start, stop)
+        motion = self.motions.find(
+           pattern = self.pattern,
+           range = range, step = factor,
+           backwards = self.backwards,
+           matchEmptyLines = self.matchEmptyLines,
+           matchRangeBorders = self.matchRangeBorders)
+        motion = motion.forceLimits()
+        if not motion.isTwoPositions():
+            return self.skipToIdle()
+        elif callback:
+            if self.exclusive: motion = motion.exclusive()
+            return callback.call(motion)
+        else:
+            return self.moveAndFinshToIdle(motion)
 
