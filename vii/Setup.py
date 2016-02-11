@@ -28,6 +28,8 @@ O: vii.Actions.OpenLineAbove
 p: vii.Actions.PutAfter
 P: vii.Actions.PutBefore
 r: vii.Actions.ReplaceCharacters
+s: vii.Actions.SubstituteCharacters
+S: vii.Actions.ChangeLines
 x: vii.Actions.DeleteCharacters
 X: vii.Actions.DeleteCharactersBefore
 w: vii.Actions.Word
