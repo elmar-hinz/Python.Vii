@@ -53,9 +53,11 @@ class ChangeLines(AbstractAction):
     def act(self, callback = None):
         factor = self.command.multiplyAll()
         if callback:
-            """ cc acts linewise """
+            """ S and cc acts linewise """
             if not self.command.previous().operator == "c":
                 return self.skipToIdle()
+            motion = self.motions.down(factor - 1).limitVertical().linewise()
+        elif self.command.lpOperator() == "S":
             motion = self.motions.down(factor - 1).limitVertical().linewise()
         else:
             """ C acts from current position """
@@ -334,6 +336,15 @@ class ReplaceCharacters(AbstractAction):
         else:
             self.dispatcher.extend()
             return "pending", self
+
+class SubstituteCharacters(AbstractAction):
+    def act(self):
+        position = self.cursor.position()
+        factor = self.command.multiplyAll()
+        motion = self.motions.right(factor - 1).forceLimits()
+        self.buffer.delete(motion)
+        self.cursor.move(position)
+        return "insert", self.actionManager.action("insert", "inserting")
 
 class Up(AbstractAction):
     def act(self, callback = None):
