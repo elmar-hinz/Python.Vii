@@ -140,7 +140,13 @@ class EndOfWORD(AbstractWord):
 class FindInLine(AbstractFindInLine):
     backwards = False
 
+class FindInLineCharacterBefore(AbstractFindInLine):
+    backwards = False
+
 class FindInLineBackwards(AbstractFindInLine):
+    backwards = True
+
+class FindInLineBackwardsCharacterBefore(AbstractFindInLine):
     backwards = True
 
 class GotoLine(AbstractAction):
@@ -317,6 +323,12 @@ class Right(AbstractAction):
         else:
             motion = motion.forceLimits()
             return self.moveAndFinshToIdle(motion)
+
+class RepeatFindInLine(AbstractFindInLine):
+    repeat = "normal"
+
+class RepeatFindInLineInversed(AbstractFindInLine):
+    repeat = "inversed"
 
 class ReplaceCharacters(AbstractAction):
     def act(self):

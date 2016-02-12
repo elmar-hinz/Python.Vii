@@ -8,16 +8,6 @@ class AbstractAction:
         self.dispatcher.logHistory()
         self.dispatcher.reset()
 
-    def XXXredirect(self, operator, count = None):
-            self.dispatcher.reset()
-            part = self.dispatcher.currentCommand.last()
-            part.operator = operator
-            if count:
-                part.numeral = str(count)
-                part.count = count
-            part.ready = True
-            return self.actionManager.action("normal", "idle").act()
-
     def skipToIdle(self):
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
@@ -46,24 +36,34 @@ class AbstractPendingAction(AbstractAction):
 
 class AbstractFindInLine(AbstractAction):
     backwards = False
+    pattern = "%s"
+    repeat = None
 
     def __init__(self):
         self.callback = None
 
     def act(self, callback = None):
         mode = self.dispatcher.currentMode
-        if mode == "pending":
-            pattern = self.command.lpOperator()
+        if mode == "pending" or self.repeat:
             factor = self.command.multiplyAll()
-            if self.backwards:
-                motion = self.motions.beginningOfLine()
+            if not self.repeat:
+                backwards = self.backwards
+                token = self.command.lpOperator()
+                self.globalVariables.set("findInLineBackwards", backwards)
+                self.globalVariables.set("findInLineToken", token)
             else:
-                motion = self.motions.endOfLine()
-            motion = motion.forceLimits()
+                backwards = self.globalVariables.get("findInLineBackwards")
+                token = self.globalVariables.get("findInLineToken")
+                if self.repeat == "inversed": backwards = not backwards
+            if backwards:
+                range = self.motions.beginningOfLine()
+            else:
+                range = self.motions.endOfLine()
+            range = range.forceLimits()
             motion = self.motions.find(
-               pattern = pattern,
-               range = motion, step = factor,
-               backwards = self.backwards,
+               pattern = (self.pattern % token),
+               range = range, step = factor,
+               backwards = backwards,
                matchEmptyLines = False,
                matchRangeBorders = False)
             if self.callback:
