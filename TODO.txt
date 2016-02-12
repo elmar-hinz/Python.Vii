@@ -1,4 +1,3 @@
-* fix register
 * deletions into register
 * ;, motions
 * scroll window
