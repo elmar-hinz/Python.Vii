@@ -139,15 +139,19 @@ class EndOfWORD(AbstractWord):
 
 class FindInLine(AbstractFindInLine):
     backwards = False
+    pattern = "(%s)"
 
 class FindInLineCharacterBefore(AbstractFindInLine):
     backwards = False
+    pattern = "(.)%s"
 
 class FindInLineBackwards(AbstractFindInLine):
     backwards = True
+    pattern = "(%s)"
 
 class FindInLineBackwardsCharacterBefore(AbstractFindInLine):
     backwards = True
+    pattern = "%s(.)"
 
 class GotoLine(AbstractAction):
     def act(self, callback = None):

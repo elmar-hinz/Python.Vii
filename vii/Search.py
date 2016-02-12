@@ -35,12 +35,12 @@ class Search:
                 line = buffer.copy(Range(y, y))
                 for hit in re.finditer(pattern, line):
                     result = SearchResult()
-                    result.string = hit.group()
-                    x = hit.start() + 1
+                    count = len(hit.groups())
+                    result.string = hit.group(count)
+                    x = hit.span(count)[0] + 1
                     if range.contains(Position(y,x)):
                         result.position = Position(y, x)
                         results.append(result)
         if limit: results = results[:limit]
         return results
-
 

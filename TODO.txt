@@ -1,4 +1,3 @@
-* ;, motions
+* fix tests
 * scroll window
 * read and write buffer
-
