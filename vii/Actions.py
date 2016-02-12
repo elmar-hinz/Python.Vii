@@ -40,7 +40,7 @@ class BackWORD(AbstractWord):
 class Change(AbstractPendingAction):
     def call(self, motion):
         if motion:
-            self.buffer.delete(motion)
+            self.deleteAndRegister(motion)
             if motion.isLines():
                 y = motion.upperY()
                 self.buffer.insert(Position(y, 1), "\n")
@@ -67,7 +67,7 @@ class ChangeLines(AbstractAction):
 class Delete(AbstractPendingAction):
     def call(self, motion):
         if motion:
-            self.buffer.delete(motion)
+            self.deleteAndRegister(motion)
             if motion.isLines():
                 y = motion.upperY()
                 self.cursor.gotoPositionStrict(Position(y, 1))
@@ -80,7 +80,7 @@ class DeleteCharacters(AbstractAction):
     def act(self):
         factor = self.command.multiplyAll()
         motion = self.motions.right(factor - 1).forceLimits()
-        self.buffer.delete(motion)
+        self.deleteAndRegister(motion)
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
@@ -90,7 +90,7 @@ class DeleteCharactersBefore(AbstractAction):
         motion = self.motions.left(factor)
         motion = motion.forceLimits()
         motion = motion.exclusive()
-        self.buffer.delete(motion)
+        self.deleteAndRegister(motion)
         return self.moveAndFinshToIdle(motion)
 
 class DeleteLines(AbstractAction):
@@ -342,7 +342,7 @@ class SubstituteCharacters(AbstractAction):
         position = self.cursor.position()
         factor = self.command.multiplyAll()
         motion = self.motions.right(factor - 1).forceLimits()
-        self.buffer.delete(motion)
+        self.deleteAndRegister(motion)
         self.cursor.move(position)
         return "insert", self.actionManager.action("insert", "inserting")
 
