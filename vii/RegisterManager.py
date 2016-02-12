@@ -11,6 +11,7 @@ class RegisterManager:
         self.numbered[1:10] = [value] + self.numbered[1:9]
 
     def store(self, name, string, linewise = False):
+        if name == '_': return
         if name == '"':
             return self.store(0, string, linewise)
         name = str(name)
