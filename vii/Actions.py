@@ -270,7 +270,7 @@ class PutBefore(AbstractAction):
     def act(self):
         count = self.command.lpCount()
         if count == None: count = 1
-        string, linewise = self.registerManager.read()
+        string, linewise = self.registerManager.fetch('"')
         string *= count
         if linewise:
             y = self.cursor.y
@@ -290,7 +290,7 @@ class PutAfter(AbstractAction):
     def act(self):
         count = self.command.lpCount()
         if count == None: count = 1
-        string, linewise = self.registerManager.read()
+        string, linewise = self.registerManager.fetch('"')
         string *= count
         if linewise:
             position = Position(self.cursor.y + 1, 1)
@@ -369,10 +369,10 @@ class Yank(AbstractPendingAction):
     def call(self, motion):
         if not motion:
             string = ""
-            self.registerManager.unshift(string)
+            self.registerManager.store('0', string)
         else:
             string = self.buffer.copy(motion)
-            self.registerManager.unshift(string, motion.isLines())
+            self.registerManager.store('0', string, motion.isLines())
             if motion.isLines():
                 y = motion.upperY()
                 x = self.cursor.x
