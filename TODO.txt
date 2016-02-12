@@ -1,4 +1,3 @@
-* deletions into register
 * ;, motions
 * scroll window
 * read and write buffer

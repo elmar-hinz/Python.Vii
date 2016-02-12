@@ -28,6 +28,10 @@ class AbstractAction:
         self.finish()
         return "normal", self.actionManager.action("normal", "idle")
 
+    def deleteAndRegister(self, motion):
+        string = self.buffer.delete(motion)
+        self.registerManager.shift(string, motion.isLines())
+
 class AbstractPendingAction(AbstractAction):
     def act(self, callback = None):
         mode = self.dispatcher.currentMode

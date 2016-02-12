@@ -80,8 +80,9 @@ class Buffer:
             return head + body + tail
 
     def delete(self, range):
-        if not range: return
-        if self.isEmpty(): return
+        result = self.copy(range)
+        if not range: return result
+        if self.isEmpty(): return result
         range = self._resolveRange(range)
         (y1, x1), (y2, x2) = range.toPositionTuples()
         head = self.lines[y1-1][:x1-1]
@@ -104,6 +105,7 @@ class Buffer:
             startPosition=Position(startY,startX),
             afterPosition=Position(y1, x1))
         signal(self.updatedSignal, self)
+        return result
 
     def isEmpty(self):
         "Has Zero lines"
