@@ -2,6 +2,8 @@ normalCommandMap = """
 0: vii.Actions.BeginningOfLine
 $: vii.Actions.EndOfLine
 ^: vii.Actions.BeginningOfLine
+;: vii.Actions.RepeatFindInLine
+,: vii.Actions.RepeatFindInLineInversed
 a: vii.Actions.Append
 A: vii.Actions.AppendToLine
 b: vii.Actions.BackWord
@@ -30,6 +32,8 @@ P: vii.Actions.PutBefore
 r: vii.Actions.ReplaceCharacters
 s: vii.Actions.SubstituteCharacters
 S: vii.Actions.ChangeLines
+t: vii.Actions.FindInLineCharacterBefore
+T: vii.Actions.FindInLineBackwardsCharacterBefore
 x: vii.Actions.DeleteCharacters
 X: vii.Actions.DeleteCharactersBefore
 w: vii.Actions.Word

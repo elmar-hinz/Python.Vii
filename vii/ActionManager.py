@@ -35,6 +35,7 @@ class ActionManager:
         action.windowManager = self.windowManager
         action.actionManager = self
         action.registerManager = self.registerManager
+        action.globalVariables = self.globalVariables
         action.window = self.windowManager.window
         action.buffer = self.windowManager.buffer
         action.cursor = self.windowManager.cursor

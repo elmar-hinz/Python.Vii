@@ -4,6 +4,7 @@ from .view.View import View
 from .WindowManager import WindowManager
 from .ActionManager import ActionManager
 from .RegisterManager import RegisterManager
+from .Variables import Variables
 from .Setup import insertCommandMap, normalCommandMap
 from .Setup import operatorPendingCommandMap, gCommandMap
 
@@ -13,6 +14,7 @@ class App:
     def __init__(self, screen):
         screen.nodelay(0)
         windowManager = WindowManager(screen, View(screen))
+        globalVariables = Variables()
         dispatcher = Dispatcher()
         actionManager = ActionManager()
         registerManager = RegisterManager()
@@ -23,6 +25,7 @@ class App:
         actionManager.dispatcher = dispatcher
         actionManager.registerManager = registerManager
         actionManager.windowManager = windowManager
+        actionManager.globalVariables = globalVariables
         dispatcher.windowManager = windowManager
         dispatcher.actionManager = actionManager
 
