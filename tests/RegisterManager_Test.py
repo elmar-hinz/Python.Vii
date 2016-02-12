@@ -55,3 +55,9 @@ class RegisterManager_Test:
         assert self.fixture.fetch('"') == ("aaa", True)
         assert self.fixture.fetch(1) == ("aaa", True)
 
+    def test_blackhole_register(self):
+        assert self.fixture.fetch('"') == ("", False)
+        self.fixture.store('_', "xxx", True)
+        assert self.fixture.fetch('"') == ("", False)
+
+
