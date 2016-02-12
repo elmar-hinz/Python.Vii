@@ -7,7 +7,8 @@ class SearchResult_Test:
         result = SearchResult()
         result.position = Position(2, 2)
         result.string = "Hello"
-        assert str(result) == "2,2:'Hello'"
+        assert result.__repr__() == "2,2:'Hello'"
+        assert str(result) == "Hello"
 
 class Search_Test:
 

@@ -127,9 +127,13 @@ class Range:
             return False
         elif y > self.lowerY():
             return False
-        elif y == self.upperY() and x < self.upperX():
+        elif(   y == self.upperY()
+                and self.upperX() != None
+                and x < self.upperX()):
             return False
-        elif y == self.lowerY() and x > self.lowerX():
+        elif(   y == self.lowerY()
+                and self.lowerX() != None
+                and x > self.lowerX()):
             return False
         else:
             return True
