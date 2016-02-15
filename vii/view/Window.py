@@ -49,9 +49,19 @@ class WindowLines:
             while line:
                 yield line[:number] +"\n"
                 line = line[number:]
-        for line in string.splitlines():
+        for count, line in enumerate(string.splitlines()):
             parts = list(splitLineByNumber(line, width))
             self.lines.append(parts)
+
+    def makeNumbers(self, width):
+        self.numbers = []
+        format = "%"+str(width-1)+"d "
+        for count, line in enumerate(self.lines):
+            parts = []
+            parts.append(format % (count + 1))
+            for i in range(len(line) - 1):
+                parts.append(numberBarWidth * " ")
+            self.numbers.append(parts)
 
     def mapPositionFromWindowLines(self, y, x):
         """ y, x are based 1 """
@@ -96,17 +106,15 @@ class WindowLines:
                 x -= len(part)
         raise Exception("Never reached")
 
-    def subStringByLine(self, topLine, bottomLine):
-        topLine, bottomLine = topLine - 1, bottomLine - 1
-        lines = self.lines[topLine:bottomLine + 1]
-        string = ""
-        for line in lines: string += "".join(line)
-        return string
 
-    def subString(self, top, hight):
+    def subStringWithNumbers(self, top, hight):
         top = top - 1
         parts = []
-        for line in self.lines: parts += line
+        for l in range(len(self.lines)):
+            number = self.numbers[l]
+            line = self.lines[l]
+            for p in range(len(line)):
+                parts.append(number[p] + line[p])
         return ''.join(parts[top: top + hight])
 
     def __str__(self):
@@ -119,14 +127,13 @@ class Window:
     def __init__(self):
         slot("updatedBuffer", self)
         slot("cursorMoved", self)
-        # self.lines = WindowLines()
-        # self.lines.splitLines("", 1)
         self.firstLine = 1
 
     def makeLines(self):
-        width = self.port.width() - 1
+        width = self.port.width() - 1 - numberBarWidth
         string = str(self.buffer)
         self.lines.splitLines(string, width)
+        self.lines.makeNumbers(numberBarWidth)
 
     def firstWindowLine(self):
         y = self.firstLine
@@ -156,7 +163,7 @@ class Window:
         pass
 
     def draw(self):
-        string = self.lines.subString(
+        string = self.lines.subStringWithNumbers(
                 self.firstWindowLine(), self.port.height())
         self.port.draw(string)
 
@@ -172,6 +179,7 @@ class Window:
             if below > 0: self.firstLine += below
         y, x = self.lines.mapPositionToWindowLines(y,x)
         y = self.mapWindowLineToPort(y)
+        x += numberBarWidth
         self.port.move(y, x)
 
     def receive(self, signal, sender, *args):
