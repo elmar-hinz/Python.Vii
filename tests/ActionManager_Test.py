@@ -26,6 +26,7 @@ class ActionManager_Test:
         self.manager.dispatcher = Mock()
         self.manager.windowManager = Mock()
         self.manager.registerManager = Mock()
+        self.manager.globalVariables = Mock()
 
     def test_init(self):
         pass
@@ -46,7 +47,7 @@ class ActionManager_Test:
         assert action.__class__ == Alpha
         wanted = ("""
         command dispatcher windowManager
-        actionManager registerManager
+        actionManager registerManager globalVariables
         window buffer cursor motions
             """)
         for word in wanted.split():

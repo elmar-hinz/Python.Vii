@@ -66,15 +66,15 @@ W: vii.Actions.WORD
 y: vii.Actions.YankLines
 """
 
+insertCommandMap = """
+inserting: vii.Actions.Inserting
+"""
+
 gCommandMap = """
 g: vii.GActions.GotoTop
 J: vii.GActions.JoinLinesWithoutAdjustments
 e: vii.GActions.EndOfWordBackwards
 E: vii.GActions.EndOfWORDBackwards
-"""
-
-insertCommandMap = """
-inserting: vii.Actions.Inserting
 """
 
 """Window"""
