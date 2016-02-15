@@ -8,7 +8,7 @@ logger = logging.getLogger()
 logger.addHandler(fileHandler)
 logger.setLevel(logLevel)
 
-def debug(str): logger.debug(str)
+def debug(str, str2 = ""): logger.debug("%s %s" % (str, str2))
 def info(str): logger.info(str)
 def warn(str): logger.warn(str)
 def error(str): logger.error(str)
