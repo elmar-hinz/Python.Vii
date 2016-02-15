@@ -1,3 +1,7 @@
-* fix tests
-* scroll window
+* Port to Window
+    * crop based on upper left
+    * cursor matches window
+    * scrolling follow cursor
 * read and write buffer
+* catch all exceptions on top level
+* fix tests

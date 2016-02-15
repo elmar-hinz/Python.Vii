@@ -1,6 +1,6 @@
-from .AbstractWindow import AbstractWindow
+from .Window import Window
 
-class CommandLine(AbstractWindow):
+class CommandLine(Window):
 
     def layout(self, parentWindow):
         height, width = 1, parentWindow.getmaxyx()[1]

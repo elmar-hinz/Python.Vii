@@ -2,7 +2,7 @@ from .Buffer import Buffer
 from .Motions import Motions
 from .Cursor import Cursor
 from .Search import Search
-from .view.Window import Window
+from .view.Window import Window, Port, WindowLines
 
 class WindowManager:
 
@@ -18,7 +18,11 @@ class WindowManager:
         self.cursor = Cursor()
         self.buffer = Buffer()
         self.motions = Motions()
-        self.window = Window(self.parentScreen)
+        self.port = Port(self.parentScreen)
+        self.window = Window()
+        self.window.port = self.port
+        self.window.lines = WindowLines()
+        self.window.lines.splitLines("", 1)
         self.cursor.buffer = self.buffer
         self.cursor.motions = self.motions
         self.motions.buffer = self.buffer
@@ -27,5 +31,4 @@ class WindowManager:
         self.motions.search.buffer = self.buffer
         self.window.cursor = self.cursor
         self.window.buffer = self.buffer
-
 
