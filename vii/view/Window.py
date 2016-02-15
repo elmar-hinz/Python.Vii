@@ -177,6 +177,7 @@ class Window:
         else:
             below = self.linesBelowPort(y)
             if below > 0: self.firstLine += below
+        self.draw()
         y, x = self.lines.mapPositionToWindowLines(y,x)
         y = self.mapWindowLineToPort(y)
         x += numberBarWidth
