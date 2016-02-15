@@ -1,7 +1,6 @@
 * Port to Window
-    * crop based on upper left
-    * cursor matches window
-    * scrolling follow cursor
+    * Fix GG gg Bug
+    * Fix bottom line bug
 * read and write buffer
 * catch all exceptions on top level
 * fix tests
