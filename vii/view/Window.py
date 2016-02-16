@@ -144,13 +144,14 @@ class Window:
         return self.firstLine - nr
 
     def linesBelowPort(self, nr):
+        """ The number of lines the top lines needs to move down, if
+        position is below the botton line of port """
         y, x = nr, self.buffer.lengthOfLine(nr)
-        # y below port
         yTarget, xTarget = self.lines.mapPositionToWindowLines(y, x)
-        yTop = yTarget - self.port.height() + 1
+        yTop = yTarget - self.port.height()
 
         topLineY, topLineX = self.lines.mapPositionFromWindowLines(yTop, 1)
-        return topLineY - self.firstLine
+        return topLineY - self.firstLine + 1
 
     def mapWindowLineToPort(self, y):
         top = self.firstWindowLine()
@@ -175,8 +176,8 @@ class Window:
         if above > 0:
             self.firstLine -= above
         else:
-            below = self.linesBelowPort(y)
-            if below > 0: self.firstLine += below
+            down = self.linesBelowPort(y)
+            if down > 0: self.firstLine += down
         self.draw()
         y, x = self.lines.mapPositionToWindowLines(y,x)
         y = self.mapWindowLineToPort(y)
@@ -184,7 +185,10 @@ class Window:
         self.port.move(y, x)
 
     def receive(self, signal, sender, *args):
-        self.makeLines()
-        self.draw()
-        self.move()
+        if signal == "updatedBuffer":
+            pass
+        if signal == "cursorMoved":
+            self.makeLines()
+            self.draw()
+            self.move()
 

@@ -1,6 +1,3 @@
-* Port to Window
-    * Fix GG gg Bug
-    * Fix bottom line bug
 * read and write buffer
 * catch all exceptions on top level
 * fix tests
