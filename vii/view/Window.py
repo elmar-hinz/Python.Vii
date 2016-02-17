@@ -56,13 +56,13 @@ class WindowLines:
         line = self.lines[y-1]
         for i in range(0, len(line)):
             """ For each part x is shortened by part's length """
-            part = line[i].rstrip()
+            part = line[i][:-1] #strip parts linebreak
             yCount += 1
             if x <= len(part):
                 return (yCount, x)
             elif i == len(line) - 1:
                 """ On last linebreak """
-                x = len(part) + 1
+                x = len(part) + 1 # + 1 for lost linebreak
                 return (yCount, x)
             else:
                 xCount += len(part)
