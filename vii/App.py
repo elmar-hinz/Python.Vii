@@ -11,6 +11,8 @@ from .Range import Position
 
 os.environ.setdefault('ESCDELAY', '25')
 
+class QuitException(Exception): pass
+
 class App:
     def __init__(self, screen):
         screen.nodelay(0)
@@ -37,10 +39,12 @@ class App:
         dispatcher.windowManager = windowManager
         dispatcher.actionManager = actionManager
 
-        self.loop(screen, dispatcher)
+        try: self.loop(screen, dispatcher)
+        except QuitException: pass
 
     def loop(self, screen, dispatcher):
         while True:
             dispatcher.step(screen.get_wch())
+
 
 def main(): curses.wrapper(App)

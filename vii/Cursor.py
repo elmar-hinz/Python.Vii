@@ -47,7 +47,6 @@ class Cursor:
         self.updated()
 
     def position(self, position = None):
-        debug(position)
         if position:
             self.y, self.x = position.toPositionTuple()
             self.updated()
