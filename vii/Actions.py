@@ -2,6 +2,7 @@ from .AbstractAction import *
 from .Logger import *
 from .Range import Range, Position
 from .Buffer import LastLinebreakLostExecption
+from .Interpreter import Interpreter, InterpreterActionManager
 
 class Idle(AbstractAction):
     def act(self, callback = None):
@@ -63,6 +64,10 @@ class ChangeLines(AbstractAction):
             """ C acts from current position """
             motion = self.motions.endOfLine(factor)
         return self.actionManager.action("normal", "c").call(motion)
+
+class CommandLine(AbstractAction):
+    def act(self):
+        return "insert", self.actionManager.action("command", "inserting")
 
 class Delete(AbstractPendingAction):
     def call(self, motion):
@@ -225,6 +230,33 @@ class Inserting(AbstractAction):
         startY, startX = self.startPosition.toPositionTuple()
         if (y > startY or x >= startX) and x > 0:
             self.buffer.delete(Position(y, x))
+
+class InsertingCommandLine(Inserting):
+    def act(self):
+        token = self.command.lpInsert()
+        if not "startPosition" in dir(self): self.start()
+        if False: pass
+        elif token == chr(10):
+            return self.commit()
+        elif token == chr(127):
+            self.backspace()
+            return ("insert", self)
+        else:
+            self.insert(token)
+            return ("insert", self)
+
+    def commit(self):
+        interpreter = Interpreter()
+        interpreter.actionManager = InterpreterActionManager()
+        command = self.buffer.copy(Range(1,1)).strip()
+        debug(command)
+        interpreter.interpret(command)
+        return self.skipToIdle()
+
+    def finish(self):
+        super().finish()
+        self.buffer.delete(Range(1,self.buffer.countOfLines()))
+        self.windowManager.currentWindow().focus()
 
 class InsertBeforeLine(AbstractAction):
     def act(self):

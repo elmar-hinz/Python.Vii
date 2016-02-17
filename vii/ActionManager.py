@@ -1,6 +1,7 @@
 from .Logger import *
 from .AbstractAction import AbstractAction
 import importlib
+from .Range import Position
 
 class DummyAction(AbstractAction):
 
@@ -36,10 +37,15 @@ class ActionManager:
         action.actionManager = self
         action.registerManager = self.registerManager
         action.globalVariables = self.globalVariables
-        action.window = self.windowManager.window
-        action.buffer = self.windowManager.buffer
-        action.cursor = self.windowManager.cursor
-        action.motions = self.windowManager.motions
+        if mode == "command":
+            action.window = self.windowManager.commandLine
+            action.window.buffer.insert(Position(1,1), "\n")
+            action.window.cursor.move(Position(1,0))
+        else:
+            action.window = self.windowManager.window
+        action.buffer = action.window.buffer
+        action.cursor = action.window.cursor
+        action.motions = action.window.motions
         return action
 
     def parseMap(self, text):
@@ -47,6 +53,7 @@ class ActionManager:
         for line in text.strip().splitlines():
             try:
                 k, v = tuple(i.strip() for i in line.split(":"))
+                if k == "colon": k = ":"
                 map[k] = v
             except:
                 pass
