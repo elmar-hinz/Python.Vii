@@ -1,3 +1,2 @@
-* read and write buffer
 * catch all exceptions on top level
 * fix tests

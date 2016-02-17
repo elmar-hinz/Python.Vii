@@ -35,6 +35,7 @@ class Buffer:
     updatedSignal = "updatedBuffer"
 
     def __init__(self):
+        self.address = None
         self.lines = []
         signal(self.updatedSignal, self)
 
@@ -219,3 +220,22 @@ class Buffer:
         else:
             return Position(y, self.lengthOfLine(y))
 
+    """ Read/write """
+
+    def read(self, address):
+        self.address = address
+        try:
+            file = open(address, 'r' )
+            string = file.read()
+            self.fill(string)
+            file.close()
+        except:
+            pass
+
+    def write(self, address = None):
+        if not address: address = self.address
+        if not address: return
+        file = open(address, 'w')
+        file.write(str(self))
+        file.flush()
+        file.close()

@@ -248,8 +248,8 @@ class InsertingCommandLine(Inserting):
     def commit(self):
         interpreter = Interpreter()
         interpreter.actionManager = InterpreterActionManager()
+        interpreter.actionManager.window = self.windowManager.currentWindow()
         command = self.buffer.copy(Range(1,1)).strip()
-        debug(command)
         interpreter.interpret(command)
         return self.skipToIdle()
 

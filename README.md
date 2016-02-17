@@ -30,15 +30,28 @@ There are other projects with the goal to write a better editor than Vim. I
 think an editor should first catch up with Vim before it can outrun. Without
 full Vim compatibility the habitual users will not join the company.
 
-## Progress
+## Version
 
-I am getting close to a minimal Editor with one Window only. Moving, editing,
-copying and deleting already work in a sufficiant way.
+* 1.0    Minimal editor
 
-See https://github.com/elmar-hinz/Python.Vii/blob/master/vii/Setup.py
+        * Command line: edit, write, quit
+        * A rich bunch of actions to move and edit text.
+        * See: https://github.com/elmar-hinz/Python.Vii/blob/master/vii/Setup.py
 
-* The commandline to read and write files is still missing.
-* Window scrolling is still missing.
+## Stability
 
-Once these is working, the first version will be published.
+It is a working editor. The first version is rather prove of concept than
+production stable.
+
+The goal of this version is to make you curious. Maybe you like to test it
+and report you feedback.
+
+For now there is still to much resarch and dynamic to ask for pull requests,
+but stay tuned to join the development within one or two years.
+
+## Installation
+
+The devolopment is done on OS X with homebrew Python 3. The editor depends
+on the Python ncurses library.
+
 
