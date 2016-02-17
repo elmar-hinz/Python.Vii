@@ -2,6 +2,7 @@ normalCommandMap = """
 0: vii.Actions.BeginningOfLine
 $: vii.Actions.EndOfLine
 ^: vii.Actions.BeginningOfLine
+colon: vii.Actions.CommandLine
 ;: vii.Actions.RepeatFindInLine
 ,: vii.Actions.RepeatFindInLineInversed
 a: vii.Actions.Append
@@ -68,6 +69,10 @@ y: vii.Actions.YankLines
 
 insertCommandMap = """
 inserting: vii.Actions.Inserting
+"""
+
+commandCommandMap = """
+inserting: vii.Actions.InsertingCommandLine
 """
 
 gCommandMap = """

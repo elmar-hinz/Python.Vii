@@ -1,44 +1,7 @@
 from ..Setup import numberBarWidth
 from ..Range import Range
-import curses
 from ..Signals import slot
 from ..Logger import debug
-
-class Port:
-
-    def __init__(self, parentWindow):
-        self.port = curses.newwin(*self.layout(parentWindow))
-        self.port.refresh()
-        self.maxY, self.maxX = self.port.getmaxyx()
-
-    def layout(self, parentWindow):
-        height, width = parentWindow.getmaxyx()
-        x, y = 0, 0
-        return (height - 1, width, y, x)
-
-    def move(self, y, x):
-        self.port.move(y-1, x-1)
-        self.port.refresh()
-
-    def draw(self, string):
-        self.port.clear()
-        self.port.addstr(string[:-1])
-        self.port.refresh()
-
-    def clear(self):
-        self.port.clear()
-
-    def appendLine(self, line):
-        self.port.addstr(line + "\n")
-
-    def refresh(self):
-        self.port.refresh()
-
-    def height(self):
-        return self.maxY
-
-    def width(self):
-        return self.maxX
 
 class WindowLines:
 
@@ -125,7 +88,6 @@ class WindowLines:
 class Window:
 
     def __init__(self):
-        slot("updatedBuffer", self)
         slot("cursorMoved", self)
         self.firstLine = 1
 
@@ -157,12 +119,6 @@ class Window:
         top = self.firstWindowLine()
         return y - top + 1
 
-    def movePortTopTo(self, y):
-        self.firstLine = y
-
-    def movePortBottomTo(self, y):
-        pass
-
     def draw(self):
         string = self.lines.subStringWithNumbers(
                 self.firstWindowLine(), self.port.height())
@@ -184,11 +140,15 @@ class Window:
         x += numberBarWidth
         self.port.move(y, x)
 
+    def focus(self):
+        self.cursor.move(self.cursor.position())
+
     def receive(self, signal, sender, *args):
-        if signal == "updatedBuffer":
-            pass
-        if signal == "cursorMoved":
+        # Every buffer update triggers a move of the cursor.
+        # A cursor move signal is received here.
+        # Move implies draw because the view port needs to
+        # draw the section containing the cursor before.
+        if sender == self.cursor:
             self.makeLines()
-            self.draw()
             self.move()
 

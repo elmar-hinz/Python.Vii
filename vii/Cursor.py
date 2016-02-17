@@ -36,12 +36,15 @@ class Cursor:
             "cursor after range moves by deltas"
             self.y += toY - fromY
             self.x += toX - fromX
-            self.updated()
+            # self.updated()
         elif(self.y > toY or (self.y == toY and self.x >= toX)):
             """" Deletion only. Cursor in range moves to position of deletion.
             Position of deletion needs to be included itself to trigger
             range enforcing for that case. """
             self.gotoPositionStrict(Position(toY, toX))
+        if self.buffer.isEmpty():
+            self.gotoPositionStrict(Position(0,0))
+        self.updated()
 
     def position(self, position = None):
         debug(position)
