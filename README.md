@@ -40,18 +40,14 @@ full Vim compatibility the habitual users will not join the company.
 
 ## Stability
 
-It is a working editor. The first version is rather prove of concept than
-production stable.
-
-The goal of this version is to make you curious. Maybe you like to test it
+It is a working editor. It is prove of concept, not more. Maybe you like to test it
 and report you feedback.
 
-For now there is still to much resarch and dynamic to ask for pull requests,
-but stay tuned to join the development within one or two years.
+For now there is still too much resarch and dynamic to ask for pull requests,
+but stay tuned to join the development within a few years, if I find the time
+to drive this experiment any further.
 
 ## Installation
 
 The devolopment is done on OS X with homebrew Python 3. The editor depends
 on the Python ncurses library.
-
-
